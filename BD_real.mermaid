@@ -1,0 +1,49 @@
+erDiagram
+Alumno{
+
+}
+Carrera{
+    
+}
+Materia{
+    
+}
+Curso{
+    
+}
+Turno{
+    
+}
+Horario{
+    
+}
+Ciclo_Lectivo{
+    
+}
+Inscripción{
+    
+}
+Evaluación{
+    
+}
+Condición_Final{
+    
+}
+Reporte_Regularidad{
+    
+}
+
+Alumno ||--o{ Inscripción : realiza
+Alumno ||--o{ Reporte_Regularidad : genera
+Inscripción ||--o{ Evaluación : tiene
+Inscripción ||--|| Condición_Final : determina
+Inscripción ||--o{ Materia : pertenece_a
+Inscripción ||--o{ Curso : ofrece
+Inscripción ||--o{ Turno : en_turno
+Inscripción ||--o{ Ciclo_Lectivo : ocurre_en
+Reporte_Regularidad ||--o{ Materia : incluye
+Curso }o--|| Carrera : corresponde_a
+Materia }o--|| Carrera : es_de
+Curso ||--o{ Horario : tiene
+Horario }o--|| Dia : ocurre_en
+Horario }o--|| Modulo : en_modulo
