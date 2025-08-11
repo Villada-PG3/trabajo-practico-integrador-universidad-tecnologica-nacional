@@ -1,49 +1,53 @@
 erDiagram
-Alumno{
-
+carrera{
+    str carrera pk
+    str descr
 }
-Carrera{
-    
+Alumno{
+    str DNI pk
+    int Fecha_nacimiento
+    str Nombre
+    str carrera fk
+    str CondicionAlumno fk
 }
 Materia{
-    
+    str sigla pk
+    str nombre
 }
 Curso{
-    
+    str Codigo pk
+    str Horario
+    int modulo
+    int nivel
 }
-Turno{
-    
-}
-Horario{
-    
-}
-Ciclo_Lectivo{
-    
-}
-Inscripción{
-    
-}
-Evaluación{
-    
-}
-Condición_Final{
-    
-}
-Reporte_Regularidad{
-    
+Condición_alumno{
+    str CondicionAlumno pk
 }
 
+Inscripción{
+    str CodigoINSCR pk
+    int Ciclo_Lectivo
+}
+Evaluación{
+    str tipoDeEvalucaion pk
+    int Nota
+    str sigla fk
+    str docente
+    int fecha
+    int horario
+}
+Condición_Final{
+    str Condición_Final pk
+}
+
+
 Alumno ||--o{ Inscripción : realiza
-Alumno ||--o{ Reporte_Regularidad : genera
-Inscripción ||--o{ Evaluación : tiene
-Inscripción ||--|| Condición_Final : determina
-Inscripción ||--o{ Materia : pertenece_a
-Inscripción ||--o{ Curso : ofrece
-Inscripción ||--o{ Turno : en_turno
-Inscripción ||--o{ Ciclo_Lectivo : ocurre_en
-Reporte_Regularidad ||--o{ Materia : incluye
-Curso }o--|| Carrera : corresponde_a
-Materia }o--|| Carrera : es_de
-Curso ||--o{ Horario : tiene
-Horario }o--|| Dia : ocurre_en
-Horario }o--|| Modulo : en_modulo
+Inscripción ||--o{ Materia : Inscribe
+Inscripción ||--o{ Condición_alumno : determina
+carrera ||--o{ Alumno: Tiene
+Materia ||--o{ Curso: Tiene
+Condición_alumno }o--|| Alumno: Tiene
+Curso ||--o{ Evaluación: tiene
+Alumno ||--o{ Evaluación: rinde
+Evaluación }o--|| Condición_Final: determina
+Alumno||--o{ Condición_Final: tiene
