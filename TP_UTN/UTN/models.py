@@ -38,7 +38,12 @@ class Materia(models.Model):
     nivel = models.PositiveIntegerField()
     tipo_materia = models.CharField(max_length=50)
     ciclo_lectivo = models.PositiveIntegerField()
-    turno_cursado = models.CharField(max_length=20)
+    Opciones_Turno = [
+    ('manana', 'Mañana'),
+    ('tarde', 'Tarde'),
+    ('noche', 'Noche'),
+    ]
+    turno_cursado = models.CharField(max_length=10, choices= Opciones_Turno)
     horario = models.CharField(max_length=50)
     modulo = models.CharField(max_length=50)
 
@@ -68,16 +73,17 @@ class AlumnoCurso(models.Model):
 
 
 class Inscripcion(models.Model):
-    ESTADOS = [
-        ('activo', 'Activo'),
-        ('finalizado', 'Finalizado'),
-        ('anulado', 'Anulado'),
-    ]
+    ESTADOS_INSCRIPCION = [
+    ('inscripto', 'Inscripto'),
+    ('finalizado', 'Finalizado'),
+    ('anulado', 'Anulado'),
+]
+    estado = models.CharField(max_length=20, choices=ESTADOS_INSCRIPCION, default='inscripto')
 
     id_codigo_alfanumerico = models.AutoField(primary_key=True)
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='inscripciones')
     materia_curso = models.ForeignKey(MateriaCurso, on_delete=models.CASCADE, related_name='inscripciones')
-    estado = models.CharField(max_length=20, choices=ESTADOS, default='activo')
+    estado = models.CharField(max_length=20, choices=ESTADOS_INSCRIPCION, default='inscripto')
     descripcion = models.TextField(blank=True)
 
     def __str__(self):
@@ -106,7 +112,13 @@ class Reporte(models.Model):
 class CondicionFinal(models.Model):
     id_condicion_final = models.AutoField(primary_key=True)
     reporte = models.ForeignKey(Reporte, on_delete=models.CASCADE, related_name='condiciones')
-    condicion = models.CharField(max_length=50)
+    CONDICIONES_FINAL = [
+    ('regular', 'Regular'),
+    ('libre', 'Libre'),
+    ('aprobacion_directa', 'Aprobación Directa'),
+    ('promocion_practica', 'Promoción Práctica'),
+]
+    condicion = models.CharField(max_length=50, choices=CONDICIONES_FINAL)
     fecha = models.DateField(default=date.today)
 
     def __str__(self):
@@ -117,7 +129,12 @@ class Evaluacion(models.Model):
     id_evaluacion = models.AutoField(primary_key=True)
     nota = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)])
     comentario = models.TextField(blank=True)
-    tipo_evaluacion = models.ForeignKey(TipoEvaluacion, on_delete=models.CASCADE, related_name='evaluaciones')
+    TIPOS_EVALUACION = [
+    ('parcial_teorico', 'Parcial Teórico'),
+    ('parcial_practico', 'Parcial Práctico'),
+    ('trabajo_practico', 'Trabajo Práctico'),
+]
+    tipo_evaluacion = models.ForeignKey(TipoEvaluacion, on_delete=models.CASCADE, choices=TIPOS_EVALUACION)
     fecha = models.DateField(default=date.today)
     condicion_final = models.ForeignKey(CondicionFinal, on_delete=models.CASCADE, related_name='evaluaciones')
 
