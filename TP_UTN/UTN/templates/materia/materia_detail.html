@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Materia</title>
+</head>
+<body>
+    <h1>{{ object }}</h1>
+    <p>Nivel: {{ object.nivel }}</p>
+    <p>Tipo: {{ object.tipo_materia }}</p>
+    <p>Ciclo Lectivo: {{ object.ciclo_lectivo }}</p>
+    <p>Turno: {{ object.turno_cursado }}</p>
+    <a href="{% url 'materia_update' object.pk %}">Editar</a>
+    <a href="{% url 'materia_delete' object.pk %}">Eliminar</a>
+</body>
+</html>
