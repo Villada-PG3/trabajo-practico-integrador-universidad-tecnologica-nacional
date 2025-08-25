@@ -12,9 +12,6 @@ erDiagram
         int nivel
         str tipo_Materia
         int ciclo_lectivo
-        str turno_cursado
-        str horario
-        str modulo
 
     }
     Curso{
@@ -27,6 +24,9 @@ erDiagram
         int id_materia_curso pk
         int id_curso fk
         int sigla fk
+        str turno_cursado
+        str horario
+        str modulo
     }
     Inscripcion{
         int id_codigo_alfanumerico pk
@@ -58,12 +58,24 @@ erDiagram
         int id_reporte fk
         str Condicion
         date fecha
+        int id_profesor fk
     }
     Reporte{
         int id_reporte pk
         int id_alumno fk
         int id_materia fk
         str observaciones
+    }
+    Profesor{
+        int id_profesor pk
+        str nombre
+        str apellido
+    }
+    Curso_Profesor{
+        int id_curso_profesor pk
+        int id_curso fk
+        int id_profesor fk
+        str email
     }
 
     Alumno ||--o{ Inscripcion : realiza
@@ -72,8 +84,12 @@ erDiagram
     Inscripcion ||--o{ Materia : tiene
     Materia ||--o{ Materia_Curso : pertenece
     Curso ||--o{ Materia_Curso : tiene
+    Curso ||--o{ Curso_Profesor : imparte
+    Curso_Profesor }o--|| Profesor : da
     Alumno_Curso }o--|| Curso : asiste
     Reporte ||--o{ Condicion_Final : contiene
     Reporte }o--|| Materia : sisi
     Condicion_Final ||--o{ Evaluacion : tiene
     Evaluacion ||--o{ Tipo_Evaluacion  : clasifica
+    Condicion_Final }o--|| Profesor : realiza
+    

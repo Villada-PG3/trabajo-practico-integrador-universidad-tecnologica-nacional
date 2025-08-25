@@ -38,15 +38,6 @@ class Materia(models.Model):
     nivel = models.PositiveIntegerField()
     tipo_materia = models.CharField(max_length=50)
     ciclo_lectivo = models.PositiveIntegerField()
-    Opciones_Turno = [
-    ('manana', 'Mañana'),
-    ('tarde', 'Tarde'),
-    ('noche', 'Noche'),
-    ]
-    turno_cursado = models.CharField(max_length=10, choices= Opciones_Turno)
-    horario = models.CharField(max_length=50)
-    modulo = models.CharField(max_length=50)
-
     def __str__(self):
         return f"{self.tipo_materia} ({self.sigla})"
 
@@ -58,6 +49,15 @@ class MateriaCurso(models.Model):
     id_materia_curso = models.AutoField(primary_key=True)
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='materias')
     materia = models.ForeignKey(Materia, on_delete=models.CASCADE, related_name='cursos')
+    Opciones_Turno = [
+    ('manana', 'Mañana'),
+    ('tarde', 'Tarde'),
+    ('noche', 'Noche'),
+    ]
+    turno_cursado = models.CharField(max_length=10, choices= Opciones_Turno)
+    horario = models.CharField(max_length=50)
+    modulo = models.CharField(max_length=50)
+
 
     def __str__(self):
         return f"{self.curso.nombre} - {self.materia.tipo_materia}"
@@ -120,6 +120,7 @@ class CondicionFinal(models.Model):
 ]
     condicion = models.CharField(max_length=50, choices=CONDICIONES_FINAL)
     fecha = models.DateField(default=date.today)
+    profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE, related_name='condiciones')
 
     def __str__(self):
         return f"{self.reporte} - {self.condicion}"
@@ -140,3 +141,20 @@ class Evaluacion(models.Model):
 
     def __str__(self):
         return f"{self.tipo_evaluacion} - {self.nota}"
+
+class Profesor(models.Model):
+    id_profesor = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50)
+    apellido = models.CharField(max_length=50)
+    email = models.EmailField()
+
+    def __str__(self):
+        return f"{self.nombre} {self.apellido}"
+
+class ProfesorCurso(models.Model):
+    id_profesor_curso = models.AutoField(primary_key=True)
+    profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE, related_name='cursos')
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='profesores')
+
+    def __str__(self):
+        return f"{self.profesor} - {self.curso}"
