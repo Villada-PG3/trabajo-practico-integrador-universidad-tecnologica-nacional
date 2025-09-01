@@ -3,14 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eliminar Alumno</title>
+    <title>Confirmar Eliminación - Sistema Escolar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        background: '#ffffff',
+                        foreground: '#475569',
+                        card: '#f1f5f9',
+                        'card-foreground': '#1f2937',
+                        primary: '#059669',
+                        'primary-foreground': '#ffffff',
+                        secondary: '#f1f5f9',
+                        'secondary-foreground': '#475569',
+                        muted: '#e5e7eb',
+                        'muted-foreground': '#1f2937',
+                        accent: '#10b981',
+                        'accent-foreground': '#ffffff',
+                        destructive: '#dc2626',
+                        'destructive-foreground': '#ffffff',
+                        border: '#d1d5db',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <h1>¿Está seguro que desea eliminar "{{ object }}"?</h1>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Sí, eliminar</button>
-        <a href="{% url 'alumno_list' %}">Cancelar</a>
-    </form>
+<body class="min-h-screen bg-background text-foreground font-sans">
+    <div class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 to-slate-100">
+        <div class="w-full max-w-md">
+            <div class="bg-card rounded-xl shadow-lg border border-border p-8 space-y-6">
+                <div class="flex justify-center">
+                    <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                 
+                <div class="text-center space-y-2">
+                    <h1 class="text-2xl font-bold text-card-foreground text-balance">
+                        Confirmar Eliminación
+                    </h1>
+                    <p class="text-muted-foreground text-pretty">
+                        Esta acción no se puede deshacer
+                    </p>
+                </div>
+
+                 
+                <div class="bg-muted rounded-lg p-4 border-l-4 border-l-accent">
+                    <p class="text-sm text-muted-foreground mb-1">Alumno a eliminar:</p>
+                    <p class="font-semibold text-card-foreground text-lg">
+                        {{ object }}
+                    </p>
+                </div>
+
+                
+                <div class="text-center">
+                    <p class="text-foreground text-pretty leading-relaxed">
+                        ¿Estás seguro de que deseas eliminar este alumno del sistema? 
+                        Se perderán todos los datos asociados.
+                    </p>
+                </div>
+
+                 
+                <form method="post" class="space-y-4">
+                    {% csrf_token %}
+                    
+                    <div class="flex flex-col gap-3">
+                         
+                        <button 
+                            type="submit" 
+                            class="w-full bg-destructive hover:bg-red-700 text-destructive-foreground font-medium py-3 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-2"
+                        >
+                            <span class="flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                Sí, eliminar alumno
+                            </span>
+                        </button>
+
+                         
+                        <a 
+                            href="{% url 'alumno_list' %}" 
+                            class="w-full bg-secondary hover:bg-slate-200 text-secondary-foreground font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                        >
+                            <span class="flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                                Cancelar
+                            </span>
+                        </a>
+                    </div>
+                </form>
+
+                  
+                <div class="text-center pt-4 border-t border-border">
+                    <p class="text-xs text-muted-foreground">
+                        ¿Necesitas ayuda? 
+                        <a href="#" class="text-accent hover:text-primary underline">
+                            Contacta soporte
+                        </a>
+                    </p>
+                </div>
+            </div>
+ 
+            <div class="mt-6 text-center">
+                <p class="text-sm text-muted-foreground flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    Conexión segura y datos protegidos
+                </p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
