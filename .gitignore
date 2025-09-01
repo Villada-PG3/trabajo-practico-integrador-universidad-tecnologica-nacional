@@ -1,2 +1,3 @@
 venv/
 __pycache__/
+TP_UTN/db.sqlite3
