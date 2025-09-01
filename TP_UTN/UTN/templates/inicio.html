@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Menú Principal</title>
+    <link rel="stylesheet" href="{% static 'UTN/css/style1.css' %}">
+</head>
+<body>
+    <h1>Menú Principal</h1>
+    <ul>
+        <li><a href="{% url 'alumno_list' %}">Alumnos</a></li>
+        <li><a href="{% url 'curso_list' %}">Cursos</a></li>
+        <li><a href="{% url 'materia_list' %}">Materias</a></li>
+    </ul>
+</body>
+</html>

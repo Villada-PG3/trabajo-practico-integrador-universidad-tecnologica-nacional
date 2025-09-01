@@ -19,11 +19,13 @@ from django.urls import path
 from UTN.views import (
     AlumnoListView, AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView, AlumnoDeleteView,
     CursoListView, CursoDetailView, CursoCreateView, CursoUpdateView, CursoDeleteView,
-    MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView
+    MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView, InicioView
 )
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("", InicioView.as_view(), name="inicio"), 
     # Alumno URLs
     path('alumnos/', AlumnoListView.as_view(), name='alumno_list'),
     path('alumnos/<int:pk>/', AlumnoDetailView.as_view(), name='alumno_detail'),
