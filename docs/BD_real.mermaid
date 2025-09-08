@@ -25,7 +25,6 @@ erDiagram
         int id_materia_curso pk
         int sigla fk
         int id_curso fk
-        int id_alumno fk
         str turno_cursado
         str horario
         str modulo
@@ -49,7 +48,6 @@ erDiagram
         str tipo_evaluacion fk
         date fecha
         str Condicion_Final fk
-        str Materia fk
     }
     Tipo_Evaluacion{
         int id_tipo_evaluacion pk
@@ -58,6 +56,7 @@ erDiagram
     }
     Condicion_Final{
         int id_condicion_final pk
+        int id_alumno fk
         str Condicion
         date fecha
         int id_profesor fk
@@ -73,11 +72,17 @@ erDiagram
         int id_profesor fk
         str email
     }
+    Alumno_Materia_Curso{
+        int id_alumno_materia_curso pk
+        int id_alumno fk
+        int id_materia_curso fk
+    }
 
     Alumno ||--o{ Inscripcion : realiza
     Alumno ||--o{ Alumno_Curso : cursa
     Alumno ||--o{ Condicion_Final : genera
-    Alumno ||--o{ Materia_Curso : cursa
+    Alumno ||--o{ Alumno_Materia_Curso : cursa
+    Alumno_Materia_Curso }o--|| Materia_Curso : pertenece
     Inscripcion ||--o{ Materia : tiene
     Materia ||--o{ Materia_Curso : pertenece
     Curso ||--o{ Materia_Curso : tiene
