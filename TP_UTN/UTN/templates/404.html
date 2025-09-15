@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Materias - Sistema Universitario</title>
+    <title>Error de Direccion - Sistema Universitario</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -54,6 +54,7 @@
         }
     </style>
 </head>
+
 <body class="min-h-screen bg-background text-foreground">
       
     <header class="bg-primary text-primary-foreground shadow-sm border-b border-border">
@@ -66,49 +67,53 @@
                 </div>
                 <nav class="hidden md:block">
                     <div class="flex items-center space-x-4">
-                        <a href="/" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <a href="/" class="text-primary-foreground hover:text-primary-foreground/80 px-3 py-2 rounded-md text-sm font-medium bg-primary-foreground/10 transition-colors">
                             Inicio
                         </a>
-                        <a href="#" class="text-primary-foreground hover:text-primary-foreground/80 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <a href="/alumnos" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
                             Alumnos
-                        <a href="#" class="text-primary-foreground hover:text-primary-foreground/80 px-3 py-2 rounded-md text-sm font-medium bg-primary-foreground/10 transition-colors">
-                            Materias
+                        </a>
+                        <a href="#" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Profesores
                         </a>
                     </div>
                 </nav>
             </div>
         </div>
     </header>
-
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="mb-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-foreground mb-2">Lista de Materias</h1>
-                    <p class="text-muted-foreground">Gestión del registro de materias</p>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="{% url 'materia_create' %}" 
-                       class="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 transition-colors font-medium shadow-sm">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                        </svg>
-                        Agregar Materia
+    <main class="flex-grow flex items-center justify-center py-16 px-4">
+        <div class="text-center">
+            <h1 class="text-6xl font-extrabold text-primary mb-4">404</h1>
+            <p class="text-xl text-muted-foreground">ㅤ╱ı、</p>
+            <p class="text-xl text-muted-foreground">（ﾟ､ ｡７</p>
+            <p class="text-xl text-muted-foreground">ㅤ ı、~ヽ</p>
+            <p class="text-xl text-muted-foreground">ㅤㅤ じしf_,)ノ</p>
+            <p class="text-xl text-muted-foreground mb-8">Lo sentimos, la página que buscas no se pudo encontrar.</p>
+            <a href="/" class="inline-block bg-primary text-primary-foreground px-6 py-3 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
+                Volver al Inicio
+            </a>
+        </div>
+    </main>
+    <footer class="bg-muted border-t border-border mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center">
+                <p class="text-sm text-muted-foreground">
+                    © 2024 Sistema Universitario. Todos los derechos reservados.
+                </p>
+                <div class="mt-2 flex justify-center space-x-6">
+                    <a href="#" class="text-muted-foreground hover:text-accent text-sm transition-colors">
+                        Política de Privacidad
+                    </a>
+                    <a href="#" class="text-muted-foreground hover:text-accent text-sm transition-colors">
+                        Términos de Uso
+                    </a>
+                    <a href="#" class="text-muted-foreground hover:text-accent text-sm transition-colors">
+                        Contacto
                     </a>
                 </div>
             </div>
         </div>
-        <div class="bg-card rounded-lg border border-border p-6 mb-6 shadow-sm">
-            <div class="flex flex-col sm:flex-row gap-4">
-                <div class="flex-1">
-                    <label for="search" class="block text-sm font-medium text-foreground mb-2">
-                        Buscar materia
-                    </label>
-                    <input type="text" 
-                           id="search" 
-                           placeholder="Nombre, código o departamento..."
-                           class="w-full px-3 py-2 bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors">
-                </div>
-                <div class="sm:w-48">
-                    <label for="filter" class="block text-sm font-medium text-foreground mb-2">
-                        Fil
+    </footer>
+</body>
+</html>
+

@@ -1,11 +1,29 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú Principal - Sistema Universitario</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --background: oklch(1 0 0);
+            --foreground: oklch(0.205 0 0);
+            --card: oklch(0.985 0 0);
+            --primary: oklch(0.269 0 0);
+            --primary-foreground: oklch(1 0 0);
+            --secondary: oklch(0.488 0.243 264.376);
+            --accent: oklch(0.672 0.196 160);
+            --border: oklch(0.851 0 0);
+            --input: oklch(0.985 0 0);
+            --ring: oklch(0.488 0.243 264.376 / 0.5);
+        }
+        body { font-family: 'DM Sans', sans-serif; }
+    </style>
     <script>
         tailwind.config = {
             theme: {
@@ -53,10 +71,7 @@
             --ring: 239 84% 67%;
         }
     </style>
-</head>
-<body class="min-h-screen bg-background text-foreground">
-      
-    <header class="bg-primary text-primary-foreground shadow-sm border-b border-border">
+     <header class="bg-primary text-primary-foreground shadow-sm border-b border-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-4">
@@ -64,19 +79,55 @@
                         <h1 class="text-xl font-bold">Sistema Universitario</h1>
                     </div>
                 </div>
-                <nav class="hidden md:block">
-                    <div class="flex items-center space-x-4">
-                        <a href="/" class="text-primary-foreground hover:text-primary-foreground/80 px-3 py-2 rounded-md text-sm font-medium bg-primary-foreground/10 transition-colors">
-                            Inicio
-                        </a>
-                        <a href="/alumnos" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            Alumnos
-                        </a>
-                        <a href="#" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            Profesores
-                        </a>
-                    </div>
-                </nav>
+                
             </div>
         </div>
     </header>
+
+</head>
+<body class="h-full bg-gray-50">
+    <div class="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <!-- University Header -->
+        <div class="sm:mx-auto sm:w-full sm:max-w-md">
+            <div class="text-center">
+                <div class="mx-auto h-16 w-16 bg-gray-700 rounded-full flex items-center justify-center mb-6">
+                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Sistema Universitario</h1>
+                <p class="text-sm text-gray-600">Selecciona una opción</p>
+            </div>
+        </div>
+
+        <!-- Menu Card -->
+        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+            <div class="bg-white py-8 px-6 shadow-lg rounded-lg border border-gray-200 space-y-6">
+                
+                <!-- Botones principales -->
+                <div class="space-y-4">
+                    <a href="{% url 'alumno_list' %}" 
+                       class="w-full flex justify-center py-3 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                        Registrar Alumnos
+                    </a>
+
+                    <a href="{% url 'materia_list' %}" 
+                       class="w-full flex justify-center py-3 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-200">
+                        Gestión de Materias
+                    </a>
+                </div>
+
+            
+            </div>
+
+            <!-- Footer -->
+            <div class="mt-8 text-center">
+                <p class="text-xs text-gray-500">
+                    © 2025 Sistema Universitario. Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
