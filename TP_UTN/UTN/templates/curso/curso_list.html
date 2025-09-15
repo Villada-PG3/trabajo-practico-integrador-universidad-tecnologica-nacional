@@ -3,15 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Cursos</title>
+    <title>Lista de Materias - Sistema Universitario</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: 'hsl(var(--background))',
+                        foreground: 'hsl(var(--foreground))',
+                        card: 'hsl(var(--card))',
+                        'card-foreground': 'hsl(var(--card-foreground))',
+                        primary: 'hsl(var(--primary))',
+                        'primary-foreground': 'hsl(var(--primary-foreground))',
+                        secondary: 'hsl(var(--secondary))',
+                        'secondary-foreground': 'hsl(var(--secondary-foreground))',
+                        muted: 'hsl(var(--muted))',
+                        'muted-foreground': 'hsl(var(--muted-foreground))',
+                        accent: 'hsl(var(--accent))',
+                        'accent-foreground': 'hsl(var(--accent-foreground))',
+                        border: 'hsl(var(--border))',
+                        input: 'hsl(var(--input))',
+                        ring: 'hsl(var(--ring))'
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 210 40% 12%;
+            --card: 210 40% 98%;
+            --card-foreground: 210 40% 12%;
+            --primary: 210 11% 27%;
+            --primary-foreground: 0 0% 100%;
+            --secondary: 239 84% 67%;
+            --secondary-foreground: 0 0% 100%;
+            --muted: 210 40% 98%;
+            --muted-foreground: 210 40% 12%;
+            --accent: 239 84% 67%;
+            --accent-foreground: 0 0% 100%;
+            --border: 210 20% 82%;
+            --input: 210 40% 98%;
+            --ring: 239 84% 67%;
+        }
+    </style>
 </head>
-<body>
-    <h1>Lista de Cursos</h1>
-    <ul>
-        {% for curso in object_list %}
-        <li><a href="{{ curso.get_absolute_url }}">{{ curso }}</a></li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'curso_create' %}">Agregar Curso</a>
-</body>
-</html>
+<body class="min-h-screen bg-background text-foreground">
+      
+    <header class="bg-primary text-primary-foreground shadow-sm border-b border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-xl font-bold">Sistema Universitario</h1>
+                    </div>
+                </div>
+                <nav class="hidden md:block">
+                    <div class="flex items-center space-x-4">
+                        <a href="/" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Inicio
+                        </a>
+                        <a href="#" class="text-primary-foreground hover:text-primary-foreground/80 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Alumnos
+                        <a href="#" class="text-primary-foreground hover:text-primary-foreground/80 px-3 py-2 rounded-md text-sm font-medium bg-primary-foreground/10 transition-colors">
+                            Materias
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-foreground mb-2">Lista de Materias</h1>
+                    <p class="text-muted-foreground">Gestión del registro de materias</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'materia_create' %}" 
+                       class="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 transition-colors font-medium shadow-sm">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        Agregar Materia
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="bg-card rounded-lg border border-border p-6 mb-6 shadow-sm">
+            <div class="flex flex-col sm:flex-row gap-4">
+                <div class="flex-1">
+                    <label for="search" class="block text-sm font-medium text-foreground mb-2">
+                        Buscar materia
+                    </label>
+                    <input type="text" 
+                           id="search" 
+                           placeholder="Nombre, código o departamento..."
+                           class="w-full px-3 py-2 bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors">
+                </div>
+                <div class="sm:w-48">
+                    <label for="filter" class="block text-sm font-medium text-foreground mb-2">
+                        Fil

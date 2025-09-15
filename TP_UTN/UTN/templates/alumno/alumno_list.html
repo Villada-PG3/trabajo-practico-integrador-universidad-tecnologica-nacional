@@ -1,277 +1,35 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Alumnos - Sistema Universitario</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        background: 'hsl(var(--background))',
-                        foreground: 'hsl(var(--foreground))',
-                        card: 'hsl(var(--card))',
-                        'card-foreground': 'hsl(var(--card-foreground))',
-                        primary: 'hsl(var(--primary))',
-                        'primary-foreground': 'hsl(var(--primary-foreground))',
-                        secondary: 'hsl(var(--secondary))',
-                        'secondary-foreground': 'hsl(var(--secondary-foreground))',
-                        muted: 'hsl(var(--muted))',
-                        'muted-foreground': 'hsl(var(--muted-foreground))',
-                        accent: 'hsl(var(--accent))',
-                        'accent-foreground': 'hsl(var(--accent-foreground))',
-                        border: 'hsl(var(--border))',
-                        input: 'hsl(var(--input))',
-                        ring: 'hsl(var(--ring))'
-                    },
-                    fontFamily: {
-                        sans: ['DM Sans', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        :root {
-            --background: 0 0% 100%;
-            --foreground: 210 40% 12%;
-            --card: 210 40% 98%;
-            --card-foreground: 210 40% 12%;
-            --primary: 210 11% 27%;
-            --primary-foreground: 0 0% 100%;
-            --secondary: 239 84% 67%;
-            --secondary-foreground: 0 0% 100%;
-            --muted: 210 40% 98%;
-            --muted-foreground: 210 40% 12%;
-            --accent: 239 84% 67%;
-            --accent-foreground: 0 0% 100%;
-            --border: 210 20% 82%;
-            --input: 210 40% 98%;
-            --ring: 239 84% 67%;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Universitario</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-background text-foreground">
-      
-    <header class="bg-primary text-primary-foreground shadow-sm border-b border-border">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-4">
-                    <div class="flex-shrink-0">
-                        <h1 class="text-xl font-bold">Sistema Universitario</h1>
-                    </div>
-                </div>
-                <nav class="hidden md:block">
-                    <div class="flex items-center space-x-4">
-                        <a href="/" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            Inicio
-                        </a>
-                        <a href="#" class="text-primary-foreground hover:text-primary-foreground/80 px-3 py-2 rounded-md text-sm font-medium bg-primary-foreground/10 transition-colors">
-                            Alumnos
-                        </a>
-                        <a href="#" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            Profesores
-                        </a>
-                    </div>
-                </nav>
-            </div>
-        </div>
-    </header>
+<body class="h-full bg-gray-50 flex flex-col items-center justify-center min-h-screen font-sans">
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="mb-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-foreground mb-2">Lista de Alumnos</h1>
-                    <p class="text-muted-foreground">Gestión del registro estudiantil</p>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="{% url 'alumno_create' %}" 
-                       class="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 transition-colors font-medium shadow-sm">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                        </svg>
-                        Agregar Alumno
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="bg-card rounded-lg border border-border p-6 mb-6 shadow-sm">
-            <div class="flex flex-col sm:flex-row gap-4">
-                <div class="flex-1">
-                    <label for="search" class="block text-sm font-medium text-foreground mb-2">
-                        Buscar alumno
-                    </label>
-                    <input type="text" 
-                           id="search" 
-                           placeholder="Nombre, apellido o número de matrícula..."
-                           class="w-full px-3 py-2 bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors">
-                </div>
-                <div class="sm:w-48">
-                    <label for="filter" class="block text-sm font-medium text-foreground mb-2">
-                        Filtrar por carrera
-                    </label>
-                    <select id="filter" 
-                            class="w-full px-3 py-2 bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors">
-                        <option value="">Todas las carreras</option>
-                        <option value="ingenieria">Ingeniería</option>
-                        <option value="medicina">Medicina</option>
-                        <option value="derecho">Derecho</option>
-                        <option value="administracion">Administración</option>
-                    </select>
-                </div>
-            </div>
-        </div>
- 
-        <div class="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-border bg-muted/50">
-                <h2 class="text-lg font-semibold text-foreground">Registro de Estudiantes</h2>
-                <p class="text-sm text-muted-foreground mt-1">Lista completa de alumnos registrados en el sistema</p>
-            </div>
-            
-            <div class="divide-y divide-border">
-                {% for alumno in object_list %}
-                <div class="px-6 py-4 hover:bg-muted/30 transition-colors">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <div class="flex-shrink-0">
-                                <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                                    <span class="text-primary font-semibold text-sm">
-                                        {{ alumno.nombre.0|upper }}{{ alumno.apellido.0|upper }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <a href="{{ alumno.get_absolute_url }}" 
-                                   class="text-foreground hover:text-accent font-medium transition-colors">
-                                    {{ alumno }}
-                                </a>
-                                <p class="text-sm text-muted-foreground mt-1">
-                                    Matrícula: {{ alumno.matricula|default:"No asignada" }}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/10 text-accent">
-                                {{ alumno.carrera|default:"Sin carrera" }}
-                            </span>
-                            <a href="{{ alumno.get_absolute_url }}" 
-                               class="text-muted-foreground hover:text-accent transition-colors">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="px-6 py-12 text-center">
-                    <svg class="mx-auto h-12 w-12 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
-                    </svg>
-                    <h3 class="mt-4 text-lg font-medium text-foreground">No hay alumnos registrados</h3>
-                    <p class="mt-2 text-muted-foreground">Comience agregando el primer alumno al sistema.</p>
-                    <div class="mt-6">
-                        <a href="{% url 'alumno_create' %}" 
-                           class="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 transition-colors font-medium">
-                            Agregar Primer Alumno
-                        </a>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
+  <!-- Header -->
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold text-gray-900">Sistema Universitario</h1>
+    <p class="text-gray-600">Gestión académica</p>
+  </div>
 
-        {% if is_paginated %}
-        <div class="mt-6 flex items-center justify-between">
-            <div class="flex-1 flex justify-between sm:hidden">
-                {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}" 
-                   class="relative inline-flex items-center px-4 py-2 border border-border text-sm font-medium rounded-md text-foreground bg-card hover:bg-muted transition-colors">
-                    Anterior
-                </a>
-                {% endif %}
-                {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}" 
-                   class="ml-3 relative inline-flex items-center px-4 py-2 border border-border text-sm font-medium rounded-md text-foreground bg-card hover:bg-muted transition-colors">
-                    Siguiente
-                </a>
-                {% endif %}
-            </div>
-            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                <div>
-                    <p class="text-sm text-muted-foreground">
-                        Mostrando
-                        <span class="font-medium">{{ page_obj.start_index }}</span>
-                        a
-                        <span class="font-medium">{{ page_obj.end_index }}</span>
-                        de
-                        <span class="font-medium">{{ paginator.count }}</span>
-                        resultados
-                    </p>
-                </div>
-                <div>
-                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                        {% if page_obj.has_previous %}
-                        <a href="?page={{ page_obj.previous_page_number }}" 
-                           class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-border bg-card text-sm font-medium text-muted-foreground hover:bg-muted transition-colors">
-                            <span class="sr-only">Anterior</span>
-                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                        </a>
-                        {% endif %}
-                        
-                        {% for num in paginator.page_range %}
-                        {% if page_obj.number == num %}
-                        <span class="relative inline-flex items-center px-4 py-2 border border-border bg-accent text-accent-foreground text-sm font-medium">
-                            {{ num }}
-                        </span>
-                        {% else %}
-                        <a href="?page={{ num }}" 
-                           class="relative inline-flex items-center px-4 py-2 border border-border bg-card text-sm font-medium text-foreground hover:bg-muted transition-colors">
-                            {{ num }}
-                        </a>
-                        {% endif %}
-                        {% endfor %}
-                        
-                        {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}" 
-                           class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-border bg-card text-sm font-medium text-muted-foreground hover:bg-muted transition-colors">
-                            <span class="sr-only">Siguiente</span>
-                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                        </a>
-                        {% endif %}
-                    </nav>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-    </main> 
-    <footer class="bg-muted border-t border-border mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="text-center">
-                <p class="text-sm text-muted-foreground">
-                    © 2024 Sistema Universitario. Todos los derechos reservados.
-                </p>
-                <div class="mt-2 flex justify-center space-x-6">
-                    <a href="#" class="text-muted-foreground hover:text-accent text-sm transition-colors">
-                        Política de Privacidad
-                    </a>
-                    <a href="#" class="text-muted-foreground hover:text-accent text-sm transition-colors">
-                        Términos de Uso
-                    </a>
-                    <a href="#" class="text-muted-foreground hover:text-accent text-sm transition-colors">
-                        Contacto
-                    </a>
-                </div>
-            </div>
-        </div>
-    </footer>
+  <!-- Botones -->
+  <div class="space-y-4 w-64">
+    <a href="/login" 
+       class="block w-full text-center py-3 px-4 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition">
+       Iniciar Sesión
+    </a>
+    <a href="/registro" 
+       class="block w-full text-center py-3 px-4 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 transition">
+       Registrarse
+    </a>
+  </div>
+
+  <!-- Barra inferior -->
+  <div class="fixed bottom-0 left-0 right-0 bg-gray-800 text-white flex justify-center py-3">
+    <a href="/" class="hover:text-blue-400">Inicio</a>
+  </div>
+
 </body>
 </html>
