@@ -5,6 +5,15 @@ from datetime import date
 
 # Create your models here.
 
+class Carrera(models.Model):
+    id_carrera = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    duracion_anios = models.PositiveIntegerField()
+    titulo_otorgado = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
+
 class Alumno(models.Model):
     id_alumno = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
@@ -12,9 +21,10 @@ class Alumno(models.Model):
     dni = models.CharField(max_length=20, unique=True)
     email = models.EmailField()
     anio_universitario = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)])
+    carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, related_name='alumnos')
 
     def __str__(self):
-        return f"{self.apellido}, {self.nombre}"
+        return f"{self.apellido}, {self.nombre}, {self.carrera.nombre}"
 
     def get_absolute_url(self):
         return reverse('alumno_detail', kwargs={'pk': self.pk})
@@ -38,8 +48,9 @@ class Materia(models.Model):
     nivel = models.PositiveIntegerField()
     tipo_materia = models.CharField(max_length=50)
     ciclo_lectivo = models.PositiveIntegerField()
+    carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, related_name='materias')
     def __str__(self):
-        return f"{self.tipo_materia} ({self.sigla})"
+        return f"{self.tipo_materia} ({self.sigla}), Nivel {self.nivel} - {self.carrera.nombre}"
 
     def get_absolute_url(self):
         return reverse('materia_detail', kwargs={'pk': self.pk})
