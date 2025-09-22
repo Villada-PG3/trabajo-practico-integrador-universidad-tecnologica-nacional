@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls import path, include
 from UTN.views import (
     AlumnoListView, AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView, AlumnoDeleteView,
     CursoListView, CursoDetailView, CursoCreateView, CursoUpdateView, CursoDeleteView,
@@ -24,6 +25,7 @@ from UTN.views import (
 
 
 urlpatterns = [
+    path('auth/', include('social_django.urls', namespace='social')),
     path('admin/', admin.site.urls),
     path("", InicioView.as_view(), name="inicio"), 
     # Alumno URLs
