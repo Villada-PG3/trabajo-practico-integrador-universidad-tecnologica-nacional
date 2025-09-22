@@ -1,133 +1,197 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html lang="es" class="h-full">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Principal - Sistema Universitario</title>
+    <title>Universidad Tecnológica Nacional</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --background: oklch(1 0 0);
-            --foreground: oklch(0.205 0 0);
-            --card: oklch(0.985 0 0);
-            --primary: oklch(0.269 0 0);
-            --primary-foreground: oklch(1 0 0);
-            --secondary: oklch(0.488 0.243 264.376);
-            --accent: oklch(0.672 0.196 160);
-            --border: oklch(0.851 0 0);
-            --input: oklch(0.985 0 0);
-            --ring: oklch(0.488 0.243 264.376 / 0.5);
-        }
-        body { font-family: 'DM Sans', sans-serif; }
-    </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        background: 'hsl(var(--background))',
-                        foreground: 'hsl(var(--foreground))',
-                        card: 'hsl(var(--card))',
-                        'card-foreground': 'hsl(var(--card-foreground))',
-                        primary: 'hsl(var(--primary))',
-                        'primary-foreground': 'hsl(var(--primary-foreground))',
-                        secondary: 'hsl(var(--secondary))',
-                        'secondary-foreground': 'hsl(var(--secondary-foreground))',
-                        muted: 'hsl(var(--muted))',
-                        'muted-foreground': 'hsl(var(--muted-foreground))',
-                        accent: 'hsl(var(--accent))',
-                        'accent-foreground': 'hsl(var(--accent-foreground))',
-                        border: 'hsl(var(--border))',
-                        input: 'hsl(var(--input))',
-                        ring: 'hsl(var(--ring))'
-                    },
-                    fontFamily: {
-                        sans: ['DM Sans', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        :root {
-            --background: 0 0% 100%;
-            --foreground: 210 40% 12%;
-            --card: 210 40% 98%;
-            --card-foreground: 210 40% 12%;
-            --primary: 210 11% 27%;
-            --primary-foreground: 0 0% 100%;
-            --secondary: 239 84% 67%;
-            --secondary-foreground: 0 0% 100%;
-            --muted: 210 40% 98%;
-            --muted-foreground: 210 40% 12%;
-            --accent: 239 84% 67%;
-            --accent-foreground: 0 0% 100%;
-            --border: 210 20% 82%;
-            --input: 210 40% 98%;
-            --ring: 239 84% 67%;
-        }
-    </style>
-     <header class="bg-primary text-primary-foreground shadow-sm border-b border-border">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-4">
-                    <div class="flex-shrink-0">
-                        <h1 class="text-xl font-bold">Sistema Universitario</h1>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+     <link rel="stylesheet" href="{% static 'UTN/css/style2.css' %}">
+</head>
+<body class="bg-white text-black font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <img src="http://static.photos/education/120x120/1" alt="UTN Logo" class="h-12 mr-4">
+                    <div>
+                        <h1 class="text-xl font-bold">Universidad Tecnológica Nacional</h1>
+                        <p class="text-sm text-gray-600">Excelencia en educación tecnológica</p>
                     </div>
                 </div>
-                
-            </div>
-        </div>
-    </header>
-
-</head>
-<body class="h-full bg-gray-50">
-    <div class="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <!-- University Header -->
-        <div class="sm:mx-auto sm:w-full sm:max-w-md">
-            <div class="text-center">
-                <div class="mx-auto h-16 w-16 bg-gray-700 rounded-full flex items-center justify-center mb-6">
-                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#" class="nav-link font-medium">Inicio</a>
+                    <a href="#" class="nav-link font-medium">Carreras</a>
+                    <a href="#" class="nav-link font-medium">Investigación</a>
+                    <a href="#" class="nav-link font-medium">Extensión</a>
+                    <a href="#" class="nav-link font-medium">Contacto</a>
                 </div>
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Sistema Universitario</h1>
-                <p class="text-sm text-gray-600">Selecciona una opción</p>
+                <button class="md:hidden focus:outline-none">
+                    <i data-feather="menu"></i>
+                </button>
             </div>
         </div>
+    </nav>
 
-        <!-- Menu Card -->
-        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-            <div class="bg-white py-8 px-6 shadow-lg rounded-lg border border-gray-200 space-y-6">
-                
-                <!-- Botones principales -->
-                <div class="space-y-4">
-                    <a href="{% url 'alumno_list' %}" 
-                       class="w-full flex justify-center py-3 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
-                        Registrar Alumnos
-                    </a>
-
-                    <a href="{% url 'materia_list' %}" 
-                       class="w-full flex justify-center py-3 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-200">
-                        Gestión de Materias
-                    </a>
+    <!-- Hero Section -->
+    <section class="hero-gradient py-20">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0" data-aos="fade-right">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6">Formando los líderes tecnológicos del mañana</h1>
+                    <p class="text-lg mb-8 text-gray-700">Más de 70 años de excelencia académica en ingeniería y tecnología. Únete a nuestra comunidad de innovadores y creadores.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition duration-300">Postularme</a>
+                        <a href="#" class="border border-black px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition duration-300">Ver carreras</a>
+                    </div>
                 </div>
-
-            
-            </div>
-
-            <!-- Footer -->
-            <div class="mt-8 text-center">
-                <p class="text-xs text-gray-500">
-                    © 2025 Sistema Universitario. Todos los derechos reservados.
-                </p>
+                <div class="md:w-1/2" data-aos="fade-left">
+                    <img src="http://static.photos/education/640x480/5" alt="Estudiantes UTN" class="rounded-lg shadow-xl">
+                </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+                <div class="p-6" data-aos="fade-up" data-aos-delay="100">
+                    <h2 class="text-4xl font-bold mb-2">70+</h2>
+                    <p class="text-gray-600">Años de experiencia</p>
+                </div>
+                <div class="p-6" data-aos="fade-up" data-aos-delay="200">
+                    <h2 class="text-4xl font-bold mb-2">30</h2>
+                    <p class="text-gray-600">Carreras de grado</p>
+                </div>
+                <div class="p-6" data-aos="fade-up" data-aos-delay="300">
+                    <h2 class="text-4xl font-bold mb-2">50K+</h2>
+                    <p class="text-gray-600">Estudiantes activos</p>
+                </div>
+                <div class="p-6" data-aos="fade-up" data-aos-delay="400">
+                    <h2 class="text-4xl font-bold mb-2">100+</h2>
+                    <p class="text-gray-600">Laboratorios especializados</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Programs Section -->
+    <section class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl font-bold mb-4">Nuestras Carreras</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Programas académicos diseñados para las demandas del siglo XXI</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover transition duration-300" data-aos="fade-up" data-aos-delay="100">
+                    <img src="http://static.photos/technology/640x360/10" alt="Ingeniería" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Ingenierías</h3>
+                        <p class="text-gray-600 mb-4">Programas de ingeniería con enfoque práctico y tecnológico.</p>
+                        <a href="#" class="text-black font-medium flex items-center">
+                            Ver más <i data-feather="arrow-right" class="ml-2 w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover transition duration-300" data-aos="fade-up" data-aos-delay="200">
+                    <img src="http://static.photos/science/640x360/15" alt="Tecnicaturas" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Tecnicaturas</h3>
+                        <p class="text-gray-600 mb-4">Formación técnica especializada en áreas tecnológicas clave.</p>
+                        <a href="#" class="text-black font-medium flex items-center">
+                            Ver más <i data-feather="arrow-right" class="ml-2 w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover transition duration-300" data-aos="fade-up" data-aos-delay="300">
+                    <img src="http://static.photos/workspace/640x360/20" alt="Posgrados" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Posgrados</h3>
+                        <p class="text-gray-600 mb-4">Especialización y maestrías para profesionales en tecnología.</p>
+                        <a href="#" class="text-black font-medium flex items-center">
+                            Ver más <i data-feather="arrow-right" class="ml-2 w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-black text-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-6" data-aos="fade-up">¿Listo para comenzar tu futuro tecnológico?</h2>
+            <p class="text-gray-300 mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">La UTN te ofrece las herramientas para transformar tus ideas en realidad.</p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4" data-aos="fade-up" data-aos-delay="200">
+                <a href="#" class="bg-white text-black px-8 py-3 rounded-lg font-medium hover:bg-gray-200 transition duration-300">Postularme ahora</a>
+                <a href="#" class="border border-white px-8 py-3 rounded-lg font-medium hover:bg-gray-900 transition duration-300">Contactar admisiones</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Universidad Tecnológica Nacional</h3>
+                    <p class="text-gray-600">Excelencia en educación tecnológica desde 1959.</p>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-gray-600 hover:text-black"><i data-feather="facebook"></i></a>
+                        <a href="#" class="text-gray-600 hover:text-black"><i data-feather="twitter"></i></a>
+                        <a href="#" class="text-gray-600 hover:text-black"><i data-feather="instagram"></i></a>
+                        <a href="#" class="text-gray-600 hover:text-black"><i data-feather="linkedin"></i></a>
+                        <a href="#" class="text-gray-600 hover:text-black"><i data-feather="youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Enlaces rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-600 hover:text-black">Admisiones</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-black">Calendario académico</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-black">Biblioteca</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-black">Portal estudiantil</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Contacto</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-600"><i data-feather="map-pin" class="mr-2 w-4 h-4"></i> Sarmiento 440, CABA</li>
+                        <li class="flex items-center text-gray-600"><i data-feather="phone" class="mr-2 w-4 h-4"></i> (011) 5371-5600</li>
+                        <li class="flex items-center text-gray-600"><i data-feather="mail" class="mr-2 w-4 h-4"></i> info@utn.edu.ar</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Boletín informativo</h4>
+                    <p class="text-gray-600 mb-4">Suscríbete para recibir novedades.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Tu email" class="px-4 py-2 w-full rounded-l-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-black">
+                        <button class="bg-black text-white px-4 py-2 rounded-r-lg hover:bg-gray-800 transition duration-300">
+                            <i data-feather="send"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 mt-12 pt-8 text-center text-gray-500">
+                <p>© 2023 Universidad Tecnológica Nacional. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+        feather.replace();
+    </script>
 </body>
 </html>

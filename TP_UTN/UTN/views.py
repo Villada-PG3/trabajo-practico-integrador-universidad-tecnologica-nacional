@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
-from .models import Alumno, Curso, Materia, MateriaCurso, AlumnoCurso, Inscripcion, TipoEvaluacion, Reporte, CondicionFinal, Evaluacion
+from .models import Alumno, Curso, Materia, MateriaCurso, AlumnoCurso, Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion
 
 class InicioView(TemplateView):
     template_name = "inicio.html"
