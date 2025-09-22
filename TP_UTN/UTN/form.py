@@ -1,8 +1,7 @@
 from django import forms
 from .models import (
-    Alumno, Curso, Materia, MateriaCurso,
-    AlumnoCurso, Inscripcion, TipoEvaluacion,
-    Reporte, CondicionFinal, Evaluacion
+    Alumno, Carrera, Curso, Materia, MateriaCurso,
+    AlumnoCurso, Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion
 )
 
 
@@ -16,6 +15,7 @@ class AlumnoForm(forms.ModelForm):
             'dni': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'DNI'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Correo electrónico'}),
             'anio_universitario': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 10}),
+            'carrera': forms.Select(attrs={'class': 'form-select'}),
         }
 
 
@@ -41,6 +41,7 @@ class MateriaForm(forms.ModelForm):
             'turno_cursado': forms.Select(attrs={'class': 'form-select'}),
             'horario': forms.TextInput(attrs={'class': 'form-control'}),
             'modulo': forms.TextInput(attrs={'class': 'form-control'}),
+            'carrera': forms.Select(attrs={'class': 'form-select'}),
         }
 
 
@@ -86,14 +87,13 @@ class TipoEvaluacionForm(forms.ModelForm):
         }
 
 
-class ReporteForm(forms.ModelForm):
+class CarreraForm(forms.ModelForm):
     class Meta:
-        model = Reporte
+        model = Carrera
         fields = '__all__'
         widgets = {
-            'alumno': forms.Select(attrs={'class': 'form-select'}),
-            'materia': forms.Select(attrs={'class': 'form-select'}),
-            'observaciones': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
 
