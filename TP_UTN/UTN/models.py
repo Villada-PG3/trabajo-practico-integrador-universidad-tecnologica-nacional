@@ -43,16 +43,24 @@ class Curso(models.Model):
 
 
 class Materia(models.Model):
-    sigla = models.AutoField(primary_key=True)
-    nivel = models.PositiveIntegerField()
-    tipo_materia = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=100, default="")
+    sigla = models.CharField(max_length=10, primary_key=True)
     ciclo_lectivo = models.PositiveIntegerField()
-    carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, related_name='materias', null=True, blank=True)
     def __str__(self):
-        return f"{self.tipo_materia} ({self.sigla}), Nivel {self.nivel} - {self.carrera.nombre}"
+        return f"{self.nombre} ({self.sigla})"
 
     def get_absolute_url(self):
         return reverse('materia_detail', kwargs={'pk': self.pk})
+    
+class CarreraMateria(models.Model):
+    carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE)
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('carrera', 'materia')
+
+    def __str__(self):
+        return f"{self.materia} - {self.carrera}"
 
 
 class MateriaCurso(models.Model):
