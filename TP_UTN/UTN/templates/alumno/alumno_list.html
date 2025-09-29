@@ -70,7 +70,9 @@
                     </div>
                     
                     <div>
-                        <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login with Google</a>
+                        <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}" class="block w-full text-center py-3 px-4 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition">
+                            Login with Google
+                        </a>
                     </div>
                 </form>
                 
