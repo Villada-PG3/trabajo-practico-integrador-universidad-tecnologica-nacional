@@ -49,6 +49,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # optional social auth exception middleware:
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -63,6 +65,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect', 
             ],
         },
     },
@@ -135,21 +139,27 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '904283027489-80jf4e75ddalne63c9q29mgt505ahkd0.a
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 # URLs
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'materias'  # Ensure this matches your app's route
-LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'auth'
+LOGIN_REDIRECT_URL = '/'  # Ensure this matches your app's route
+LOGOUT_REDIRECT_URL = 'auth'
 
 # Debugging for social_django
 SOCIAL_AUTH_PIPELINE = (
-    'social_core.pipeline.debug.debug',  # Debugging step
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
     'social_core.pipeline.social_auth.auth_allowed',
-    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.social_auth.social_user',  # Check if user exists
     'social_core.pipeline.user.get_username',
-    'social_core.pipeline.user.create_user',
-    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.user.create_user',  # Create user if not exists
+    'social_core.pipeline.social_auth.associate_user',  # Associate user with account
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
-    'social_core.pipeline.debug.debug',  # Log final state
 )
+
+# Add this setting to prevent the exception from being raised
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['openid', 'email', 'profile']
+SOCIAL_AUTH_RAISE_EXCEPTIONS = True
+SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']  # Prevent overwriting existing user data
+SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
+    'prompt': 'select_account'
+}
