@@ -82,3 +82,7 @@ class MateriaDeleteView(DeleteView):
     model = Materia
     template_name = 'materia/materia_confirm_delete.html'
     success_url = reverse_lazy('materia_list')
+
+#carreras
+class CarreraListView(TemplateView):
+    template_name = "carreras/carrera.html"

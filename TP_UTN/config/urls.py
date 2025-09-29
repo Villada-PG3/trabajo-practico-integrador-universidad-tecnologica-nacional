@@ -19,7 +19,7 @@ from django.urls import path
 from UTN.views import (
     AlumnoListView, AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView, AlumnoDeleteView,
     CursoListView, CursoDetailView, CursoCreateView, CursoUpdateView, CursoDeleteView,
-    MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView, InicioView
+    MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView, InicioView, CarreraListView
 )
 
 
@@ -44,4 +44,6 @@ urlpatterns = [
     path('materias/create/', MateriaCreateView.as_view(), name='materia_create'),
     path('materias/<int:pk>/update/', MateriaUpdateView.as_view(), name='materia_update'),
     path('materias/<int:pk>/delete/', MateriaDeleteView.as_view(), name='materia_delete'),
+    #Carrera URLs
+    path('carreras/', CarreraListView.as_view(), name='carrera_list'),
 ]
