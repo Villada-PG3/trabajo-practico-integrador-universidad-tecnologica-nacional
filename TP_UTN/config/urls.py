@@ -19,7 +19,7 @@ from django.urls import path
 from UTN.views import (
     AlumnoListView, AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView, AlumnoDeleteView,
     CursoListView, CursoDetailView, CursoCreateView, CursoUpdateView, CursoDeleteView,
-    MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView, InicioView, CarreraListView
+    MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView, InicioView, CarreraListView, Ingenieria_civil, Ingenieria_electronica, Ingenieria_energia, Ingenieria_industrial, Ingenieria_mecanica, Ingenieria_metalurgica, Ingenieria_quimica, Ingenieria_sistemas
 )
 
 
@@ -46,4 +46,12 @@ urlpatterns = [
     path('materias/<int:pk>/delete/', MateriaDeleteView.as_view(), name='materia_delete'),
     #Carrera URLs
     path('carreras/', CarreraListView.as_view(), name='carrera_list'),
+    path('carreras/ingenieria_civil/', Ingenieria_civil.as_view(), name='ingenieria_civil'),
+    path('carreras/ingenieria_electronica/', Ingenieria_electronica.as_view(), name='ingenieria_electronica'),
+    path('carreras/ingenieria_energia/', Ingenieria_energia.as_view(), name='ingenieria_energia'),
+    path('carreras/ingenieria_industrial/', Ingenieria_industrial.as_view(), name='ingenieria_industrial'),
+    path('carreras/ingenieria_mecanica/', Ingenieria_mecanica.as_view(), name='ingenieria_mecanica'),
+    path('carreras/ingenieria_metalurgica/', Ingenieria_metalurgica.as_view(), name='ingenieria_metalurgica'),
+    path('carreras/ingenieria_quimica/', Ingenieria_quimica.as_view(), name='ingenieria_quimica'),
+    path('carreras/ingenieria_sistemas/', Ingenieria_sistemas.as_view(), name='ingenieria_sistemas'),
 ]

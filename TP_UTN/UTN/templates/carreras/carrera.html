@@ -12,12 +12,16 @@
   <header class="border-b bg-white shadow">
     <div class="container mx-auto px-4 py-4 flex justify-between items-center">
       <div class="flex items-center gap-4">
-        <div class="h-12 w-12 flex items-center justify-center bg-blue-600 text-white rounded-lg font-bold text-xl">
-          U
-        </div>
-        <div>
-          <h1 class="text-xl font-bold">Universidad Tecnológica Nacional</h1>
-          <p class="text-sm text-gray-500">Excelencia en educación tecnológica</p>
+        <div class="flex items-center">
+          <div class="flex items-center justify-center text-white rounded-lg font-bold text-xl 
+                      bg-no-repeat bg-contain"
+              style="background-image: url('https://tse2.mm.bing.net/th/id/OIP.cqBKPdnHYvuLe2CUvTk8EwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3'); 
+                      width: 48px; height: 48px;">
+          </div>
+          <div>
+            <h1 class="text-xl font-bold">Universidad Tecnológica Nacional</h1>
+            <p class="text-sm text-gray-500">Excelencia en educación tecnológica</p>
+          </div>
         </div>
       </div>
       <nav class="hidden md:flex gap-6">
@@ -38,30 +42,20 @@
     </div>
   </section>
 
-  <!-- Search -->
-  <section class="py-8">
-    <div class="container mx-auto px-4 max-w-3xl">
-      <div class="relative">
-        <input type="text" placeholder="Buscar carreras por nombre o descripción..." class="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring focus:ring-blue-200" />
-        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
-      </div>
-    </div>
-  </section>
-
   <!-- Careers Grid -->
   <section class="py-12 flex-1">
     <div class="container mx-auto px-4 max-w-6xl">
       <div class="mb-8">
         <h3 class="text-2xl font-bold mb-2">Carreras Disponibles</h3>
-        <p class="text-gray-500">6 carreras encontradas</p>
+        <p class="text-gray-500">8 carreras encontradas</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         
-        <!-- Ingeniería en Sistemas -->
+        <!-- Ingeniería en Sistemas de Información -->
         <div class="border rounded-lg p-6 bg-white shadow hover:shadow-lg transition">
           <div class="flex justify-between items-start mb-3">
-            <h4 class="text-lg font-semibold">Ingeniería en Sistemas</h4>
+            <h4 class="text-lg font-semibold">Ingeniería en Sistemas de Información</h4>
             <span class="text-sm bg-blue-100 text-blue-600 px-2 py-1 rounded">Destacada</span>
           </div>
           <p class="text-sm text-gray-600 mb-4">
@@ -107,23 +101,36 @@
 
         <!-- Ingeniería Electrónica -->
         <div class="border rounded-lg p-6 bg-white shadow hover:shadow-lg transition">
-          <div class="flex justify-between items-start mb-3">
-            <h4 class="text-lg font-semibold">Ingeniería Electrónica</h4>
-          </div>
+          <h4 class="text-lg font-semibold mb-3">Ingeniería Electrónica</h4>
           <p class="text-sm text-gray-600 mb-4">
-            Estudio de sistemas electrónicos, telecomunicaciones, automatización y robótica aplicada.
+            Especialización en circuitos, sistemas embebidos y telecomunicaciones.
+          </p>
+          <button class="w-full border border-gray-300 py-2 rounded hover:bg-gray-50">Ver más información</button>
+        </div>
+
+        <!-- Ingeniería en Energía Eléctrica -->
+        <div class="border rounded-lg p-6 bg-white shadow hover:shadow-lg transition">
+          <h4 class="text-lg font-semibold mb-3">Ingeniería en Energía Eléctrica</h4>
+          <p class="text-sm text-gray-600 mb-4">
+            Capacitación en generación, distribución y eficiencia energética.
           </p>
           <button class="w-full border border-gray-300 py-2 rounded hover:bg-gray-50">Ver más información</button>
         </div>
 
         <!-- Ingeniería Industrial -->
         <div class="border rounded-lg p-6 bg-white shadow hover:shadow-lg transition">
-          <div class="flex justify-between items-start mb-3">
-            <h4 class="text-lg font-semibold">Ingeniería Industrial</h4>
-            <span class="text-sm bg-red-100 text-red-600 px-2 py-1 rounded">Alta demanda</span>
-          </div>
+          <h4 class="text-lg font-semibold mb-3">Ingeniería Industrial</h4>
           <p class="text-sm text-gray-600 mb-4">
-            Optimización de procesos productivos, gestión empresarial y administración de recursos.
+            Optimización de procesos productivos, logística y gestión de calidad.
+          </p>
+          <button class="w-full border border-gray-300 py-2 rounded hover:bg-gray-50">Ver más información</button>
+        </div>
+
+        <!-- Ingeniería Metalúrgica -->
+        <div class="border rounded-lg p-6 bg-white shadow hover:shadow-lg transition">
+          <h4 class="text-lg font-semibold mb-3">Ingeniería Metalúrgica</h4>
+          <p class="text-sm text-gray-600 mb-4">
+            Formación en tratamiento de metales, materiales y procesos industriales.
           </p>
           <button class="w-full border border-gray-300 py-2 rounded hover:bg-gray-50">Ver más información</button>
         </div>

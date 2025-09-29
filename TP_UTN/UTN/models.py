@@ -165,7 +165,7 @@ class ProfesorCurso(models.Model):
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='profesores')
 
     def __str__(self):
-        return f"{self.profesor} - {self.curso}"
+        return f"hace un html con el estilo del anterior y que sea simple con un titulo que yo voy a ingresar una descripcion que yo tmb voy a ingresar y un boton de insribirse y eso ademas que debajo de la descripcion yo agrego el horario los turnos y los profesself.profesor - {self.curso}"
     
 class AlumnoMateriaCurso(models.Model):
     id_alumno_materia_curso = models.AutoField(primary_key=True)
