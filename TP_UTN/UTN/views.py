@@ -87,18 +87,18 @@ class MateriaDeleteView(DeleteView):
 class CarreraListView(TemplateView):
     template_name = "carreras/carrera.html"
 class Ingenieria_civil(TemplateView):
-    template_name = "carreras/ingenieria_civil.html"
+    template_name = "carreras/Ingenieria_civil.html"
 class Ingenieria_electronica(TemplateView):
-    template_name = "carreras/ingenieria_electronica.html"
+    template_name = "carreras/Ingenieria_electronica.html"
 class Ingenieria_energia(TemplateView):
-    template_name = "carreras/ingenieria_energia.html"
+    template_name = "carreras/Ingenieria_energia.html"
 class Ingenieria_industrial(TemplateView):
-    template_name = "carreras/ingenieria_industrial.html"
+    template_name = "carreras/Ingenieria_industrial.html"
 class Ingenieria_mecanica(TemplateView):
-    template_name = "carreras/ingenieria_mecanica.html"
+    template_name = "carreras/Ingenieria_mecanica.html"
 class Ingenieria_metalurgica(TemplateView):
-    template_name = "carreras/ingenieria_metalurgica.html"
+    template_name = "carreras/Ingenieria_metalurgica.html"
 class Ingenieria_quimica(TemplateView):
-    template_name = "carreras/ingenieria_quimica.html"
+    template_name = "carreras/Ingenieria_quimica.html"
 class Ingenieria_sistemas(TemplateView):
-    template_name = "carreras/ingenieria_sistemas.html"
+    template_name = "carreras/Ingenieria_sistemas.html"
