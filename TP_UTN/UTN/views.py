@@ -101,4 +101,4 @@ class Ingenieria_metalurgica(TemplateView):
 class Ingenieria_quimica(TemplateView):
     template_name = "carreras/Ingenieria_quimica.html"
 class Ingenieria_sistemas(TemplateView):
-    template_name = "carreras/Ingenieria_sistemas.html"
+    template_name = "carreras/Ingenieria_sistema.html"
