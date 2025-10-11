@@ -19,9 +19,10 @@ from django.urls import path
 from UTN.views import (
     AlumnoListView, AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView, AlumnoDeleteView, CarreraListView,
     CursoListView, CursoDetailView, CursoCreateView, CursoUpdateView, CursoDeleteView,
-    MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView, InicioView
+    MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView,
+    InicioView, CarreraListView, Ingenieria_civil, Ingenieria_electronica, Ingenieria_energia,
+    Ingenieria_industrial, Ingenieria_mecanica, Ingenieria_metalurgica, Ingenieria_quimica, Ingenieria_sistemas
 )
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -44,6 +45,21 @@ urlpatterns = [
     path('materias/create/', MateriaCreateView.as_view(), name='materia_create'),
     path('materias/<int:pk>/update/', MateriaUpdateView.as_view(), name='materia_update'),
     path('materias/<int:pk>/delete/', MateriaDeleteView.as_view(), name='materia_delete'),
+<<<<<<< HEAD
     # Carrera URLs
     path('carreras/', CarreraListView.as_view(), name='carrera_list'),
 ]
+=======
+    #Carrera URLs
+    path('carreras/', CarreraListView.as_view(), name='carrera_list'),
+    path('carreras/ingenieria_civil/', Ingenieria_civil.as_view(), name='Ingenieria_civil'),
+    path('carreras/ingenieria_electronica/', Ingenieria_electronica.as_view(), name='Ingenieria_electronica'),
+    path('carreras/ingenieria_energia/', Ingenieria_energia.as_view(), name='Ingenieria_energia'),
+    path('carreras/ingenieria_industrial/', Ingenieria_industrial.as_view(), name='Ingenieria_industrial'),
+    path('carreras/ingenieria_mecanica/', Ingenieria_mecanica.as_view(), name='Ingenieria_mecanica'),
+    path('carreras/ingenieria_metalurgica/', Ingenieria_metalurgica.as_view(), name='Ingenieria_metalurgica'),
+    path('carreras/ingenieria_quimica/', Ingenieria_quimica.as_view(), name='Ingenieria_quimica'),
+    path('carreras/ingenieria_sistemas/', Ingenieria_sistemas.as_view(), name='ingenieria_sistemas'),
+
+]
+>>>>>>> d909d7d63c1fb4a62458270cb53bdb6166af4168

@@ -85,7 +85,25 @@ class MateriaDeleteView(DeleteView):
     model = Materia
     template_name = 'materia/materia_confirm_delete.html'
     success_url = reverse_lazy('materia_list')
+
+#carreras
 class CarreraListView(ListView):
     model = Carrera
-    template_name = 'carreras/carrera_list.html'
+    template_name = 'carrera/carrera_list.html'
     context_object_name = 'carreras'
+class Ingenieria_civil(TemplateView):
+    template_name = "carreras/Ingenieria_civil.html"
+class Ingenieria_electronica(TemplateView):
+    template_name = "carreras/Ingenieria_electronica.html"
+class Ingenieria_energia(TemplateView):
+    template_name = "carreras/Ingenieria_energia.html"
+class Ingenieria_industrial(TemplateView):
+    template_name = "carreras/Ingenieria_industrial.html"
+class Ingenieria_mecanica(TemplateView):
+    template_name = "carreras/Ingenieria_mecanica.html"
+class Ingenieria_metalurgica(TemplateView):
+    template_name = "carreras/Ingenieria_metalurgica.html"
+class Ingenieria_quimica(TemplateView):
+    template_name = "carreras/Ingenieria_quimica.html"
+class Ingenieria_sistemas(TemplateView):
+    template_name = "carreras/Ingenieria_sistema.html"
