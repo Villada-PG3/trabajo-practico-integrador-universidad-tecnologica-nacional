@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from UTN.views import (
-    AlumnoListView, AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView, AlumnoDeleteView,
+    AlumnoListView, AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView, AlumnoDeleteView, CarreraListView,
     CursoListView, CursoDetailView, CursoCreateView, CursoUpdateView, CursoDeleteView,
     MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView, InicioView
 )
@@ -44,4 +44,6 @@ urlpatterns = [
     path('materias/create/', MateriaCreateView.as_view(), name='materia_create'),
     path('materias/<int:pk>/update/', MateriaUpdateView.as_view(), name='materia_update'),
     path('materias/<int:pk>/delete/', MateriaDeleteView.as_view(), name='materia_delete'),
+    # Carrera URLs
+    path('carreras/', CarreraListView.as_view(), name='carrera_list'),
 ]
