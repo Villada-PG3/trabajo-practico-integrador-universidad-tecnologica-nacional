@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    MateriaCurso, Alumno, Curso, Materia, AlumnoCurso, Inscripcion, 
+    MateriaCurso, Alumno, Curso, Materia, Inscripcion, 
     TipoEvaluacion, Carrera, CondicionFinal, Evaluacion, 
     Profesor, ProfesorCurso, AlumnoMateriaCurso, CarreraMateria
 )
@@ -10,7 +10,6 @@ admin.site.register(Alumno)
 admin.site.register(Curso)
 admin.site.register(Materia)
 admin.site.register(CarreraMateria)
-admin.site.register(AlumnoCurso)
 admin.site.register(Inscripcion)
 admin.site.register(TipoEvaluacion)
 admin.site.register(Carrera)

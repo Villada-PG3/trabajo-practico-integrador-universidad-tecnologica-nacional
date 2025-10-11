@@ -164,12 +164,20 @@
 
         <!-- Updated course list section with modern card grid -->
         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <!-- Sample course cards with modern design -->
             
-                    <div class="flex space-x-2">
-                        <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+            <!-- Sample course cards with modern design -->
+            {% for curso in cursos %}
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ curso.nombre }}</h2>
+                <p class="text-gray-600 mb-4">{{ curso.nivel }}</p>
+                <span class="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+                </span>
+            </div>
+            {% empty %}
+                <p class="text-gray-500 text-center col-span-full">No hay cursos disponibles.</p>
+            {% endfor %}
+        </div>
+
                             </svg>
                         </button>
                         <button class="p-2 text-gray-400 hover:text-red-600 transition-colors">

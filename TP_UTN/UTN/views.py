@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
-from .models import Alumno, Curso, Materia, MateriaCurso, AlumnoCurso, Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion
+from .models import Alumno, Carrera, Curso, Materia, MateriaCurso, Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion
 
 class InicioView(TemplateView):
     template_name = "inicio.html"
@@ -16,9 +16,10 @@ class AlumnoDetailView(DetailView):
 
 class AlumnoCreateView(CreateView):
     model = Alumno
-    fields = '__all__'
+    # Usa los campos que realmente quieres que el usuario ingrese
+    fields = ['nombre', 'apellido', 'dni', 'email', 'contrasenia', 'anio_universitario', 'carrera']
     template_name = 'alumno/alumno_form.html'
-    success_url = reverse_lazy('alumno_list')
+    success_url = reverse_lazy('alumno_list')   
 
 class AlumnoUpdateView(UpdateView):
     model = Alumno
@@ -35,6 +36,7 @@ class AlumnoDeleteView(DeleteView):
 class CursoListView(ListView):
     model = Curso
     template_name = 'curso/curso_list.html'
+    context_object_name = 'cursos'
 
 class CursoDetailView(DetailView):
     model = Curso
@@ -61,6 +63,7 @@ class CursoDeleteView(DeleteView):
 class MateriaListView(ListView):
     model = Materia
     template_name = 'materia/materia_list.html'
+    context_object_name = 'materias'
 
 class MateriaDetailView(DetailView):
     model = Materia
@@ -82,3 +85,7 @@ class MateriaDeleteView(DeleteView):
     model = Materia
     template_name = 'materia/materia_confirm_delete.html'
     success_url = reverse_lazy('materia_list')
+class CarreraListView(ListView):
+    model = Carrera
+    template_name = 'carreras/carrera_list.html'
+    context_object_name = 'carreras'
