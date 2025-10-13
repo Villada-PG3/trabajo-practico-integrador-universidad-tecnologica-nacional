@@ -23,11 +23,12 @@ erDiagram
     }
     Materia_Curso{
         int id_materia_curso pk
-        int id_curso fk
         int sigla fk
+        int id_curso fk
         str turno_cursado
         str horario
         str modulo
+        str grupo
     }
     Inscripcion{
         int id_codigo_alfanumerico pk
@@ -55,16 +56,10 @@ erDiagram
     }
     Condicion_Final{
         int id_condicion_final pk
-        int id_reporte fk
+        int id_alumno fk
         str Condicion
         date fecha
         int id_profesor fk
-    }
-    Reporte{
-        int id_reporte pk
-        int id_alumno fk
-        int id_materia fk
-        str observaciones
     }
     Profesor{
         int id_profesor pk
@@ -77,18 +72,26 @@ erDiagram
         int id_profesor fk
         str email
     }
+    Alumno_Materia_Curso{
+        int id_alumno_materia_curso pk
+        int id_alumno fk
+        int id_materia_curso fk
+    }
 
     Alumno ||--o{ Inscripcion : realiza
     Alumno ||--o{ Alumno_Curso : cursa
-    Alumno ||--o{ Reporte : genera
+    Alumno ||--o{ Condicion_Final : genera
+    Alumno ||--o{ Alumno_Materia_Curso : cursa
+    Alumno_Materia_Curso }o--|| Materia_Curso : pertenece
     Inscripcion ||--o{ Materia : tiene
     Materia ||--o{ Materia_Curso : pertenece
     Curso ||--o{ Materia_Curso : tiene
     Curso ||--o{ Curso_Profesor : imparte
-    Curso_Profesor }o--|| Profesor : da
+    Profesor ||--o{ Curso_Profesor : da
     Alumno_Curso }o--|| Curso : asiste
-    Reporte ||--o{ Condicion_Final : contiene
-    Reporte }o--|| Materia : sisi
     Condicion_Final ||--o{ Evaluacion : tiene
     Evaluacion }o--|| Tipo_Evaluacion  : clasifica
     Condicion_Final }o--|| Profesor : realiza
+    
+    
+   
