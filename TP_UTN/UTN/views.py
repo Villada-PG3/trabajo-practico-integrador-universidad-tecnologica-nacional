@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
 from .models import Alumno, Carrera, Curso, Materia, MateriaCurso, Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion
+from django.db.models import Q
 
 class InicioView(TemplateView):
     template_name = "inicio.html"
@@ -65,6 +66,26 @@ class MateriaListView(ListView):
     template_name = 'materia/materia_list.html'
     context_object_name = 'materias'
 
+    def get_queryset(self):
+        # 1. Obtener el queryset base (todas las carreras)
+        queryset = super().get_queryset()
+        
+        # 2. Obtener el parámetro de búsqueda 'q' de la URL
+        query = self.request.GET.get('q')
+
+        if query:
+            # 3. Filtrar el queryset si hay un término de búsqueda
+            # Usamos Q objects para construir una consulta más compleja si es necesario (ej: buscar en nombre O ID)
+            # 'nombre__icontains=query' busca la cadena en el campo 'nombre'
+            queryset = queryset.filter(
+                Q(nombre__icontains=query) 
+                # Opcional: Si quieres buscar también por ID:
+                # | Q(id_carrera__icontains=query) 
+            )
+        
+        # 4. Devolver el queryset (filtrado o completo)
+        return queryset
+
 class MateriaDetailView(DetailView):
     model = Materia
     template_name = 'materia/materia_detail.html'
@@ -105,6 +126,26 @@ class CarreraListView(ListView):
     model = Carrera
     template_name = 'carreras/carrera_list.html'
     context_object_name = 'carreras'
+
+    def get_queryset(self):
+        # 1. Obtener el queryset base (todas las carreras)
+        queryset = super().get_queryset()
+        
+        # 2. Obtener el parámetro de búsqueda 'q' de la URL
+        query = self.request.GET.get('q')
+
+        if query:
+            # 3. Filtrar el queryset si hay un término de búsqueda
+            # Usamos Q objects para construir una consulta más compleja si es necesario (ej: buscar en nombre O ID)
+            # 'nombre__icontains=query' busca la cadena en el campo 'nombre'
+            queryset = queryset.filter(
+                Q(nombre__icontains=query) 
+                # Opcional: Si quieres buscar también por ID:
+                # | Q(id_carrera__icontains=query) 
+            )
+        
+        # 4. Devolver el queryset (filtrado o completo)
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
