@@ -158,8 +158,12 @@
             {% for carrera in carreras %}
             <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
                 <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ carrera.nombre }}</h2>
-                <p class="text-gray-600 mb-4">{{ carrera.id_carrera }}</p>
-                <p class="text-gray-600 mb-4">Duración: {{ carrera.duracion_anios }}</p>
+                <p class="text-gray-600 mb-4">identificacion: {{ carrera.id_carrera }}</p>
+                <p class="text-gray-600 mb-4">Duración: {{ carrera.duracion_anios }} años</p>
+                <a href="{% url carrera.url_name %}" 
+                    class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors inline-block mt-2">
+                    Ver carrera
+                </a>
                 <span class="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
                 </span>
             </div>

@@ -86,11 +86,40 @@ class MateriaDeleteView(DeleteView):
     template_name = 'materia/materia_confirm_delete.html'
     success_url = reverse_lazy('materia_list')
 
+
+
 #carreras
+CARRERA_URL_MAP = {
+    "Ingeniería Civil": "Ingenieria_civil",
+    "Ingeniería Electrónica": "Ingenieria_electronica",
+    "Ingeniería en Energía Eléctrica": "Ingenieria_energia",
+    "Ingeniería Industrial": "Ingenieria_industrial",
+    "Ingeniería Mecánica": "Ingenieria_mecanica",
+    "Ingeniería Metalúrgica": "Ingenieria_metalurgica",
+    "Ingeniería Química": "Ingenieria_quimica",
+    # Asegúrate de que el nombre aquí coincida con el nombre en tu URL
+    "Ingeniería en Sistemas de Información": "ingenieria_sistemas", 
+}
+
 class CarreraListView(ListView):
     model = Carrera
     template_name = 'carreras/carrera_list.html'
     context_object_name = 'carreras'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Iterar sobre la lista de carreras y añadir la propiedad 'url_name'
+        for carrera in context['carreras']:
+            nombre = carrera.nombre
+            # Añade una nueva propiedad al objeto carrera
+            # Usa .get() para evitar errores si una carrera no está en el mapa
+            carrera.url_name = CARRERA_URL_MAP.get(nombre, 'carrera_list') # 'carrera_list' como URL de fallback
+            
+        return context
+
+# El resto de tus clases TemplateView quedan igual (Ingenieria_civil, etc.)
+# ...
 class Ingenieria_civil(TemplateView):
     template_name = "carreras/Ingenieria_civil.html"
 class Ingenieria_electronica(TemplateView):

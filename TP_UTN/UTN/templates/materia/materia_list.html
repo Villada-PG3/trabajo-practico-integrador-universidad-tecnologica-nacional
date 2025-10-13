@@ -157,15 +157,22 @@
             {% for materia in materias %}
             <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
                 <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ materia.nombre }}</h2>
-                <p class="text-gray-600 mb-4">{{ materia.sigla }}</p>
-                <p class="text-gray-600 mb-4">Duración: {{ materia.ciclo_lectivo }}</p>
-                <span class="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
-                </span>
+                <p class="text-gray-600 mb-4">sigla: {{ materia.sigla }}</p>
+                <p class="text-gray-600 mb-4">ciclo lectivo: {{ materia.ciclo_lectivo }}º año</p>
+                <p class="text-gray-700 font-medium mb-4">
+                    Carreras:
+                    {% for cm in materia.carreramateria_set.all %}
+                        <span class="text-gray-900">{{ cm.carrera.nombre }}</span>{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        <span class="text-gray-500">Sin carrera asignada</span>
+                    {% endfor %}
+                </p>
             </div>
             {% empty %}
                 <p class="text-gray-500 text-center col-span-full">No hay materias disponibles.</p>
             {% endfor %}
-        </div>
+                <span class="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+                </span>
 
                             </svg>
                         </button>
