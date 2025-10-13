@@ -89,7 +89,7 @@ class MateriaDeleteView(DeleteView):
 #carreras
 class CarreraListView(ListView):
     model = Carrera
-    template_name = 'carrera/carrera_list.html'
+    template_name = 'carreras/carrera_list.html'
     context_object_name = 'carreras'
 class Ingenieria_civil(TemplateView):
     template_name = "carreras/Ingenieria_civil.html"
