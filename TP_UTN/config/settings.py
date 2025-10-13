@@ -144,11 +144,12 @@ LOGIN_REDIRECT_URL = '/'  # Ensure this matches your app's route
 LOGOUT_REDIRECT_URL = 'auth'
 
 # Debugging for social_django
+
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
     'social_core.pipeline.social_auth.auth_allowed',
-    'social_core.pipeline.social_auth.social_user',  # Check if user exists
+    'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
     'social_core.pipeline.user.create_user',  # Create user if not exists
     'social_core.pipeline.social_auth.associate_user',  # Associate user with account
