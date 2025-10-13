@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error de Direccion - Sistema Universitario</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: 'hsl(var(--background))',
+                        foreground: 'hsl(var(--foreground))',
+                        card: 'hsl(var(--card))',
+                        'card-foreground': 'hsl(var(--card-foreground))',
+                        primary: 'hsl(var(--primary))',
+                        'primary-foreground': 'hsl(var(--primary-foreground))',
+                        secondary: 'hsl(var(--secondary))',
+                        'secondary-foreground': 'hsl(var(--secondary-foreground))',
+                        muted: 'hsl(var(--muted))',
+                        'muted-foreground': 'hsl(var(--muted-foreground))',
+                        accent: 'hsl(var(--accent))',
+                        'accent-foreground': 'hsl(var(--accent-foreground))',
+                        border: 'hsl(var(--border))',
+                        input: 'hsl(var(--input))',
+                        ring: 'hsl(var(--ring))'
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 210 40% 12%;
+            --card: 210 40% 98%;
+            --card-foreground: 210 40% 12%;
+            --primary: 210 11% 27%;
+            --primary-foreground: 0 0% 100%;
+            --secondary: 239 84% 67%;
+            --secondary-foreground: 0 0% 100%;
+            --muted: 210 40% 98%;
+            --muted-foreground: 210 40% 12%;
+            --accent: 239 84% 67%;
+            --accent-foreground: 0 0% 100%;
+            --border: 210 20% 82%;
+            --input: 210 40% 98%;
+            --ring: 239 84% 67%;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-background text-foreground">
+      
+    <header class="bg-primary text-primary-foreground shadow-sm border-b border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-xl font-bold">Sistema Universitario</h1>
+                    </div>
+                </div>
+                <nav class="hidden md:block">
+                    <div class="flex items-center space-x-4">
+                        <a href="/" class="text-primary-foreground hover:text-primary-foreground/80 px-3 py-2 rounded-md text-sm font-medium bg-primary-foreground/10 transition-colors">
+                            Inicio
+                        </a>
+                        <a href="/alumnos" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Alumnos
+                        </a>
+                        <a href="#" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Profesores
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <main class="flex-grow flex items-center justify-center py-16 px-4">
+        <div class="text-center">
+            <h1 class="text-6xl font-extrabold text-primary mb-4">404</h1>
+            <p class="text-xl text-muted-foreground">ㅤ╱ı、</p>
+            <p class="text-xl text-muted-foreground">（ﾟ､ ｡７</p>
+            <p class="text-xl text-muted-foreground">ㅤ ı、~ヽ</p>
+            <p class="text-xl text-muted-foreground">ㅤㅤ じしf_,)ノ</p>
+            <p class="text-xl text-muted-foreground mb-8">Lo sentimos, la página que buscas no se pudo encontrar.</p>
+            <a href="/" class="inline-block bg-primary text-primary-foreground px-6 py-3 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
+                Volver al Inicio
+            </a>
+        </div>
+    </main>
+    <footer class="bg-muted border-t border-border mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center">
+                <p class="text-sm text-muted-foreground">
+                    © 2024 Sistema Universitario. Todos los derechos reservados.
+                </p>
+                <div class="mt-2 flex justify-center space-x-6">
+                    <a href="#" class="text-muted-foreground hover:text-accent text-sm transition-colors">
+                        Política de Privacidad
+                    </a>
+                    <a href="#" class="text-muted-foreground hover:text-accent text-sm transition-colors">
+                        Términos de Uso
+                    </a>
+                    <a href="#" class="text-muted-foreground hover:text-accent text-sm transition-colors">
+                        Contacto
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+

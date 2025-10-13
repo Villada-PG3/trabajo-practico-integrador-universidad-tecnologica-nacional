@@ -5,16 +5,27 @@ from datetime import date
 
 # Create your models here.
 
-class Alumno(models.Model):
-    id_alumno = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50)
-    apellido = models.CharField(max_length=50)
-    dni = models.CharField(max_length=20, unique=True)
-    email = models.EmailField()
-    anio_universitario = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)])
+class Carrera(models.Model):
+    id_carrera = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100, null=True, blank=True)
+    duracion_anios = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.apellido}, {self.nombre}"
+        return self.nombre
+
+class Alumno(models.Model):
+    id_alumno = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50, default="")
+    apellido = models.CharField(max_length=50, default="")
+    contrasenia = models.CharField(max_length=100, default="")
+    dni = models.CharField(max_length=20, unique=True, default="")
+    email = models.EmailField(default="")
+    anio_universitario = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)], default=1)
+    carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, related_name='alumnos', null=True, blank=True)
+
+    def __str__(self):
+        carrera_nombre = self.carrera.nombre if self.carrera else "Sin carrera"
+        return f"{self.apellido}, {self.nombre} ({carrera_nombre})"
 
     def get_absolute_url(self):
         return reverse('alumno_detail', kwargs={'pk': self.pk})
@@ -34,15 +45,24 @@ class Curso(models.Model):
 
 
 class Materia(models.Model):
-    sigla = models.AutoField(primary_key=True)
-    nivel = models.PositiveIntegerField()
-    tipo_materia = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=100, default="")
+    sigla = models.CharField(max_length=10, primary_key=True)
     ciclo_lectivo = models.PositiveIntegerField()
     def __str__(self):
-        return f"{self.tipo_materia} ({self.sigla})"
+        return f"{self.nombre} ({self.sigla})"
 
     def get_absolute_url(self):
         return reverse('materia_detail', kwargs={'pk': self.pk})
+    
+class CarreraMateria(models.Model):
+    carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE)
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('carrera', 'materia')
+
+    def __str__(self):
+        return f"{self.materia} - {self.carrera}"
 
 
 class MateriaCurso(models.Model):
@@ -60,17 +80,7 @@ class MateriaCurso(models.Model):
 
 
     def __str__(self):
-        return f"{self.curso.nombre} - {self.materia.tipo_materia}"
-
-
-class AlumnoCurso(models.Model):
-    id_alumno_curso = models.AutoField(primary_key=True)
-    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='cursos')
-    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='alumnos')
-
-    def __str__(self):
-        return f"{self.alumno} en {self.curso}"
-
+        return f"{self.curso.nombre} - {self.materia.nombre} - {self.horario}"
 
 class Inscripcion(models.Model):
     ESTADOS_INSCRIPCION = [
@@ -82,7 +92,8 @@ class Inscripcion(models.Model):
 
     id_codigo_alfanumerico = models.AutoField(primary_key=True)
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='inscripciones')
-    materia_curso = models.ForeignKey(MateriaCurso, on_delete=models.CASCADE, related_name='inscripciones')
+    materia = models.ForeignKey(MateriaCurso, on_delete=models.CASCADE, related_name='inscripciones', default=None)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='inscripciones', default=None)
     estado = models.CharField(max_length=20, choices=ESTADOS_INSCRIPCION, default='inscripto')
     descripcion = models.TextField(blank=True)
 
@@ -98,32 +109,22 @@ class TipoEvaluacion(models.Model):
     def __str__(self):
         return self.nombre
 
-
-class Reporte(models.Model):
-    id_reporte = models.AutoField(primary_key=True)
-    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='reportes')
-    materia = models.ForeignKey(Materia, on_delete=models.CASCADE, related_name='reportes')
-    observaciones = models.TextField(blank=True)
-
-    def __str__(self):
-        return f"Reporte de {self.alumno} en {self.materia}"
-
-
 class CondicionFinal(models.Model):
     id_condicion_final = models.AutoField(primary_key=True)
-    reporte = models.ForeignKey(Reporte, on_delete=models.CASCADE, related_name='condiciones')
+    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='condiciones')
     CONDICIONES_FINAL = [
-    ('regular', 'Regular'),
-    ('libre', 'Libre'),
-    ('aprobacion_directa', 'Aprobación Directa'),
-    ('promocion_practica', 'Promoción Práctica'),
-]
+        ('regular', 'Regular'),
+        ('libre', 'Libre'),
+        ('aprobacion_directa', 'Aprobación Directa'),
+        ('promocion_practica', 'Promoción Práctica'),
+    ]
     condicion = models.CharField(max_length=50, choices=CONDICIONES_FINAL)
     fecha = models.DateField(default=date.today)
-    profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE, related_name='condiciones')
+    profesor = models.ForeignKey('Profesor', on_delete=models.CASCADE, related_name='condiciones')
 
     def __str__(self):
-        return f"{self.reporte} - {self.condicion}"
+        return f"{self.alumno} - {self.materia_curso} - {self.condicion}"
+
 
 
 class Evaluacion(models.Model):
@@ -157,4 +158,12 @@ class ProfesorCurso(models.Model):
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='profesores')
 
     def __str__(self):
-        return f"{self.profesor} - {self.curso}"
+        return f"hace un html con el estilo del anterior y que sea simple con un titulo que yo voy a ingresar una descripcion que yo tmb voy a ingresar y un boton de insribirse y eso ademas que debajo de la descripcion yo agrego el horario los turnos y los profesself.profesor - {self.curso}"
+    
+class AlumnoMateriaCurso(models.Model):
+    id_alumno_materia_curso = models.AutoField(primary_key=True)
+    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='materias_curso')
+    materia_curso = models.ForeignKey(MateriaCurso, on_delete=models.CASCADE, related_name='alumnos')
+
+    def __str__(self):
+        return f"{self.alumno} en {self.materia_curso}"

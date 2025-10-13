@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de {{ object }} - Sistema Universitario</title>
+    <!-- Updated to use DM Sans font and Tailwind config matching the reference design -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: 'hsl(var(--background))',
+                        foreground: 'hsl(var(--foreground))',
+                        card: 'hsl(var(--card))',
+                        'card-foreground': 'hsl(var(--card-foreground))',
+                        primary: 'hsl(var(--primary))',
+                        'primary-foreground': 'hsl(var(--primary-foreground))',
+                        secondary: 'hsl(var(--secondary))',
+                        'secondary-foreground': 'hsl(var(--secondary-foreground))',
+                        muted: 'hsl(var(--muted))',
+                        'muted-foreground': 'hsl(var(--muted-foreground))',
+                        accent: 'hsl(var(--accent))',
+                        'accent-foreground': 'hsl(var(--accent-foreground))',
+                        border: 'hsl(var(--border))',
+                        input: 'hsl(var(--input))',
+                        ring: 'hsl(var(--ring))',
+                        destructive: 'hsl(var(--destructive))',
+                        'destructive-foreground': 'hsl(var(--destructive-foreground))'
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 210 40% 12%;
+            --card: 210 40% 98%;
+            --card-foreground: 210 40% 12%;
+            --primary: 210 11% 27%;
+            --primary-foreground: 0 0% 100%;
+            --secondary: 239 84% 67%;
+            --secondary-foreground: 0 0% 100%;
+            --muted: 210 40% 98%;
+            --muted-foreground: 210 40% 12%;
+            --accent: 239 84% 67%;
+            --accent-foreground: 0 0% 100%;
+            --border: 210 20% 82%;
+            --input: 210 40% 98%;
+            --ring: 239 84% 67%;
+            --destructive: 0 84% 60%;
+            --destructive-foreground: 0 0% 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-background text-foreground">
+    <!-- Added complete header navigation matching the reference design -->
+    <header class="bg-primary text-primary-foreground shadow-sm border-b border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-xl font-bold">Sistema Universitario</h1>
+                    </div>
+                </div>
+                <nav class="hidden md:block">
+                    <div class="flex items-center space-x-4">
+                        <a href="#" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Inicio
+                        </a>
+                        <a href="{% url 'alumno_list' %}" class="text-primary-foreground hover:text-primary-foreground/80 px-3 py-2 rounded-md text-sm font-medium bg-primary-foreground/10 transition-colors">
+                            Alumnos
+                        </a>
+                        <a href="#" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Profesores
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Added breadcrumb navigation -->
+        <nav class="flex mb-6" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="{% url 'alumno_list' %}" class="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-accent transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                        </svg>
+                        Lista de Alumnos
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="ml-1 text-sm font-medium text-foreground md:ml-2">{{ object }}</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- Redesigned student profile header with avatar and consistent styling -->
+        <div class="bg-card rounded-lg border border-border shadow-sm p-6 mb-6">
+            <div class="flex items-center space-x-6">
+                <div class="flex-shrink-0">
+                    <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
+                        <span class="text-primary font-bold text-2xl">
+                            {{ object.nombre.0|upper }}{{ object.apellido.0|upper }}
+                        </span>
+                    </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-3xl font-bold text-foreground mb-2">{{ object }}</h1>
+                    <div class="flex items-center space-x-4">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-accent/10 text-accent">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                            Año {{ object.anio_universitario }}
+                        </span>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-secondary/10 text-secondary">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Estudiante Activo
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Redesigned information cards with consistent styling -->
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-card rounded-lg border border-border shadow-sm p-6">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 114 0v2m-4 0a2 2 0 104 0m-4 0v2m4-2v2"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-foreground">Documento de Identidad</h3>
+                        <p class="text-sm text-muted-foreground">DNI Nacional</p>
+                    </div>
+                </div>
+                <p class="text-2xl font-bold text-primary">{{ object.dni }}</p>
+            </div>
+
+            <div class="bg-card rounded-lg border border-border shadow-sm p-6">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-foreground">Correo Electrónico</h3>
+                        <p class="text-sm text-muted-foreground">Contacto principal</p>
+                    </div>
+                </div>
+                <p class="text-lg font-medium text-secondary break-all">{{ object.email }}</p>
+            </div>
+        </div>
+
+        <!-- Redesigned action buttons section with consistent styling -->
+        <div class="bg-card rounded-lg border border-border shadow-sm p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-lg font-semibold text-foreground">Acciones Disponibles</h2>
+                    <p class="text-sm text-muted-foreground mt-1">Gestionar información del estudiante</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="{% url 'alumno_update' object.pk %}" 
+                   class="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 transition-colors font-medium shadow-sm">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    Editar Información
+                </a>
+                
+                <a href="{% url 'alumno_delete' object.pk %}" 
+                   class="inline-flex items-center px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors font-medium shadow-sm">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    Eliminar Alumno
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Added footer matching the reference design -->
+    <footer class="bg-muted border-t border-border mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center">
+                <p class="text-sm text-muted-foreground">
+                    © 2024 Sistema Universitario. Todos los derechos reservados.
+                </p>
+                <div class="mt-2 flex justify-center space-x-6">
+                    <a href="#" class="text-muted-foreground hover:text-accent text-sm transition-colors">
+                        Política de Privacidad
+                    </a>
+                    <a href="#" class="text-muted-foreground hover:text-accent text-sm transition-colors">
+                        Términos de Uso
+                    </a>
+                    <a href="#" class="text-muted-foreground hover:text-accent text-sm transition-colors">
+                        Contacto
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
