@@ -45,11 +45,6 @@ urlpatterns = [
     path('materias/create/', MateriaCreateView.as_view(), name='materia_create'),
     path('materias/<int:pk>/update/', MateriaUpdateView.as_view(), name='materia_update'),
     path('materias/<int:pk>/delete/', MateriaDeleteView.as_view(), name='materia_delete'),
-<<<<<<< HEAD
-    # Carrera URLs
-    path('carreras/', CarreraListView.as_view(), name='carrera_list'),
-]
-=======
     #Carrera URLs
     path('carreras/', CarreraListView.as_view(), name='carrera_list'),
     path('carreras/ingenieria_civil/', Ingenieria_civil.as_view(), name='Ingenieria_civil'),
@@ -62,4 +57,3 @@ urlpatterns = [
     path('carreras/ingenieria_sistemas/', Ingenieria_sistemas.as_view(), name='ingenieria_sistemas'),
 
 ]
->>>>>>> d909d7d63c1fb4a62458270cb53bdb6166af4168
