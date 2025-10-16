@@ -124,7 +124,25 @@ class CondicionFinal(models.Model):
     def __str__(self):
         return f"{self.alumno} - {self.materia_curso} - {self.condicion}"
 
+#####################################################
 
+class Profesor(models.Model):
+    id_profesor = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50)
+    apellido = models.CharField(max_length=50)
+    email = models.EmailField()
+    def __str__(self):
+        return f"{self.nombre} {self.apellido} - {self.email}"
+    
+class TipoEvaluacion(models.Model):
+    id_tipo_evaluacion = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50)
+    descripcion = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.nombre
+
+######################################################
 
 class Evaluacion(models.Model):
     id_evaluacion = models.AutoField(primary_key=True)
