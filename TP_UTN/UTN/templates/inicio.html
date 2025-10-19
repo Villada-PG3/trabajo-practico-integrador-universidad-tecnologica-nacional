@@ -27,7 +27,51 @@
                 </div>
                 <div class="hidden md:flex space-x-8">
                     <a href="#" class="nav-link font-medium">Inicio</a>
-                    <a href="{% url 'alumno_list' %}" class="nav-link font-medium">Iniciar Sesión</a>
+                    {% if user.is_authenticated %}
+                        <div class="hidden md:flex items-center space-x-3">
+                            <a href="#" class="nav-link font-medium flex items-center space-x-2">
+                                <span>{{ user.get_full_name|default:user.username }}</span>
+                                {% if user.social_auth.exists %}
+                                    {% for sa in user.social_auth.all %}
+                                        {% if sa.provider == 'google-oauth2' %}
+                                            {% with sa.extra_data.picture as picture %}
+                                                {% if picture %}
+                                                    <img src="{{ picture }}" alt="avatar" style="width:32px;height:32px;border-radius:50%;">
+                                                {% else %}
+                                                    <script>
+                                                        fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                                                            headers: {
+                                                                'Authorization': 'Bearer {{ sa.extra_data.access_token }}'
+                                                            }
+                                                        })
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            if (data.picture) {
+                                                                document.getElementById('user-avatar').src = data.picture;
+                                                            }
+                                                        });
+                                                    </script>
+                                                    <img id="user-avatar" src="" alt="avatar" style="width:32px;height:32px;border-radius:50%;">
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {% if not user.social_auth.exists %}
+                                    <a href="{% url 'alumno_list' %}" class="nav-link font-medium">
+                                        Iniciar Sesión
+                                    </a>
+                                {% endif %}
+                            </a>
+                            <a href="{% url 'logout' %}" class="nav-link font-medium text-red-600 hover:text-red-700">
+                                Cerrar Sesión
+                            </a>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'alumno_list' %}" class="nav-link font-medium">
+                            Iniciar Sesión
+                        </a>
+                    {% endif %}
                     <a href="/carreras/" class="nav-link font-medium">Carreras</a>
                 </div>
                 <button class="md:hidden focus:outline-none">
