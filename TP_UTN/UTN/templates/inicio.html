@@ -180,54 +180,63 @@
     </section>
     {% endif %}
 
-    <!-- Footer -->
-    <footer class="bg-gray-100 py-12">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-lg font-bold mb-4">Universidad Tecnológica Nacional</h3>
-                    <p class="text-gray-600">Excelencia en educación tecnológica desde 1959.</p>
-                    <div class="flex space-x-4 mt-4">
-                        <a href="#" class="text-gray-600 hover:text-black"><i data-feather="facebook"></i></a>
-                        <a href="#" class="text-gray-600 hover:text-black"><i data-feather="twitter"></i></a>
-                        <a href="#" class="text-gray-600 hover:text-black"><i data-feather="instagram"></i></a>
-                        <a href="#" class="text-gray-600 hover:text-black"><i data-feather="linkedin"></i></a>
-                        <a href="#" class="text-gray-600 hover:text-black"><i data-feather="youtube"></i></a>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="font-bold mb-4">Enlaces rápidos</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-600 hover:text-black">Admisiones</a></li>
-                        <li><a href="#" class="text-gray-600 hover:text-black">Calendario académico</a></li>
-                        <li><a href="#" class="text-gray-600 hover:text-black">Biblioteca</a></li>
-                        <li><a href="#" class="text-gray-600 hover:text-black">Portal estudiantil</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold mb-4">Contacto</h4>
-                    <ul class="space-y-2">
-                        <li class="flex items-center text-gray-600"><i data-feather="map-pin" class="mr-2 w-4 h-4"></i> Sarmiento 440, CABA</li>
-                        <li class="flex items-center text-gray-600"><i data-feather="phone" class="mr-2 w-4 h-4"></i> (011) 5371-5600</li>
-                        <li class="flex items-center text-gray-600"><i data-feather="mail" class="mr-2 w-4 h-4"></i> info@utn.edu.ar</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold mb-4">Boletín informativo</h4>
-                    <p class="text-gray-600 mb-4">Suscríbete para recibir novedades.</p>
-                    <div class="flex">
-                        <input type="email" placeholder="Tu email" class="px-4 py-2 w-full rounded-l-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-black">
-                        <button class="bg-black text-white px-4 py-2 rounded-r-lg hover:bg-gray-800 transition duration-300">
-                            <i data-feather="send"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-gray-200 mt-12 pt-8 text-center text-gray-500">
-                <p>© 2023 Universidad Tecnológica Nacional. Todos los derechos reservados.</p>
-            </div>
+<!-- Footer -->
+<footer class="bg-gray-100 py-12">
+  <div class="container mx-auto px-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+      <!-- Bloque Universidad -->
+      <div>
+        <h3 class="text-lg font-bold mb-4">Universidad Tecnológica Nacional</h3>
+        <p class="text-gray-600">Excelencia en educación tecnológica desde 1959.</p>
+        
+        <!-- Redes Sociales -->
+        <div class="flex space-x-4 mt-4">
+          <a href="https://www.facebook.com/utn.cordoba/?locale=es_LA" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-black">
+            <i data-feather="facebook"></i>
+          </a>
+          <a href="https://www.instagram.com/utn.cordoba/?hl=es" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-black">
+            <i data-feather="instagram"></i>
+          </a>
+          <a href="https://ar.linkedin.com/company/utn---facultad-regional-c-rdoba" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-black">
+            <i data-feather="linkedin"></i>
+          </a>
+          <a href="https://www.youtube.com/@utn.cordoba" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-black">
+            <i data-feather="youtube"></i>
+          </a>
         </div>
-    </footer>
+      </div>
+
+      <!-- Bloque Ubicación -->
+      <div>
+        <h3 class="text-lg font-bold mb-4">Ubicación</h3>
+        <ul class="space-y-2 text-gray-600">
+          <li class="flex items-center">
+            <i data-feather="map-pin" class="mr-2 w-4 h-4"></i>
+            Maestro M. Lopez esq, Cruz Roja Argentina S/N, Córdoba
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Pie de página -->
+    <div class="border-t border-gray-200 mt-12 pt-8 text-center text-gray-500">
+      <p>© 2023 Universidad Tecnológica Nacional. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script>
+  AOS.init({
+    duration: 800,
+    easing: 'ease-in-out',
+    once: true
+  });
+  feather.replace();
+</script>
+
 
     <script>
         AOS.init({
