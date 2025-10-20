@@ -68,7 +68,7 @@
                             </a>
                         </div>
                     {% else %}
-                        <a href="{% url 'alumno_list' %}" class="nav-link font-medium">
+                        <a href="{% url 'social:begin' 'google-oauth2' %}?next=/&prompt=select_account" class="nav-link font-medium">
                             Iniciar Sesión
                         </a>
                     {% endif %}
@@ -167,6 +167,7 @@
     </section>
 
     <!-- CTA Section -->
+    {% if not user.is_authenticated %}
     <section class="py-20 bg-black text-white">
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-3xl font-bold mb-6" data-aos="fade-up">¿Listo para comenzar tu futuro tecnológico?</h2>
@@ -177,6 +178,7 @@
             </div>
         </div>
     </section>
+    {% endif %}
 
     <!-- Footer -->
     <footer class="bg-gray-100 py-12">
