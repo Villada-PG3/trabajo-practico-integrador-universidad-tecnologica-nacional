@@ -23,18 +23,18 @@ class AlumnoCreateView(CreateView):
     # Usa los campos que realmente quieres que el usuario ingrese
     fields = ['nombre', 'apellido', 'dni', 'email', 'contrasenia', 'anio_universitario', 'carrera']
     template_name = 'alumno/alumno_form.html'
-    success_url = reverse_lazy('alumno_list')   
+    success_url = reverse_lazy('inicio')   
 
 class AlumnoUpdateView(UpdateView):
     model = Alumno
     fields = '__all__'
     template_name = 'alumno/alumno_form.html'
-    success_url = reverse_lazy('alumno_list')
+    success_url = reverse_lazy('inicio')
 
 class AlumnoDeleteView(DeleteView):
     model = Alumno
     template_name = 'alumno/alumno_confirm_delete.html'
-    success_url = reverse_lazy('alumno_list')
+    success_url = reverse_lazy('inicio')
 
 # Views for Curso
 class CursoListView(ListView):
