@@ -26,7 +26,7 @@
         </div>
       </div>
       <nav class="hidden md:flex gap-6">
-        <a href="#" class="text-gray-600 hover:text-gray-900">Inicio</a>
+        <a href="/" class="text-gray-600 hover:text-gray-900">Inicio</a>
         <a href="#" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Carreras</a>
         <a href="#" class="text-gray-600 hover:text-gray-900">Cursos</a>
       </nav>
@@ -68,10 +68,7 @@
       </div>
 
       <div class="text-center mt-10">
-        <button 
-          class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-8 py-3 rounded-lg shadow transition">
-          Inscribirse
-        </button>
+        <a href="{% url 'alumno_create' %}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium px-8 py-3 rounded-lg shadow transition">Inscribirse</a>
       </div>
 
     </div>
