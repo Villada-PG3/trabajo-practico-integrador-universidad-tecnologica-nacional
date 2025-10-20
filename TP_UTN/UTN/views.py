@@ -13,9 +13,6 @@ def logout_view(request):
 class InicioView(TemplateView):
     template_name = "inicio.html"
 # Views for Alumno
-class AlumnoListView(ListView):
-    model = Alumno
-    template_name = 'alumno/alumno_list.html'
 
 class AlumnoDetailView(DetailView):
     model = Alumno

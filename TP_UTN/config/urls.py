@@ -20,7 +20,7 @@ from django.urls import path
 from django.urls import path, include
 from UTN.views import logout_view
 from UTN.views import (
-    AlumnoListView, AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView, AlumnoDeleteView, CarreraListView,
+    AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView, AlumnoDeleteView, CarreraListView,
     CursoListView, CursoDetailView, CursoCreateView, CursoUpdateView, CursoDeleteView,
     MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView,
     InicioView, CarreraListView, Ingenieria_civil, Ingenieria_electronica, Ingenieria_energia,
@@ -37,7 +37,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", InicioView.as_view(), name="inicio"), 
     # Alumno URLs
-    path('alumnos/', AlumnoListView.as_view(), name='alumno_list'),
     path('alumnos/<int:pk>/', AlumnoDetailView.as_view(), name='alumno_detail'),
     path('alumnos/create/', AlumnoCreateView.as_view(), name='alumno_create'),
     path('alumnos/<int:pk>/update/', AlumnoUpdateView.as_view(), name='alumno_update'),
