@@ -1,7 +1,8 @@
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView, View
 from django.urls import reverse_lazy
-from .models import Alumno, Carrera, Curso, Materia, MateriaCurso, Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion
+from .models import Alumno, AlumnoMateriaCurso, Carrera, Curso, Materia, MateriaCurso, Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion, CarreraMateria
 from django.db.models import Q
 
 class InicioView(TemplateView):
@@ -107,7 +108,74 @@ class MateriaDeleteView(DeleteView):
     template_name = 'materia/materia_confirm_delete.html'
     success_url = reverse_lazy('materia_list')
 
+class MateriaReinscripcionView(TemplateView):
+    template_name = "materia/reinscripcion_materia.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        alumno_id = self.kwargs.get('alumno_id')
+
+        # Buscar el alumno
+        alumno = Alumno.objects.get(id_alumno=alumno_id)
+
+        # Buscar las materias asociadas a la carrera del alumno
+        # y que correspondan a su año o anterior
+        materias_relacionadas = CarreraMateria.objects.filter(
+            carrera=alumno.carrera,
+            materia__ciclo_lectivo__lte=alumno.anio_universitario
+        ).select_related('materia')
+
+        # Extraer las materias de esa relación
+        materias = [cm.materia for cm in materias_relacionadas]
+
+        context['alumno'] = alumno
+        context['materias'] = materias
+
+        cursos_disponibles = MateriaCurso.objects.filter(materia__in=materias)
+        context['cursos_disponibles'] = cursos_disponibles
+        return context
+
+def reinscribir_materia(request, alumno_id, materia_id):
+    alumno = get_object_or_404(Alumno, id_alumno_id=alumno_id)
+    materia = get_object_or_404(Materia, id_materia=materia_id)
+
+    # Verificar si ya está reinscripto
+    ya_existe = AlumnoMateriaCurso.objects.filter(
+        alumno=alumno,
+        materia_curso__materia=materia
+    ).exists()
+
+    if ya_existe:
+        messages.warning(request, "Ya estás reinscripto en esta materia.")
+        return redirect('materia_reinscripcion', alumno_id=alumno_id)
+
+    curso_id = request.POST.get('curso_id')  # Viene desde el botón elegido
+    materia_curso = get_object_or_404(MateriaCurso, id_materia_curso=curso_id)
+
+    AlumnoMateriaCurso.objects.create(
+        alumno=alumno,
+        materia_curso=materia_curso
+    )
+
+    messages.success(request, f"Te reinscribiste a {materia.nombre} correctamente.")
+    return redirect('materia_reinscripcion', alumno_id=alumno_id)
+
+def cancelar_reinscripcion(request, alumno_id, materia_id):
+    alumno = get_object_or_404(Alumno, id_alumno_id=alumno_id)
+    materia = get_object_or_404(Materia, id_materia=materia_id)
+
+    inscripcion = AlumnoMateriaCurso.objects.filter(
+        alumno=alumno,
+        materia_curso__materia=materia
+    ).first()
+
+    if inscripcion:
+        inscripcion.delete()
+        messages.success(request, f"Se canceló la reinscripción a {materia.nombre}.")
+    else:
+        messages.warning(request, "No estabas reinscripto en esta materia.")
+
+    return redirect('materia_reinscripcion', alumno_id=alumno_id)
 
 #carreras
 CARRERA_URL_MAP = {

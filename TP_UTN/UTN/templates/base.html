@@ -1,0 +1,95 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Universidad Tecnológica Nacional{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link rel="stylesheet" href="{% static 'UTN/css/style2.css' %}">
+    <link rel="icon" href="https://tse2.mm.bing.net/th/id/OIP.cqBKPdnHYvuLe2CUvTk8EwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" type="image/x-icon">
+</head>
+
+<body class="bg-white text-black font-sans">
+
+    <!-- NAVBAR -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="https://tse2.mm.bing.net/th/id/OIP.cqBKPdnHYvuLe2CUvTk8EwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="UTN Logo" class="h-12 mr-4">
+                <div>
+                    <h1 class="text-xl font-bold">Universidad Tecnológica Nacional</h1>
+                    <p class="text-sm text-gray-600">Excelencia en educación tecnológica</p>
+                </div>
+            </div>
+
+            <div class="hidden md:flex space-x-8">
+                <a href="{% url 'inicio' %}" class="font-medium hover:text-gray-700">Inicio</a>
+                <a href="{% url 'materia_reinscripcion' alumno.id_alumno %}" class="font-medium hover:text-gray-700">Reinscripción</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO DINÁMICO -->
+    <main class="min-h-screen">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-100 py-12 mt-16">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-lg font-bold mb-4">Universidad Tecnológica Nacional</h3>
+                <p class="text-gray-600">Excelencia en educación tecnológica desde 1959.</p>
+                <div class="flex space-x-4 mt-4">
+                    <a href="#" class="text-gray-600 hover:text-black"><i data-feather="facebook"></i></a>
+                    <a href="#" class="text-gray-600 hover:text-black"><i data-feather="instagram"></i></a>
+                    <a href="#" class="text-gray-600 hover:text-black"><i data-feather="linkedin"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="font-bold mb-4">Enlaces rápidos</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-gray-600 hover:text-black">Admisiones</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-black">Calendario académico</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-black">Biblioteca</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold mb-4">Contacto</h4>
+                <ul class="space-y-2 text-gray-600">
+                    <li class="flex items-center"><i data-feather="map-pin" class="mr-2 w-4 h-4"></i> Sarmiento 440, CABA</li>
+                    <li class="flex items-center"><i data-feather="phone" class="mr-2 w-4 h-4"></i> (011) 5371-5600</li>
+                    <li class="flex items-center"><i data-feather="mail" class="mr-2 w-4 h-4"></i> info@utn.edu.ar</li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold mb-4">Suscríbete</h4>
+                <div class="flex">
+                    <input type="email" placeholder="Tu email" class="px-4 py-2 w-full rounded-l-lg border border-gray-300 focus:ring-1 focus:ring-black">
+                    <button class="bg-black text-white px-4 py-2 rounded-r-lg hover:bg-gray-800 transition duration-300">
+                        <i data-feather="send"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-200 mt-12 pt-8 text-center text-gray-500">
+            <p>© 2025 Universidad Tecnológica Nacional. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
+        feather.replace();
+    </script>
+</body>
+</html>

@@ -16,12 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from UTN import views
 from UTN.views import (
     AlumnoListView, AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView, AlumnoDeleteView, CarreraListView,
     CursoListView, CursoDetailView, CursoCreateView, CursoUpdateView, CursoDeleteView,
     MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView,
     InicioView, CarreraListView, Ingenieria_civil, Ingenieria_electronica, Ingenieria_energia,
-    Ingenieria_industrial, Ingenieria_mecanica, Ingenieria_metalurgica, Ingenieria_quimica, Ingenieria_sistemas
+    Ingenieria_industrial, Ingenieria_mecanica, Ingenieria_metalurgica, Ingenieria_quimica, Ingenieria_sistemas, MateriaReinscripcionView
 )
 
 urlpatterns = [
@@ -45,6 +46,9 @@ urlpatterns = [
     path('materias/create/', MateriaCreateView.as_view(), name='materia_create'),
     path('materias/<int:pk>/update/', MateriaUpdateView.as_view(), name='materia_update'),
     path('materias/<int:pk>/delete/', MateriaDeleteView.as_view(), name='materia_delete'),
+    path('reinscripcion/<int:alumno_id>/', MateriaReinscripcionView.as_view(), name='materia_reinscripcion'),
+    path('reinscripcion/<int:alumno_id>/materia/<int:materia_id>/confirmar/', views.reinscribir_materia, name='materia_reinscribir'),
+    path('reinscripcion/<int:alumno_id>/materia/<int:materia_id>/cancelar/', views.cancelar_reinscripcion, name='cancelar_reinscripcion'),
     #Carrera URLs
     path('carreras/', CarreraListView.as_view(), name='carrera_list'),
     path('carreras/ingenieria_civil/', Ingenieria_civil.as_view(), name='Ingenieria_civil'),

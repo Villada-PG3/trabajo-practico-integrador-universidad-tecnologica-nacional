@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-5xl mx-auto mt-10">
+    <h1 class="text-3xl font-bold text-center mb-6">
+        Reinscripción de {{ alumno.nombre }} {{ alumno.apellido }}
+    </h1>
+    {# ... (Info de Alumno) ... #}
+
+    {% if materias %}
+        <div class="space-y-6">
+            {% for materia in materias %}
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-3">
+                        Materia: {{ materia.nombre }}
+                    </h2>
+                    {# ... (Info de Materia) ... #}
+
+                    <h3 class="text-xl font-semibold mt-4 mb-2 text-indigo-700">
+                        Cursos disponibles (Selecciona solo uno):
+                    </h3>
+                    
+                    {% with cursos_materia=materia.cursos_ofrecidos.all %} 
+                        {% if cursos_materia %}
+                            <div class="space-y-3 pl-4 border-l-4 border-indigo-200">
+                                {% for curso_materia in cursos_materia %}
+                                    <div class="p-3 bg-indigo-50 rounded-lg border border-indigo-100 flex justify-between items-center">
+                                        <div>
+                                            <p class="font-medium text-gray-800">
+                                                Comisión: {{ curso_materia.curso.nombre }} ({{ curso_materia.turno_cursado|capfirst }})
+                                            </p>
+                                            <p class="text-sm text-gray-600">
+                                                Horario: {{ curso_materia.horario }} | Módulo: {{ curso_materia.modulo }}
+                                            </p>
+                                        </div>
+                                        
+                                        {# Este es el botón de acción única #}
+                                        <a href="#" 
+                                           class="bg-green-600 text-white px-4 py-2 text-sm rounded-lg hover:bg-green-700 transition-colors flex-shrink-0">
+                                            Reinscribirse
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-red-500">No hay cursos asignados para esta materia.</p>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No hay materias disponibles para reinscribirse.</p>
+    {% endif %}
+
+</div>
+{% endblock %}
