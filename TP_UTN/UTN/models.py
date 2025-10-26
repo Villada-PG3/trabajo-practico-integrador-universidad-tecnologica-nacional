@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import date
+from django.conf import settings
 
 # Create your models here.
 
@@ -14,6 +15,7 @@ class Carrera(models.Model):
         return self.nombre
 
 class Alumno(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='alumno', null=True)
     id_alumno = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default="")
     apellido = models.CharField(max_length=50, default="")
