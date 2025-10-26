@@ -20,14 +20,9 @@ def create_alumno(strategy, details, user=None, social=None, *args, **kwargs):
         pass
 
     # Build basic values
-    nombre = details.get('fullname') or f"{details.get('first_name','')} {details.get('last_name','')}".strip() or user.username
+    nombre =  details.get('first_name') or ''
+    apellido = details.get('last_name') or ''
     email = details.get('email') or getattr(user, 'email', '')
-
-    # Try to get picture or other extras if available (not required)
-    picture = None
-    if social is not None:
-        extra = getattr(social, 'extra_data', {}) or {}
-        picture = extra.get('picture')
 
     # Create or get the Alumno safely
     try:
@@ -35,6 +30,7 @@ def create_alumno(strategy, details, user=None, social=None, *args, **kwargs):
             user=user,
             defaults={
                 'nombre': nombre,
+                'apellido': apellido,
                 'email': email,
             }
         )
