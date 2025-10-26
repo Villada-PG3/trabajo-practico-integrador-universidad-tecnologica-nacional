@@ -118,8 +118,7 @@ class MateriaReinscripcionView(TemplateView):
         # Buscar el alumno
         alumno = Alumno.objects.get(id_alumno=alumno_id)
 
-        # Buscar las materias asociadas a la carrera del alumno
-        # y que correspondan a su año o anterior
+        # 1. Búsqueda de materias según la carrera y año del alumno (CORRECTO)
         materias_relacionadas = CarreraMateria.objects.filter(
             carrera=alumno.carrera,
             materia__ciclo_lectivo__lte=alumno.anio_universitario
@@ -128,16 +127,36 @@ class MateriaReinscripcionView(TemplateView):
         # Extraer las materias de esa relación
         materias = [cm.materia for cm in materias_relacionadas]
 
+        # 2. ELIMINAR esta sección redundante que sobrescribe 'materias':
+        # # Obtener las materias a reinscribirse (como ya lo hacías)
+        # materias = Materia.objects.all() 
+        # context['materias'] = materias 
+
         context['alumno'] = alumno
-        context['materias'] = materias
+        context['materias'] = materias # Usamos la lista filtrada
 
         cursos_disponibles = MateriaCurso.objects.filter(materia__in=materias)
         context['cursos_disponibles'] = cursos_disponibles
+
+        # 3. Nuevo: materias en las que ya está reinscripto (USAMOS SIGLA)
+        # Usamos el nombre 'materias_reinscriptas' tal como lo usa tu HTML
+        materias_reinscriptas = AlumnoMateriaCurso.objects.filter(alumno=alumno).values_list('materia_curso__materia__sigla', flat=True)
+        context['materias_reinscriptas'] = list(materias_reinscriptas)
+        
+        # 4. 🔥 NUEVO: Obtenemos el ID de MateriaCurso de la inscripción activa
+        # Esto es crucial para poder mostrar la comisión actual y pasar el ID a "Cancelar"
+        inscripciones_activas = AlumnoMateriaCurso.objects.filter(alumno=alumno).select_related('materia_curso', 'materia_curso__curso')
+        
+        # Diccionario: {sigla_materia: objeto_AlumnoMateriaCurso}
+        context['inscripciones_por_materia'] = {
+            insc.materia_curso.materia.sigla: insc for insc in inscripciones_activas
+        }
+        
         return context
 
 def reinscribir_materia(request, alumno_id, materia_id):
-    alumno = get_object_or_404(Alumno, id_alumno_id=alumno_id)
-    materia = get_object_or_404(Materia, id_materia=materia_id)
+    alumno = get_object_or_404(Alumno, id_alumno=alumno_id)
+    materia = get_object_or_404(Materia, sigla=materia_id)
 
     # Verificar si ya está reinscripto
     ya_existe = AlumnoMateriaCurso.objects.filter(
@@ -147,7 +166,7 @@ def reinscribir_materia(request, alumno_id, materia_id):
 
     if ya_existe:
         messages.warning(request, "Ya estás reinscripto en esta materia.")
-        return redirect('materia_reinscripcion', alumno_id=alumno_id)
+        return redirect('materia_reinscripcion', sigla=materia_id)
 
     curso_id = request.POST.get('curso_id')  # Viene desde el botón elegido
     materia_curso = get_object_or_404(MateriaCurso, id_materia_curso=curso_id)
@@ -158,11 +177,11 @@ def reinscribir_materia(request, alumno_id, materia_id):
     )
 
     messages.success(request, f"Te reinscribiste a {materia.nombre} correctamente.")
-    return redirect('materia_reinscripcion', alumno_id=alumno_id)
+    return redirect('materia_reinscripcion', alumno_id=alumno.id_alumno)
 
 def cancelar_reinscripcion(request, alumno_id, materia_id):
-    alumno = get_object_or_404(Alumno, id_alumno_id=alumno_id)
-    materia = get_object_or_404(Materia, id_materia=materia_id)
+    alumno = get_object_or_404(Alumno, id_alumno=alumno_id)
+    materia = get_object_or_404(Materia, sigla=materia_id)
 
     inscripcion = AlumnoMateriaCurso.objects.filter(
         alumno=alumno,
@@ -175,7 +194,7 @@ def cancelar_reinscripcion(request, alumno_id, materia_id):
     else:
         messages.warning(request, "No estabas reinscripto en esta materia.")
 
-    return redirect('materia_reinscripcion', alumno_id=alumno_id)
+    return redirect('materia_reinscripcion', alumno_id=alumno.id_alumno)
 
 #carreras
 CARRERA_URL_MAP = {

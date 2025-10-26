@@ -47,8 +47,8 @@ urlpatterns = [
     path('materias/<int:pk>/update/', MateriaUpdateView.as_view(), name='materia_update'),
     path('materias/<int:pk>/delete/', MateriaDeleteView.as_view(), name='materia_delete'),
     path('reinscripcion/<int:alumno_id>/', MateriaReinscripcionView.as_view(), name='materia_reinscripcion'),
-    path('reinscripcion/<int:alumno_id>/materia/<int:materia_id>/confirmar/', views.reinscribir_materia, name='materia_reinscribir'),
-    path('reinscripcion/<int:alumno_id>/materia/<int:materia_id>/cancelar/', views.cancelar_reinscripcion, name='cancelar_reinscripcion'),
+    path('reinscripcion/<int:alumno_id>/materia/<path:materia_id>/confirmar/', views.reinscribir_materia, name='materia_reinscribir'),
+    path('reinscripcion/<int:alumno_id>/materia/<path:materia_id>/cancelar/', views.cancelar_reinscripcion, name='cancelar_reinscripcion'),
     #Carrera URLs
     path('carreras/', CarreraListView.as_view(), name='carrera_list'),
     path('carreras/ingenieria_civil/', Ingenieria_civil.as_view(), name='Ingenieria_civil'),
@@ -59,4 +59,5 @@ urlpatterns = [
     path('carreras/ingenieria_metalurgica/', Ingenieria_metalurgica.as_view(), name='Ingenieria_metalurgica'),
     path('carreras/ingenieria_quimica/', Ingenieria_quimica.as_view(), name='Ingenieria_quimica'),
     path('carreras/ingenieria_sistemas/', Ingenieria_sistemas.as_view(), name='ingenieria_sistemas'),
+    
 ]
