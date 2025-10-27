@@ -140,7 +140,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 # URLs
 LOGIN_URL = 'auth'
-LOGIN_REDIRECT_URL = '/'  # Ensure this matches your app's route
+LOGIN_REDIRECT_URL = '/post-login-check/'  # Ensure this matches your app's route
 LOGOUT_REDIRECT_URL = 'auth'
 
 # Debugging for social_django

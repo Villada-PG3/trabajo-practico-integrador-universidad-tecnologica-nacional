@@ -1,16 +1,29 @@
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView, View
 from django.urls import reverse_lazy
 from .models import Alumno, Carrera, Curso, Materia
 from django.db.models import Q
 from django.contrib.auth import logout
 from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 def logout_view(request):
     logout(request)
     return redirect('/')
 
+@method_decorator(login_required, name='dispatch')
+class PostLoginCheckView(View):
+    """Redirects user to alumno_form if incomplete, or inicio if complete."""
+
+    def get(self, request, *args, **kwargs):
+        alumno = getattr(request.user, 'alumno', None)
+
+        if alumno and alumno.dni != None and alumno.anio_universitario and alumno.carrera != None:
+            return redirect('inicio')  # already complete → home
+        else:
+            return redirect('alumno_create')  # needs to finish form
 class InicioView(TemplateView):
     template_name = "inicio.html"
 # Views for Alumno

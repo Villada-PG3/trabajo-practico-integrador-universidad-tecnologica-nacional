@@ -24,7 +24,8 @@ from UTN.views import (
     CursoListView, CursoDetailView, CursoCreateView, CursoUpdateView, CursoDeleteView,
     MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView,
     InicioView, CarreraListView, Ingenieria_civil, Ingenieria_electronica, Ingenieria_energia,
-    Ingenieria_industrial, Ingenieria_mecanica, Ingenieria_metalurgica, Ingenieria_quimica, Ingenieria_sistemas
+    Ingenieria_industrial, Ingenieria_mecanica, Ingenieria_metalurgica, Ingenieria_quimica, Ingenieria_sistemas,
+    PostLoginCheckView
 )
 
 class CustomLogoutView(LogoutView):
@@ -36,6 +37,7 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('admin/', admin.site.urls),
     path("", InicioView.as_view(), name="inicio"), 
+    path('post-login-check/', PostLoginCheckView.as_view(), name='post_login_check'),
     # Alumno URLs
     path('alumnos/<int:pk>/', AlumnoDetailView.as_view(), name='alumno_detail'),
     path('alumnos/create/', AlumnoCreateView.as_view(), name='alumno_create'),
