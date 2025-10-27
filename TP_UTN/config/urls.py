@@ -22,7 +22,7 @@ from UTN.views import logout_view
 from UTN.views import (
     AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView, AlumnoDeleteView, CarreraListView,
     CursoListView, CursoDetailView, CursoCreateView, CursoUpdateView, CursoDeleteView,
-    MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView,
+    MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView, MateriaReinscripcionView, cancelar_reinscripcion, reinscribir_materia,
     InicioView, CarreraListView, Ingenieria_civil, Ingenieria_electronica, Ingenieria_energia,
     Ingenieria_industrial, Ingenieria_mecanica, Ingenieria_metalurgica, Ingenieria_quimica, Ingenieria_sistemas,
     PostLoginCheckView
@@ -55,6 +55,9 @@ urlpatterns = [
     path('materias/create/', MateriaCreateView.as_view(), name='materia_create'),
     path('materias/<int:pk>/update/', MateriaUpdateView.as_view(), name='materia_update'),
     path('materias/<int:pk>/delete/', MateriaDeleteView.as_view(), name='materia_delete'),
+    path('reinscripcion/<int:alumno_id>/', MateriaReinscripcionView.as_view(), name='materia_reinscripcion'),
+    path('reinscripcion/<int:alumno_id>/materia/<path:materia_id>/confirmar/', reinscribir_materia, name='materia_reinscribir'),
+    path('reinscripcion/<int:alumno_id>/materia/<path:materia_id>/cancelar/', cancelar_reinscripcion, name='cancelar_reinscripcion'),
     #Carrera URLs
     path('carreras/', CarreraListView.as_view(), name='carrera_list'),
     path('carreras/ingenieria_civil/', Ingenieria_civil.as_view(), name='Ingenieria_civil'),
@@ -65,5 +68,5 @@ urlpatterns = [
     path('carreras/ingenieria_metalurgica/', Ingenieria_metalurgica.as_view(), name='Ingenieria_metalurgica'),
     path('carreras/ingenieria_quimica/', Ingenieria_quimica.as_view(), name='Ingenieria_quimica'),
     path('carreras/ingenieria_sistemas/', Ingenieria_sistemas.as_view(), name='ingenieria_sistemas'),
-
+    
 ]

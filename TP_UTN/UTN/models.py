@@ -26,7 +26,7 @@ class Alumno(models.Model):
 
     def __str__(self):
         carrera_nombre = self.carrera.nombre if self.carrera else "Sin carrera"
-        return f"{self.apellido}, {self.nombre} ({carrera_nombre})"
+        return f"{self.id_alumno}, {self.apellido}, {self.nombre} ({carrera_nombre})"
 
     def get_absolute_url(self):
         return reverse('alumno_detail', kwargs={'pk': self.pk})
@@ -68,7 +68,7 @@ class CarreraMateria(models.Model):
 class MateriaCurso(models.Model):
     id_materia_curso = models.AutoField(primary_key=True)
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='materias')
-    materia = models.ForeignKey(Materia, on_delete=models.CASCADE, related_name='cursos')
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE, related_name='cursos_ofrecidos')
     Opciones_Turno = [
         ('manana', 'Mañana'),
         ('tarde', 'Tarde'),
@@ -188,6 +188,10 @@ class AlumnoMateriaCurso(models.Model):
     id_alumno_materia_curso = models.AutoField(primary_key=True)
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='materias_curso')
     materia_curso = models.ForeignKey(MateriaCurso, on_delete=models.CASCADE, related_name='alumnos')
+    fecha_inscripcion = models.DateTimeField(auto_now_add=True, null=True, blank=True)  # Opcional
+
+    class Meta:
+        unique_together = ('alumno', 'materia_curso')
 
     def __str__(self):
         return f"{self.alumno} en {self.materia_curso}"

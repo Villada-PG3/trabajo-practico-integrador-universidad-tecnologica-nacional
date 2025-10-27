@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ingeniería Eléctrica - Universidad Tecnológica Nacional</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="https://tse2.mm.bing.net/th/id/OIP.cqBKPdnHYvuLe2CUvTk8EwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" type="image/x-icon">
 </head>
 <body class="min-h-screen bg-gray-50 flex flex-col">
 
@@ -25,9 +26,9 @@
         </div>
       </div>
       <nav class="hidden md:flex gap-6">
-        <a href="#" class="text-gray-600 hover:text-gray-900">Inicio</a>
-        <a href="#" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Carreras</a>
-        <a href="#" class="text-gray-600 hover:text-gray-900">Cursos</a>
+        <a href="/" class="text-gray-600 hover:text-gray-900">Inicio</a>
+        <a href="/carreras" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Carreras</a>
+        <a href="/cursos" class="text-gray-600 hover:text-gray-900">Cursos</a>
       </nav>
     </div>
   </header>
@@ -66,10 +67,9 @@
       </div>
 
       <div class="text-center mt-10">
-        <button 
-          class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-8 py-3 rounded-lg shadow transition">
-          Inscribirse
-        </button>
+        <div class="text-center mt-10">
+          <a href="{% url 'alumno_create' %}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium px-8 py-3 rounded-lg shadow transition">Inscribirse</a>
+        </div>
       </div>
 
     </div>
