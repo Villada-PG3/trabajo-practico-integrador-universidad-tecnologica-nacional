@@ -63,6 +63,18 @@
                                 <div class="space-y-3 pl-4 border-l-4 border-indigo-200">
                                     {% for curso_materia in cursos_materia %}
                                         <div class="p-3 bg-indigo-50 rounded-lg border border-indigo-100 flex justify-between items-center">
+                
+                                            <div class="flex flex-col">
+                                                <p class="text-sm text-gray-700">
+                                                    <strong>Turno:</strong> {{ curso_materia.get_turno_cursado_display }}
+                                                </p>
+                                                <p class="text-sm text-gray-700">
+                                                    <strong>Horario:</strong> {{ curso_materia.horario }}
+                                                </p>
+                                                <p class="text-sm text-gray-700">
+                                                    <strong>Módulo:</strong> {{ curso_materia.modulo }}
+                                                </p>
+                                            </div>
                                             {# ... (Detalles del Curso) ... #}
                                             
                                             <form method="post" action="{% url 'materia_reinscribir' alumno.id_alumno materia.sigla %}">
