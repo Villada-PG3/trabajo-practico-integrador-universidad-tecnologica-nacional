@@ -20,8 +20,7 @@ from django.urls import path, include
 from UTN.views import logout_view
 from UTN.views import (
     AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView, AlumnoDeleteView, CarreraListView,
-    CursoListView, CursoDetailView, CursoCreateView, CursoUpdateView, CursoDeleteView,
-    MateriaListView, MateriaDetailView, MateriaCreateView, MateriaUpdateView, MateriaDeleteView, MateriaReinscripcionView, cancelar_reinscripcion, reinscribir_materia,
+    MateriaListView, MateriaReinscripcionView, cancelar_reinscripcion, reinscribir_materia,
     InicioView, CarreraListView, Ingenieria_civil, Ingenieria_electronica, Ingenieria_energia,
     Ingenieria_industrial, Ingenieria_mecanica, Ingenieria_metalurgica, Ingenieria_quimica, Ingenieria_sistemas,
     PostLoginCheckView
@@ -42,18 +41,8 @@ urlpatterns = [
     path('alumnos/create/', AlumnoCreateView.as_view(), name='alumno_create'),
     path('alumnos/<int:pk>/update/', AlumnoUpdateView.as_view(), name='alumno_update'),
     path('alumnos/<int:pk>/delete/', AlumnoDeleteView.as_view(), name='alumno_delete'),
-    # Curso URLs
-    path('cursos/', CursoListView.as_view(), name='curso_list'),
-    path('cursos/<int:pk>/', CursoDetailView.as_view(), name='curso_detail'),
-    path('cursos/create/', CursoCreateView.as_view(), name='curso_create'),
-    path('cursos/<int:pk>/update/', CursoUpdateView.as_view(), name='curso_update'),
-    path('cursos/<int:pk>/delete/', CursoDeleteView.as_view(), name='curso_delete'),
     # Materia URLs
     path('materias/', MateriaListView.as_view(), name='materia_list'),
-    path('materias/<int:pk>/', MateriaDetailView.as_view(), name='materia_detail'),
-    path('materias/create/', MateriaCreateView.as_view(), name='materia_create'),
-    path('materias/<int:pk>/update/', MateriaUpdateView.as_view(), name='materia_update'),
-    path('materias/<int:pk>/delete/', MateriaDeleteView.as_view(), name='materia_delete'),
     path('reinscripcion/<int:alumno_id>/', MateriaReinscripcionView.as_view(), name='materia_reinscripcion'),
     path('reinscripcion/<int:alumno_id>/materia/<path:materia_id>/confirmar/', reinscribir_materia, name='materia_reinscribir'),
     path('reinscripcion/<int:alumno_id>/materia/<path:materia_id>/cancelar/', cancelar_reinscripcion, name='cancelar_reinscripcion'),

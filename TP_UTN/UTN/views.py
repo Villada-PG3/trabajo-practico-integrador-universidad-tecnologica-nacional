@@ -83,33 +83,6 @@ class AlumnoDeleteView(DeleteView):
     template_name = 'alumno/alumno_confirm_delete.html'
     success_url = reverse_lazy('inicio')
 
-# Views for Curso
-class CursoListView(ListView):
-    model = Curso
-    template_name = 'curso/curso_list.html'
-    context_object_name = 'cursos'
-
-class CursoDetailView(DetailView):
-    model = Curso
-    template_name = 'curso/curso_detail.html'
-
-class CursoCreateView(CreateView):
-    model = Curso
-    fields = '__all__'
-    template_name = 'curso/curso_form.html'
-    success_url = reverse_lazy('curso_list')
-
-class CursoUpdateView(UpdateView):
-    model = Curso
-    fields = '__all__'
-    template_name = 'curso/curso_form.html'
-    success_url = reverse_lazy('curso_list')
-
-class CursoDeleteView(DeleteView):
-    model = Curso
-    template_name = 'curso/curso_confirm_delete.html'
-    success_url = reverse_lazy('curso_list')
-
 # Views for Materia
 class MateriaListView(ListView):
     model = Materia
@@ -135,27 +108,6 @@ class MateriaListView(ListView):
         
         # 4. Devolver el queryset (filtrado o completo)
         return queryset
-
-class MateriaDetailView(DetailView):
-    model = Materia
-    template_name = 'materia/materia_detail.html'
-
-class MateriaCreateView(CreateView):
-    model = Materia
-    fields = '__all__'
-    template_name = 'materia/materia_form.html'
-    success_url = reverse_lazy('materia_list')
-
-class MateriaUpdateView(UpdateView):
-    model = Materia
-    fields = '__all__'
-    template_name = 'materia/materia_form.html'
-    success_url = reverse_lazy('materia_list')
-
-class MateriaDeleteView(DeleteView):
-    model = Materia
-    template_name = 'materia/materia_confirm_delete.html'
-    success_url = reverse_lazy('materia_list')
 
 class MateriaReinscripcionView(TemplateView):
     template_name = "materia/reinscripcion_materia.html"

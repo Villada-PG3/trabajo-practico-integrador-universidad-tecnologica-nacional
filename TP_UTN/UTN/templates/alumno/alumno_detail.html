@@ -72,7 +72,7 @@
                     </div>
                 </div>
                 <div class="hidden md:flex space-x-8">
-                    <a href="#" class="nav-link font-medium">Inicio</a>
+                    <a href=" /" class="nav-link font-medium">Inicio</a>
                     {% if user.is_authenticated and user.alumno%}
                         <div class="hidden md:flex items-center space-x-3">
                             <a href="{% url 'alumno_detail' user.alumno.pk %}" class="nav-link font-medium flex items-center space-x-2">
@@ -226,13 +226,6 @@
             </div>
             
             <div class="flex flex-col sm:flex-row gap-4">
-                <a href="{% url 'alumno_update' object.pk %}" 
-                   class="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 transition-colors font-medium shadow-sm">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                    </svg>
-                    Editar Información
-                </a>
                 
                 <a href="{% url 'alumno_delete' object.pk %}" 
                    class="inline-flex items-center px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors font-medium shadow-sm">
