@@ -188,7 +188,6 @@ class AlumnoMateriaCurso(models.Model):
     id_alumno_materia_curso = models.AutoField(primary_key=True)
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='materias_curso')
     materia_curso = models.ForeignKey(MateriaCurso, on_delete=models.CASCADE, related_name='alumnos')
-    fecha_inscripcion = models.DateTimeField(auto_now_add=True, null=True, blank=True)  # Opcional
 
     class Meta:
         unique_together = ('alumno', 'materia_curso')
