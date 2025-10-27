@@ -19,7 +19,6 @@ class Alumno(models.Model):
     id_alumno = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, default="")
     apellido = models.CharField(max_length=50, default="")
-    contrasenia = models.CharField(max_length=100, default="")
     dni = models.CharField(max_length=20, unique=True, default="")
     email = models.EmailField(default="")
     anio_universitario = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)], default=1)

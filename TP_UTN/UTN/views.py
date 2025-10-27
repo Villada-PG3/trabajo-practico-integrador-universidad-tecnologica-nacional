@@ -1,7 +1,8 @@
 from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
-from .models import Alumno, Carrera, Curso, Materia, MateriaCurso, Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion
+from .models import Alumno, Carrera, Curso, Materia
 from django.db.models import Q
 from django.contrib.auth import logout
 from django.shortcuts import redirect
@@ -20,10 +21,42 @@ class AlumnoDetailView(DetailView):
 
 class AlumnoCreateView(CreateView):
     model = Alumno
-    # Usa los campos que realmente quieres que el usuario ingrese
-    fields = ['nombre', 'apellido', 'dni', 'email', 'contrasenia', 'anio_universitario', 'carrera']
+    fields = ['dni', 'anio_universitario', 'carrera']
     template_name = 'alumno/alumno_form.html'
     success_url = reverse_lazy('inicio')   
+
+    def get_alumno_instance(self):
+        """
+        Return the Alumno instance for the current user if it exists,
+        otherwise return None.
+        """
+        try:
+            return getattr(self.request.user, 'alumno', None)
+        except Exception:
+            return None
+        
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        instance = self.get_alumno_instance()
+        if instance is not None:
+            kwargs['instance'] = instance
+        return kwargs
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+
+        # make sure the Alumno is linked to the logged-in user
+        if obj.user is None:
+            obj.user = self.request.user
+        obj.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        # helpful debug output while you're testing
+        print("=== FORM INVALID ===")
+        print("POST:", self.request.POST)
+        print("Errors:", form.errors.as_json())
+        return super().form_invalid(form)
 
 class AlumnoUpdateView(UpdateView):
     model = Alumno

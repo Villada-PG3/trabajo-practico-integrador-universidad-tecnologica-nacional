@@ -19,56 +19,81 @@
 <div class="form-container">
     <h2>Registro de Alumnos</h2>
     
-    <form method="post">
+    <form method="post" id="alumno-form">
         
         {% csrf_token %}
+        
+        {# Show non-field errors (why server returned 200 instead of redirect) #}
+        {% if form and form.non_field_errors %}
+            <div class="form-errors" style="color: red; margin-bottom: 12px;">
+                {% for err in form.non_field_errors %}
+                    <div>{{ err }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-        <div class="form-group">
-            <label for="id_nombre" class="required">Nombre</label>
-            <input type="text" id="id_nombre" name="nombre" placeholder="Ingrese nombre" required>
-        </div>
-
-        <div class="form-group">
-            <label for="id_apellido" class="required">Apellido</label>
-            <input type="text" id="id_apellido" name="apellido" placeholder="Ingrese apellido" required>
-        </div>
-
-        <div class="form-group">
-            <label for="id_contrasenia" class="required">Contrasenia</label>
-            <input type="password" id="id_contrasenia" name="contrasenia" placeholder="Ingrese contrasenia" required>
-        </div>
-
+        {% if alumno %}
+            <input type="hidden" name="alumno_id" value="{{ alumno.pk }}">
+        {% endif %}
+        
         <div class="form-group">
             <label for="id_dni" class="required">Dni</label>
-            <input type="text" id="id_dni" name="dni" placeholder="Ingrese dni" required>
-        </div>
-
-        <div class="form-group">
-            <label for="id_email" class="required">Email</label>
-            <input type="email" id="id_email" name="email" placeholder="usuario@universidad.edu" required>
+            <input type="text" id="id_dni" name="dni" placeholder="Ingrese dni" required
+                   value="{% if form and form.dni.value %}{{ form.dni.value }}{% elif alumno %}{{ alumno.dni }}{% else %}{{ request.POST.dni|default:'' }}{% endif %}">
+            {% if form and form.dni.errors %}
+                <div class="field-error" style="color: red; margin-top:6px;">
+                    {% for e in form.dni.errors %} <div>{{ e }}</div> {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <div class="form-group">
             <label for="id_anio_universitario" class="required">Año universitario</label>
-            <input type="number" id="id_anio_universitario" name="anio_universitario" placeholder="Ingrese año universitario" required min="1" max="10">
+            <input type="number" id="id_anio_universitario" name="anio_universitario" placeholder="Ingrese año universitario" required min="1" max="10"
+                   value="{% if form and form.anio_universitario.value %}{{ form.anio_universitario.value }}{% elif alumno %}{{ alumno.anio_universitario }}{% else %}{{ request.POST.anio_universitario|default:'' }}{% endif %}">
+            {% if form and form.anio_universitario.errors %}
+                <div class="field-error" style="color: red; margin-top:6px;">
+                    {% for e in form.anio_universitario.errors %} <div>{{ e }}</div> {% endfor %}
+                </div>
+            {% endif %}
         </div>
         
         <div class="form-group">
             <label for="id_carrera" class="required">Carrera</label>
-            {% for field in form %}
-                {% if field.name == 'carrera' %}
-                    {{ field }}
+            {% if form and form.carrera %}
+                {{ form.carrera }}
+                {% if form.carrera.errors %}
+                    <div class="field-error" style="color: red; margin-top:6px;">
+                        {% for e in form.carrera.errors %} <div>{{ e }}</div> {% endfor %}
+                    </div>
                 {% endif %}
-            {% endfor %}
-            
-            </div>
+            {% else %}
+                {% if alumno and alumno.carrera %}
+                    <div>{{ alumno.carrera }}</div>
+                    <input type="hidden" name="carrera" value="{{ alumno.carrera.pk }}">
+                {% else %}
+                    <!-- Si no hay form ni alumno, dejar el campo vacío -->
+                    <select id="id_carrera" name="carrera">
+                        <option value="">-- seleccione --</option>
+                    </select>
+                {% endif %}
+            {% endif %}
+        </div>
 
-
-        <button type="submit">
+        <button type="submit" id="submit-btn">
             Registrar
         </button>
     </form>
 </div>
+
+{# Prevent accidental double submits and give feedback #}
+<script>
+document.getElementById('alumno-form').addEventListener('submit', function(e){
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Registrando...';
+});
+</script>
 
 </body>
 </html>
