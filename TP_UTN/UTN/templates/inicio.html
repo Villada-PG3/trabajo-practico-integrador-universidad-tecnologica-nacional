@@ -90,7 +90,11 @@
                     <h1 class="text-4xl md:text-5xl font-bold mb-6">Formando los líderes tecnológicos del mañana</h1>
                     <p class="text-lg mb-8 text-gray-700">Más de 70 años de excelencia académica en ingeniería y tecnología. Únete a nuestra comunidad de innovadores y creadores.</p>
                     <div class="flex space-x-4">
-                        <a href="#" class="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition duration-300">Postularme</a>
+                        {% if user.is_authenticated and user.alumno%}
+                        <a href="{% url 'materia_reinscripcion' user.alumno.pk %}" class="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition duration-300">Reinscribirse</a>
+                        {% else %}
+                        <a href="{% url 'social:begin' 'google-oauth2' %}?next=/post-login-check/&prompt=select_account" class="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition duration-300">Reinscribirse</a>
+                        {% endif %}
                         <a href="carreras/" class="border border-black px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition duration-300">Ver carreras</a>
                     </div>
                 </div>
