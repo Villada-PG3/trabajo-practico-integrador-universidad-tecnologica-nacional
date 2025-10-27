@@ -61,30 +61,71 @@
 </head>
 <body class="min-h-screen bg-background text-foreground">
     <!-- Added complete header navigation matching the reference design -->
-    <header class="bg-primary text-primary-foreground shadow-sm border-b border-border">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-4">
-                    <div class="flex-shrink-0">
-                        <h1 class="text-xl font-bold">Sistema Universitario</h1>
+        <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <img src="https://tse2.mm.bing.net/th/id/OIP.cqBKPdnHYvuLe2CUvTk8EwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="UTN Logo" class="h-12 mr-4">
+                    <div>
+                        <h1 class="text-xl font-bold">Universidad Tecnológica Nacional</h1>
+                        <p class="text-sm text-gray-600">Excelencia en educación tecnológica</p>
                     </div>
                 </div>
-                <nav class="hidden md:block">
-                    <div class="flex items-center space-x-4">
-                        <a href="#" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            Inicio
+                <div class="hidden md:flex space-x-8">
+                    <a href="#" class="nav-link font-medium">Inicio</a>
+                    {% if user.is_authenticated and user.alumno%}
+                        <div class="hidden md:flex items-center space-x-3">
+                            <a href="{% url 'alumno_detail' user.alumno.pk %}" class="nav-link font-medium flex items-center space-x-2">
+                                <span>{{ user.get_full_name|default:user.username }}</span>
+                                {% if user.social_auth.exists %}
+                                    {% for sa in user.social_auth.all %}
+                                        {% if sa.provider == 'google-oauth2' %}
+                                            {% with sa.extra_data.picture as picture %}
+                                                {% if picture %}
+                                                    <img src="{{ picture }}" alt="avatar" style="width:32px;height:32px;border-radius:50%;">
+                                                {% else %}
+                                                    <script>
+                                                        fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                                                            headers: {
+                                                                'Authorization': 'Bearer {{ sa.extra_data.access_token }}'
+                                                            }
+                                                        })
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            if (data.picture) {
+                                                                document.getElementById('user-avatar').src = data.picture;
+                                                            }
+                                                        });
+                                                    </script>
+                                                    <img id="user-avatar" src="" alt="avatar" style="width:32px;height:32px;border-radius:50%;">
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {% if not user.social_auth.exists %}
+                                    <a href="{% url 'social:begin' 'google-oauth2' %}?next=/post-login-check/&prompt=select_account" class="nav-link font-medium">
+                                        Iniciar Sesión
+                                    </a>
+                                {% endif %}
+                            </a>
+                            <a href="{% url 'logout' %}" class="nav-link font-medium text-red-600 hover:text-red-700">
+                                Cerrar Sesión
+                            </a>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'social:begin' 'google-oauth2' %}?next=/post-login-check/&prompt=select_account" class="nav-link font-medium">
+                            Iniciar Sesión
                         </a>
-                        <a href="{% url 'social:begin' 'google-oauth2' %}?next=/post-login-check/&prompt=select_account" class="text-primary-foreground hover:text-primary-foreground/80 px-3 py-2 rounded-md text-sm font-medium bg-primary-foreground/10 transition-colors">
-                            Alumnos
-                        </a>
-                        <a href="#" class="text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            Profesores
-                        </a>
-                    </div>
-                </nav>
+                    {% endif %}
+                    <a href="/carreras/" class="nav-link font-medium">Carreras</a>
+                </div>
+                <button class="md:hidden focus:outline-none">
+                    <i data-feather="menu"></i>
+                </button>
             </div>
         </div>
-    </header>
+    </nav>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Added breadcrumb navigation -->
@@ -95,7 +136,6 @@
                         <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
                         </svg>
-                        Lista de Alumnos
                     </a>
                 </li>
                 <li>

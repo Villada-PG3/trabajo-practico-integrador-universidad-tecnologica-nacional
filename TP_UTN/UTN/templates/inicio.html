@@ -27,9 +27,9 @@
                 </div>
                 <div class="hidden md:flex space-x-8">
                     <a href="#" class="nav-link font-medium">Inicio</a>
-                    {% if user.is_authenticated %}
+                    {% if user.is_authenticated and user.alumno%}
                         <div class="hidden md:flex items-center space-x-3">
-                            <a href="#" class="nav-link font-medium flex items-center space-x-2">
+                            <a href="{% url 'alumno_detail' user.alumno.pk %}" class="nav-link font-medium flex items-center space-x-2">
                                 <span>{{ user.get_full_name|default:user.username }}</span>
                                 {% if user.social_auth.exists %}
                                     {% for sa in user.social_auth.all %}
