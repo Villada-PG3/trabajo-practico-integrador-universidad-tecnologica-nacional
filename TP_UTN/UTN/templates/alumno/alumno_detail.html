@@ -6,6 +6,7 @@
     <title>Perfil de {{ object }} - Sistema Universitario</title>
     <!-- Updated to use DM Sans font and Tailwind config matching the reference design -->
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://tse2.mm.bing.net/th/id/OIP.cqBKPdnHYvuLe2CUvTk8EwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -132,7 +133,7 @@
         <nav class="flex mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-3">
                 <li class="inline-flex items-center">
-                    <a href="{% url 'social:begin' 'google-oauth2' %}?next=/post-login-check/&prompt=select_account" class="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-accent transition-colors">
+                    <a href="{% url 'inicio' %}" class="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-accent transition-colors">
                         <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
                         </svg>
