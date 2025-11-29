@@ -9,6 +9,7 @@ from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 
 def logout_view(request):
     logout(request)
@@ -167,18 +168,26 @@ def reinscribir_materia(request, alumno_id, materia_id):
 
     if ya_existe:
         messages.warning(request, "Ya estás reinscripto en esta materia.")
-        return redirect('materia_reinscripcion', sigla=materia_id)
+        return redirect('materia_reinscripcion', alumno_id=alumno.id_alumno)
 
-    curso_id = request.POST.get('curso_id')  # Viene desde el botón elegido
+    curso_id = request.POST.get('curso_id')
     materia_curso = get_object_or_404(MateriaCurso, id_materia_curso=curso_id)
 
-    AlumnoMateriaCurso.objects.create(
+    # 🚨 Validación de choque de horarios
+    inscripcion = AlumnoMateriaCurso(
         alumno=alumno,
         materia_curso=materia_curso
     )
 
-    messages.success(request, f"Te reinscribiste a {materia.nombre} correctamente.")
+    try:
+        inscripcion.full_clean()  # 🔥 EJECUTA clean() y valida horarios
+        inscripcion.save()
+        messages.success(request, f"Te reinscribiste a {materia.nombre} correctamente.")
+    except ValidationError as e:
+        messages.error(request, e.messages[0])
+
     return redirect('materia_reinscripcion', alumno_id=alumno.id_alumno)
+
 
 def cancelar_reinscripcion(request, alumno_id, materia_id):
     alumno = get_object_or_404(Alumno, id_alumno=alumno_id)

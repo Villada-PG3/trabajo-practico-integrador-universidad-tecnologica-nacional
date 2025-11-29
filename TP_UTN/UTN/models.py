@@ -3,6 +3,8 @@ from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import date
 from django.conf import settings
+import datetime
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -78,35 +80,73 @@ class MateriaCurso(models.Model):
     horario = models.CharField(max_length=50)
     modulo = models.CharField(max_length=50)
     grupo = models.CharField(max_length=50, null=True, blank=True)
+    def parse_horario(self):
+        """
+        Devuelve:
+        - lista de días  -> ["Lunes","Miércoles"]
+        - hora_inicio    -> time
+        - hora_fin       -> time
+        """
 
-    def __str__(self):
-        return f"{self.curso.nombre} - {self.materia.nombre} - {self.horario}"
+        partes = self.horario.split(" ")
+        # Última parte es el rango horario "08:00-10:00"
+        rango = partes[-1]
+        dias_str = " ".join(partes[:-1])
+
+        # Parsear días (puede venir "Lunes y Miércoles")
+        dias = [d.strip() for d in dias_str.split("y")]
+
+        # Parsear horas
+        inicio_str, fin_str = rango.split("-")
+        h_inicio = datetime.datetime.strptime(inicio_str, "%H:%M").time()
+        h_fin = datetime.datetime.strptime(fin_str, "%H:%M").time()
+
+        return dias, h_inicio, h_fin
 
 class Inscripcion(models.Model):
     ESTADOS_INSCRIPCION = [
-    ('inscripto', 'Inscripto'),
-    ('finalizado', 'Finalizado'),
-    ('anulado', 'Anulado'),
-]
-    estado = models.CharField(max_length=20, choices=ESTADOS_INSCRIPCION, default='inscripto')
+        ('inscripto', 'Inscripto'),
+        ('finalizado', 'Finalizado'),
+        ('anulado', 'Anulado'),
+    ]
 
     id_codigo_alfanumerico = models.AutoField(primary_key=True)
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='inscripciones')
-    materia = models.ForeignKey(MateriaCurso, on_delete=models.CASCADE, related_name='inscripciones', default=None)
-    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='inscripciones', default=None)
+    materia_curso = models.ForeignKey(MateriaCurso, on_delete=models.CASCADE, related_name='inscripciones')
     estado = models.CharField(max_length=20, choices=ESTADOS_INSCRIPCION, default='inscripto')
     descripcion = models.TextField(blank=True)
 
     def __str__(self):
-        return f"{self.profesor} - {self.curso}"
+        return f"{self.alumno.nombre} {self.alumno.apellido} – {self.materia_curso}"
 
-class AlumnoMateriaCurso(models.Model):
-    id_alumno_materia_curso = models.AutoField(primary_key=True)
-    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='materias_curso')
-    materia_curso = models.ForeignKey(MateriaCurso, on_delete=models.CASCADE, related_name='alumnos')
+    # Validación de choque horario
+    def clean(self):
+        nueva_materia = self.materia_curso
+        nuevos_dias, nuevo_inicio, nuevo_fin = nueva_materia.parse_horario()
 
-    def __str__(self):
-        return self.nombre
+        inscripciones_existentes = Inscripcion.objects.filter(
+            alumno=self.alumno,
+            estado="inscripto"
+        ).exclude(pk=self.pk)
+
+        for insc in inscripciones_existentes:
+            materia = insc.materia_curso
+            dias, inicio, fin = materia.parse_horario()
+
+            for dia in dias:
+                if dia in nuevos_dias:
+                    if not (nuevo_fin <= inicio or nuevo_inicio >= fin):
+                        raise ValidationError(
+                            f"Conflicto de horario: ya estás inscripto en "
+                            f"{materia.materia.nombre} el día {dia} "
+                            f"de {inicio.strftime('%H:%M')} a {fin.strftime('%H:%M')}."
+                        )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+
 
 class CondicionFinal(models.Model):
     id_condicion_final = models.AutoField(primary_key=True)
@@ -161,20 +201,6 @@ class Evaluacion(models.Model):
     def __str__(self):
         return f"{self.tipo_evaluacion} - {self.nota}"
 
-class Inscripcion(models.Model):
-    ESTADOS_INSCRIPCION = [
-        ('inscripto', 'Inscripto'),
-        ('finalizado', 'Finalizado'),
-        ('anulado', 'Anulado'),
-    ]
-    id_codigo_alfanumerico = models.AutoField(primary_key=True)
-    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='inscripciones')
-    materia_curso = models.ForeignKey(MateriaCurso, on_delete=models.CASCADE, related_name='inscripciones')
-    estado = models.CharField(max_length=20, choices=ESTADOS_INSCRIPCION, default='inscripto')
-    descripcion = models.TextField(blank=True)
-
-    def __str__(self):
-        return f"{self.nombre} {self.apellido}"
 
 class ProfesorCurso(models.Model):
     id_profesor_curso = models.AutoField(primary_key=True)
@@ -191,6 +217,24 @@ class AlumnoMateriaCurso(models.Model):
 
     class Meta:
         unique_together = ('alumno', 'materia_curso')
+
+    def clean(self):
+        # Obtener el horario y el turno de la materia que quiere inscribir
+        nuevo_horario = self.materia_curso.horario
+        nuevo_turno = self.materia_curso.turno_cursado
+
+        # Buscar materias donde ya está inscripto en ese turno + horario
+        materias_existentes = AlumnoMateriaCurso.objects.filter(
+            alumno=self.alumno,
+            materia_curso__horario=nuevo_horario,
+            materia_curso__turno_cursado=nuevo_turno
+        )
+
+        # Si existen, no puede inscribirse
+        if materias_existentes.exists():
+            raise ValidationError(
+                "Ya estás inscripto en una materia en el mismo día y horario."
+            )
 
     def __str__(self):
         return f"{self.alumno} en {self.materia_curso}"
