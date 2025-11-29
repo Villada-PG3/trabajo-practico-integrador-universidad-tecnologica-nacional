@@ -33,6 +33,42 @@ class InicioView(TemplateView):
 class AlumnoDetailView(DetailView):
     model = Alumno
     template_name = 'alumno/alumno_detail.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        alumno = self.object
+
+        # Traigo todas las materias en las que está inscripto
+        inscripciones = alumno.materias_curso.select_related("materia_curso")
+
+        # Diccionario base
+        semana = {
+            "Lunes": [],
+            "Martes": [],
+            "Miércoles": [],
+            "Jueves": [],
+            "Viernes": [],
+            "Sábado": [],
+        }
+
+        for ins in inscripciones:
+            mc = ins.materia_curso
+
+            # Separar "Lunes 18:00 - 20:00"
+            try:
+                dia, horas = mc.horario.split(" ", 1)
+            except:
+                continue  # si el formato falla no rompe nada
+
+            semana[dia].append({
+                "materia": mc.materia.nombre,
+                "curso": mc.curso.nombre,
+                "horario": horas,
+                "turno": mc.turno_cursado,
+            })
+
+        context["semana"] = semana
+        return context 
 
 class AlumnoCreateView(CreateView):
     model = Alumno

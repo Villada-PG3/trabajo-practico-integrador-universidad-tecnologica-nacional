@@ -237,6 +237,45 @@
                 </a>
             </div>
         </div>
+        <div class="bg-card rounded-lg border border-border shadow-sm p-6 mt-10">
+    <h2 class="text-2xl font-bold mb-6 text-foreground">Horario Semanal</h2>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full border border-border text-sm">
+            <thead class="bg-primary/10">
+                <tr>
+                    <th class="border border-border px-4 py-2">Día</th>
+                    <th class="border border-border px-4 py-2">Materias</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dia, materias in semana.items %}
+                <tr class="hover:bg-muted/50 transition">
+                    <td class="border border-border px-4 py-2 font-semibold w-32">{{ dia }}</td>
+                    <td class="border border-border px-4 py-2">
+                        {% if materias %}
+                            <ul class="space-y-2">
+                                {% for m in materias %}
+                                    <li class="bg-secondary/10 p-3 rounded-lg shadow-sm">
+                                        <p class="font-bold text-secondary">{{ m.materia }}</p>
+                                        <p class="text-sm text-muted-foreground">
+                                            {{ m.horario }} —
+                                            Turno {{ m.turno|title }}
+                                        </p>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <span class="text-muted-foreground">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
     </main>
 
     <!-- Added footer matching the reference design -->
