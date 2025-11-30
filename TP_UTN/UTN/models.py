@@ -102,6 +102,8 @@ class MateriaCurso(models.Model):
         h_fin = datetime.datetime.strptime(fin_str, "%H:%M").time()
 
         return dias, h_inicio, h_fin
+    def __str__(self):
+        return self.materia.nombre
 
 class Inscripcion(models.Model):
     ESTADOS_INSCRIPCION = [
@@ -210,16 +212,38 @@ class ProfesorCurso(models.Model):
     def __str__(self):
         return f"hace un html con el estilo del anterior y que sea simple con un titulo que yo voy a ingresar una descripcion que yo tmb voy a ingresar y un boton de insribirse y eso ademas que debajo de la descripcion yo agrego el horario los turnos y los profesself.profesor - {self.curso}"
     
+from django.core.exceptions import ValidationError
+from django.db import models
+
 class AlumnoMateriaCurso(models.Model):
     id_alumno_materia_curso = models.AutoField(primary_key=True)
-    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='materias_curso')
-    materia_curso = models.ForeignKey(MateriaCurso, on_delete=models.CASCADE, related_name='alumnos')
+
+    alumno = models.ForeignKey(
+        Alumno,
+        on_delete=models.CASCADE,
+        related_name='materias_curso'
+    )
+
+    materia_curso = models.ForeignKey(
+        MateriaCurso,
+        on_delete=models.CASCADE,
+        related_name='alumnos'
+    )
+
+    # --- Nuevos campos ---
+    nota = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        help_text="Nota del 1 al 10"
+    )
+
+    aprobado = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('alumno', 'materia_curso')
 
     def clean(self):
-        # Obtener el horario y el turno de la materia que quiere inscribir
+        # Horario y turno de la materia que intenta inscribir
         nuevo_horario = self.materia_curso.horario
         nuevo_turno = self.materia_curso.turno_cursado
 
@@ -228,13 +252,19 @@ class AlumnoMateriaCurso(models.Model):
             alumno=self.alumno,
             materia_curso__horario=nuevo_horario,
             materia_curso__turno_cursado=nuevo_turno
-        )
+        ).exclude(pk=self.pk)  # <-- IMPORTANTE para evitar conflictos al editar
 
-        # Si existen, no puede inscribirse
         if materias_existentes.exists():
             raise ValidationError(
                 "Ya estás inscripto en una materia en el mismo día y horario."
             )
+
+    def save(self, *args, **kwargs):
+        # Si hay nota → se calcula automáticamente si aprobó
+        if self.nota is not None:
+            self.aprobado = self.nota >= 6
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.alumno} en {self.materia_curso}"

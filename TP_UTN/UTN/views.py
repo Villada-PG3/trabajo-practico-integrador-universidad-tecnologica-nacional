@@ -30,15 +30,16 @@ class InicioView(TemplateView):
     template_name = "inicio.html"
 # Views for Alumno
 
-class AlumnoDetailView(DetailView):
+class AlumnoDetailView(DetailView): 
     model = Alumno
     template_name = 'alumno/alumno_detail.html'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         alumno = self.object
 
-        # Traigo todas las materias en las que está inscripto
+        # Traigo todas las materias inscriptas
         inscripciones = alumno.materias_curso.select_related("materia_curso")
 
         # Diccionario base
@@ -54,21 +55,30 @@ class AlumnoDetailView(DetailView):
         for ins in inscripciones:
             mc = ins.materia_curso
 
-            # Separar "Lunes 18:00 - 20:00"
+            # Usamos el parser que vos ya tenés
             try:
-                dia, horas = mc.horario.split(" ", 1)
+                dias, hora_inicio, hora_fin = mc.parse_horario()
             except:
-                continue  # si el formato falla no rompe nada
+                continue  # si falla el parseo, no rompe nada
 
-            semana[dia].append({
+            # Datos que se muestran en la tabla
+            entrada = {
                 "materia": mc.materia.nombre,
-                "curso": mc.curso.nombre,
-                "horario": horas,
-                "turno": mc.turno_cursado,
-            })
+                "horario": f"{hora_inicio.strftime('%H:%M')}–{hora_fin.strftime('%H:%M')}",
+                "turno": mc.turno_cursado.capitalize(),
+                "nota": ins.nota,
+                "aprobado": ins.aprobado,
+            }
+
+            # Insertar la misma materia en todos los días del horario
+            for dia in dias:
+                dia = dia.strip()  # evitar espacios que rompan la clave
+                if dia in semana:
+                    semana[dia].append(entrada)
 
         context["semana"] = semana
-        return context 
+        return context
+
 
 class AlumnoCreateView(CreateView):
     model = Alumno

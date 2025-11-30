@@ -259,10 +259,23 @@
                                     <li class="bg-secondary/10 p-3 rounded-lg shadow-sm">
                                         <p class="font-bold text-secondary">{{ m.materia }}</p>
                                         <p class="text-sm text-muted-foreground">
-                                            {{ m.horario }} —
-                                            Turno {{ m.turno|title }}
+                                             {{ m.horario }} — Turno {{ m.turno|title }}
                                         </p>
+
+                                    {% if m.nota %}
+                                        <p class="mt-1 text-sm">
+                                            Nota: <span class="font-bold">{{ m.nota }}</span> —
+                                            {% if m.aprobado %}
+                                                <span class="text-green-600 font-semibold">Aprobado</span>
+                                             {% else %}
+                                                <span class="text-red-600 font-semibold">No aprobado</span>
+                                            {% endif %}
+                                        </p>
+                                    {% else %}          
+                                        <p class="mt-1 text-sm text-muted-foreground">Sin nota</p>
+                                    {% endif %}
                                     </li>
+
                                 {% endfor %}
                             </ul>
                         {% else %}
