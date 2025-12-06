@@ -1,52 +1,55 @@
-"""
-URL configuration for TP_UTN project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
-from django.contrib.auth.views import LogoutView
-from django.urls import path, include
-from UTN.views import logout_view
+from django.urls import path
+
 from UTN.views import (
-    AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView, AlumnoDeleteView, CarreraListView,
-    MateriaListView, MateriaReinscripcionView, cancelar_reinscripcion, reinscribir_materia,
-    InicioView, CarreraListView, Ingenieria_civil, Ingenieria_electronica, Ingenieria_energia,
-    Ingenieria_industrial, Ingenieria_mecanica, Ingenieria_metalurgica, Ingenieria_quimica, Ingenieria_sistemas,
-    PostLoginCheckView
+    # Login/registro
+    login_view, register_view, logout_view,
+
+    # Vistas principales
+    InicioView, PostLoginCheckView,
+
+    # Alumno
+    AlumnoDetailView, AlumnoCreateView, AlumnoUpdateView,
+    AlumnoDeleteView,
+
+    # Materias
+    MateriaListView, MateriaReinscripcionView,
+    cancelar_reinscripcion, reinscribir_materia,
+
+    # Carreras
+    CarreraListView,
+    Ingenieria_civil, Ingenieria_electronica, Ingenieria_energia,
+    Ingenieria_industrial, Ingenieria_mecanica, Ingenieria_metalurgica,
+    Ingenieria_quimica, Ingenieria_sistemas
 )
 
-class CustomLogoutView(LogoutView):
-    def get(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
 
 urlpatterns = [
-    path('auth/', include('social_django.urls', namespace='social')),
-    path('logout/', logout_view, name='logout'),
+    # Login / Registro
+    path("login/", login_view, name="login"),
+    path("register/", register_view, name="register"),
+    path("logout/", logout_view, name="logout"),
+
+    # Admin Django
     path('admin/', admin.site.urls),
-    path("", InicioView.as_view(), name="inicio"), 
+
+    # Inicio
+    path("", InicioView.as_view(), name="inicio"),
     path('post-login-check/', PostLoginCheckView.as_view(), name='post_login_check'),
-    # Alumno URLs
+
+    # Alumno
     path('alumnos/<int:pk>/', AlumnoDetailView.as_view(), name='alumno_detail'),
     path('alumnos/create/', AlumnoCreateView.as_view(), name='alumno_create'),
     path('alumnos/<int:pk>/update/', AlumnoUpdateView.as_view(), name='alumno_update'),
     path('alumnos/<int:pk>/delete/', AlumnoDeleteView.as_view(), name='alumno_delete'),
-    # Materia URLs
+
+    # Materias / reinscripción
     path('materias/', MateriaListView.as_view(), name='materia_list'),
     path('reinscripcion/<int:alumno_id>/', MateriaReinscripcionView.as_view(), name='materia_reinscripcion'),
     path('reinscripcion/<int:alumno_id>/materia/<path:materia_id>/confirmar/', reinscribir_materia, name='materia_reinscribir'),
     path('reinscripcion/<int:alumno_id>/materia/<path:materia_id>/cancelar/', cancelar_reinscripcion, name='cancelar_reinscripcion'),
-    #Carrera URLs
+
+    # Carreras
     path('carreras/', CarreraListView.as_view(), name='carrera_list'),
     path('carreras/ingenieria_civil/', Ingenieria_civil.as_view(), name='Ingenieria_civil'),
     path('carreras/ingenieria_electronica/', Ingenieria_electronica.as_view(), name='Ingenieria_electronica'),
@@ -56,5 +59,4 @@ urlpatterns = [
     path('carreras/ingenieria_metalurgica/', Ingenieria_metalurgica.as_view(), name='Ingenieria_metalurgica'),
     path('carreras/ingenieria_quimica/', Ingenieria_quimica.as_view(), name='Ingenieria_quimica'),
     path('carreras/ingenieria_sistemas/', Ingenieria_sistemas.as_view(), name='ingenieria_sistemas'),
-    
 ]

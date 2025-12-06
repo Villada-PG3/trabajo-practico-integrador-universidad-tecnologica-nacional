@@ -10,246 +10,137 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="{% static 'UTN/css/style2.css' %}">
     <link rel="icon" href="https://tse2.mm.bing.net/th/id/OIP.cqBKPdnHYvuLe2CUvTk8EwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" type="image/x-icon">
 </head>
 <body class="bg-white text-black font-sans">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <img src="https://tse2.mm.bing.net/th/id/OIP.cqBKPdnHYvuLe2CUvTk8EwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="UTN Logo" class="h-12 mr-4">
-                    <div>
-                        <h1 class="text-xl font-bold">Universidad Tecnológica Nacional</h1>
-                        <p class="text-sm text-gray-600">Excelencia en educación tecnológica</p>
-                    </div>
+
+<!-- NAV -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="https://tse2.mm.bing.net/th/id/OIP.cqBKPdnHYvuLe2CUvTk8EwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="UTN Logo" class="h-12 mr-4">
+                <div>
+                    <h1 class="text-xl font-bold">Universidad Tecnológica Nacional</h1>
+                    <p class="text-sm text-gray-600">Excelencia en educación tecnológica</p>
                 </div>
-                <div class="hidden md:flex space-x-8">
-                    <a href="#" class="nav-link font-medium">Inicio</a>
-                    {% if user.is_authenticated and user.alumno%}
-                        <div class="hidden md:flex items-center space-x-3">
-                            <a href="{% url 'alumno_detail' user.alumno.pk %}" class="nav-link font-medium flex items-center space-x-2">
-                                <span>{{ user.get_full_name|default:user.username }}</span>
-                                {% if user.social_auth.exists %}
-                                    {% for sa in user.social_auth.all %}
-                                        {% if sa.provider == 'google-oauth2' %}
-                                            {% with sa.extra_data.picture as picture %}
-                                                {% if picture %}
-                                                    <img src="{{ picture }}" alt="avatar" style="width:32px;height:32px;border-radius:50%;">
-                                                {% else %}
-                                                    <script>
-                                                        fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                                                            headers: {
-                                                                'Authorization': 'Bearer {{ sa.extra_data.access_token }}'
-                                                            }
-                                                        })
-                                                        .then(response => response.json())
-                                                        .then(data => {
-                                                            if (data.picture) {
-                                                                document.getElementById('user-avatar').src = data.picture;
-                                                            }
-                                                        });
-                                                    </script>
-                                                    <img id="user-avatar" src="" alt="avatar" style="width:32px;height:32px;border-radius:50%;">
-                                                {% endif %}
-                                            {% endwith %}
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                                {% if not user.social_auth.exists %}
-                                    <a href="{% url 'social:begin' 'google-oauth2' %}?next=/post-login-check/&prompt=select_account" class="nav-link font-medium">
-                                        Iniciar Sesión
-                                    </a>
-                                {% endif %}
-                            </a>
-                            <a href="{% url 'logout' %}" class="nav-link font-medium text-red-600 hover:text-red-700">
-                                Cerrar Sesión
-                            </a>
-                        </div>
-                    {% else %}
-                        <a href="{% url 'social:begin' 'google-oauth2' %}?next=/post-login-check/&prompt=select_account" class="nav-link font-medium">
-                            Iniciar Sesión
+            </div>
+
+            <div class="hidden md:flex space-x-8">
+                <a href="/" class="nav-link font-medium">Inicio</a>
+
+                {% if user.is_authenticated %}
+                    {% if user.alumno %}
+                        <a href="{% url 'alumno_detail' user.alumno.pk %}" class="nav-link font-medium">
+                            {{ user.get_full_name|default:user.username }}
                         </a>
                     {% endif %}
-                    <a href="/carreras/" class="nav-link font-medium">Carreras</a>
-                </div>
-                <button class="md:hidden focus:outline-none">
-                    <i data-feather="menu"></i>
-                </button>
-            </div>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-gradient py-20">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-10 md:mb-0" data-aos="fade-right">
-                    <h1 class="text-4xl md:text-5xl font-bold mb-6">Formando los líderes tecnológicos del mañana</h1>
-                    <p class="text-lg mb-8 text-gray-700">Más de 70 años de excelencia académica en ingeniería y tecnología. Únete a nuestra comunidad de innovadores y creadores.</p>
-                    <div class="flex space-x-4">
-                        {% if user.is_authenticated and user.alumno%}
-                        <a href="{% url 'materia_reinscripcion' user.alumno.pk %}" class="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition duration-300">Reinscribirse</a>
-                        {% else %}
-                        <a href="{% url 'social:begin' 'google-oauth2' %}?next=/post-login-check/&prompt=select_account" class="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition duration-300">Reinscribirse</a>
-                        {% endif %}
-                        <a href="carreras/" class="border border-black px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition duration-300">Ver carreras</a>
-                    </div>
-                </div>
-                <div class="md:w-7/12" data-aos="fade-left">
-                <img src="https://cdn.lavoz.com.ar/sites/default/files/styles/width_1072/public/nota_periodistica/utn_1552087923.JPG" alt="Estudiantes UTN" class="w-full h-80 md:h-96 object-cover rounded-lg shadow-xl">
-                </div>
-            </div>
-        </div>
-    </section>
+                    <a href="{% url 'logout' %}" class="nav-link font-medium text-red-600 hover:text-red-700">
+                        Cerrar Sesión
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-link font-medium">Iniciar Sesión</a>
+                    <a href="{% url 'register' %}" class="nav-link font-medium">Registrarse</a>
+                {% endif %}
 
-    <!-- Stats Section -->
-    <section class="py-16 bg-gray-50">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-                <div class="p-6" data-aos="fade-up" data-aos-delay="100">
-                    <h2 class="text-4xl font-bold mb-2">70+</h2>
-                    <p class="text-gray-600">Años de experiencia</p>
-                </div>
-                <div class="p-6" data-aos="fade-up" data-aos-delay="200">
-                    <h2 class="text-4xl font-bold mb-2">30</h2>
-                    <p class="text-gray-600">Carreras de grado</p>
-                </div>
-                <div class="p-6" data-aos="fade-up" data-aos-delay="300">
-                    <h2 class="text-4xl font-bold mb-2">50K+</h2>
-                    <p class="text-gray-600">Estudiantes activos</p>
-                </div>
-                <div class="p-6" data-aos="fade-up" data-aos-delay="400">
-                    <h2 class="text-4xl font-bold mb-2">100+</h2>
-                    <p class="text-gray-600">Laboratorios especializados</p>
-                </div>
+                <a href="/carreras/" class="nav-link font-medium">Carreras</a>
             </div>
-        </div>
-    </section>
 
-    <!-- Programs Section -->
-    <section class="py-20">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-3xl font-bold mb-4">Nuestras Carreras</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">Programas académicos diseñados para las demandas del siglo XXI</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover transition duration-300" data-aos="fade-up" data-aos-delay="100">
-                    <img src="http://static.photos/technology/640x360/10" alt="Ingeniería" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2">Ingenierías</h3>
-                        <p class="text-gray-600 mb-4">Programas de ingeniería con enfoque práctico y tecnológico.</p>
-                        <a href="#" class="text-black font-medium flex items-center">
-                            Ver más <i data-feather="arrow-right" class="ml-2 w-4 h-4"></i>
+            <button class="md:hidden focus:outline-none">
+                <i data-feather="menu"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-gradient py-20">
+    <div class="container mx-auto px-6">
+        <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0" data-aos="fade-right">
+
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">
+                    Formando los líderes tecnológicos del mañana
+                </h1>
+                <p class="text-lg mb-8 text-gray-700">
+                    Más de 70 años de excelencia académica en ingeniería y tecnología.
+                </p>
+
+                <div class="flex space-x-4">
+                    {% if user.is_authenticated and user.alumno %}
+                        <a href="{% url 'materia_reinscripcion' user.alumno.pk %}"
+                           class="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition">
+                            Reinscribirse
                         </a>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover transition duration-300" data-aos="fade-up" data-aos-delay="200">
-                    <img src="http://static.photos/science/640x360/15" alt="Tecnicaturas" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2">Tecnicaturas</h3>
-                        <p class="text-gray-600 mb-4">Formación técnica especializada en áreas tecnológicas clave.</p>
-                        <a href="#" class="text-black font-medium flex items-center">
-                            Ver más <i data-feather="arrow-right" class="ml-2 w-4 h-4"></i>
+                    {% else %}
+                        <a href="{% url 'login' %}"
+                           class="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition">
+                            Reinscribirse
                         </a>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover transition duration-300" data-aos="fade-up" data-aos-delay="300">
-                    <img src="http://static.photos/workspace/640x360/20" alt="Posgrados" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2">Posgrados</h3>
-                        <p class="text-gray-600 mb-4">Especialización y maestrías para profesionales en tecnología.</p>
-                        <a href="#" class="text-black font-medium flex items-center">
-                            Ver más <i data-feather="arrow-right" class="ml-2 w-4 h-4"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                    {% endif %}
 
-    <!-- CTA Section -->
-    {% if not user.is_authenticated %}
-    <section class="py-20 bg-black text-white">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-3xl font-bold mb-6" data-aos="fade-up">¿Listo para comenzar tu futuro tecnológico?</h2>
-            <p class="text-gray-300 mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">La UTN te ofrece las herramientas para transformar tus ideas en realidad.</p>
-            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4" data-aos="fade-up" data-aos-delay="200">
-                <a href="{% url 'social:begin' 'google-oauth2' %}?next=/post-login-check/&prompt=select_account" class="bg-white text-black px-8 py-3 rounded-lg font-medium hover:bg-gray-200 transition duration-300">Iniciar Sesion</a>
-                <a href="#" class="border border-white px-8 py-3 rounded-lg font-medium hover:bg-gray-900 transition duration-300">Contactar admisiones</a>
-            </div>
-        </div>
-    </section>
-    {% endif %}
+                    <a href="/carreras/" class="border border-black px-6 py-3 rounded-lg hover:bg-gray-100 transition">
+                        Ver carreras
+                    </a>
+                </div>
 
-<!-- Footer -->
+            </div>
+
+            <div class="md:w-7/12" data-aos="fade-left">
+                <img src="https://cdn.lavoz.com.ar/sites/default/files/styles/width_1072/public/nota_periodistica/utn_1552087923.JPG"
+                     class="w-full h-80 md:h-96 object-cover rounded-lg shadow-xl">
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+{% if not user.is_authenticated %}
+<section class="py-20 bg-black text-white">
+    <div class="container mx-auto px-6 text-center">
+        <h2 class="text-3xl font-bold mb-6">¿Listo para comenzar tu futuro tecnológico?</h2>
+        <p class="text-gray-300 mb-8 max-w-2xl mx-auto">La UTN te ofrece herramientas para transformar tus ideas.</p>
+
+        <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <a href="{% url 'login' %}" class="bg-white text-black px-8 py-3 rounded-lg hover:bg-gray-200">
+                Iniciar Sesión
+            </a>
+            <a href="{% url 'register' %}" class="border border-white px-8 py-3 rounded-lg hover:bg-gray-900">
+                Registrarse
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- FOOTER -->
 <footer class="bg-gray-100 py-12">
-  <div class="container mx-auto px-6">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-lg font-bold mb-4">Universidad Tecnológica Nacional</h3>
+                <p class="text-gray-600">Excelencia en educación tecnológica desde 1959.</p>
+            </div>
 
-      <!-- Bloque Universidad -->
-      <div>
-        <h3 class="text-lg font-bold mb-4">Universidad Tecnológica Nacional</h3>
-        <p class="text-gray-600">Excelencia en educación tecnológica desde 1959.</p>
-        
-        <!-- Redes Sociales -->
-        <div class="flex space-x-4 mt-4">
-          <a href="https://www.facebook.com/utn.cordoba/?locale=es_LA" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-black">
-            <i data-feather="facebook"></i>
-          </a>
-          <a href="https://www.instagram.com/utn.cordoba/?hl=es" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-black">
-            <i data-feather="instagram"></i>
-          </a>
-          <a href="https://ar.linkedin.com/company/utn---facultad-regional-c-rdoba" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-black">
-            <i data-feather="linkedin"></i>
-          </a>
-          <a href="https://www.youtube.com/@utn.cordoba" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-black">
-            <i data-feather="youtube"></i>
-          </a>
+            <div>
+                <h3 class="text-lg font-bold mb-4">Ubicación</h3>
+                <p class="text-gray-600">Maestro M. Lopez esq. Cruz Roja Argentina S/N, Córdoba</p>
+            </div>
         </div>
-      </div>
 
-      <!-- Bloque Ubicación -->
-      <div>
-        <h3 class="text-lg font-bold mb-4">Ubicación</h3>
-        <ul class="space-y-2 text-gray-600">
-          <li class="flex items-center">
-            <i data-feather="map-pin" class="mr-2 w-4 h-4"></i>
-            Maestro M. Lopez esq, Cruz Roja Argentina S/N, Córdoba
-          </li>
-        </ul>
-      </div>
-
+        <div class="border-t border-gray-200 mt-12 pt-8 text-center text-gray-500">
+            © 2023 Universidad Tecnológica Nacional. Todos los derechos reservados.
+        </div>
     </div>
-
-    <!-- Pie de página -->
-    <div class="border-t border-gray-200 mt-12 pt-8 text-center text-gray-500">
-      <p>© 2023 Universidad Tecnológica Nacional. Todos los derechos reservados.</p>
-    </div>
-  </div>
 </footer>
 
-<!-- Scripts -->
 <script>
-  AOS.init({
-    duration: 800,
-    easing: 'ease-in-out',
-    once: true
-  });
-  feather.replace();
+    AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
+    feather.replace();
 </script>
 
-
-    <script>
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
-        feather.replace();
-    </script>
 </body>
 </html>
