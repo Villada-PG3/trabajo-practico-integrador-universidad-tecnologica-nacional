@@ -266,33 +266,33 @@ class CarreraListView(ListView):
 
 def register_view(request):
     if request.method == "POST":
-        username = request.POST.get("username")
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
         email = request.POST.get("email")
         password = request.POST.get("password")
-        password2 = request.POST.get("password2")
 
         # Validaciones básicas
-        if password != password2:
-            messages.error(request, "Las contraseñas no coinciden.")
-            return redirect("register")
+        if not first_name or not last_name or not email or not password:
+            messages.error(request, "Todos los campos son obligatorios.")
+            return render(request, "register.html")
 
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "Ese nombre de usuario ya existe.")
-            return redirect("register")
-
+        # Email ya registrado
         if User.objects.filter(email=email).exists():
-            messages.error(request, "Ese correo ya está registrado.")
-            return redirect("register")
+            messages.error(request, "Este email ya está registrado.")
+            return render(request, "register.html")
 
-        # Crear usuario
+        # Crear usuario con email como username
         user = User.objects.create_user(
-            username=username,
+            username=email,     # 👈 necesario para Django
+            first_name=first_name,
+            last_name=last_name,
             email=email,
             password=password
         )
+
         user.save()
 
-        messages.success(request, "Cuenta creada con éxito. Iniciá sesión.")
+        messages.success(request, "Registro exitoso. Ahora puedes iniciar sesión.")
         return redirect("login")
 
     return render(request, "register.html")
