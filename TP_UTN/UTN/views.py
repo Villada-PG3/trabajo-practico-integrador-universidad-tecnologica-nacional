@@ -16,6 +16,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.db import transaction
+from .form import RegistroForm
 
 
 # ============================
@@ -266,37 +268,49 @@ class CarreraListView(ListView):
 
 def register_view(request):
     if request.method == "POST":
-        first_name = request.POST.get("first_name")
-        last_name = request.POST.get("last_name")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
+        form = RegistroForm(request.POST)
+        if form.is_valid():
+            nombre = form.cleaned_data["nombre"]
+            apellido = form.cleaned_data["apellido"]
+            dni = form.cleaned_data["dni"]
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
+            anio = form.cleaned_data["anio_universitario"]
+            carrera = form.cleaned_data["carrera"]
 
-        # Validaciones básicas
-        if not first_name or not last_name or not email or not password:
-            messages.error(request, "Todos los campos son obligatorios.")
-            return render(request, "register.html")
+            # -----------------------------
+            # CREAR USUARIO (usa email como username)
+            # -----------------------------
+            user = User.objects.create_user(
+                username=email,   # obligatorio = evita tu error
+                email=email,
+                password=password,
+                first_name=nombre,
+                last_name=apellido
+            )
 
-        # Email ya registrado
-        if User.objects.filter(email=email).exists():
-            messages.error(request, "Este email ya está registrado.")
-            return render(request, "register.html")
+            # -----------------------------
+            # CREAR ALUMNO
+            # -----------------------------
+            Alumno.objects.create(
+                user=user,
+                nombre=nombre,
+                apellido=apellido,
+                dni=dni,
+                email=email,
+                anio_universitario=anio,
+                carrera=carrera
+            )
 
-        # Crear usuario con email como username
-        user = User.objects.create_user(
-            username=email,     # 👈 necesario para Django
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            password=password
-        )
+            # -----------------------------
+            # LOGEAR AUTOMÁTICAMENTE
+            # -----------------------------
+            login(request, user)
+            return redirect("inicio")  # o "/"
+    else:
+        form = RegistroForm()
 
-        user.save()
-
-        messages.success(request, "Registro exitoso. Ahora puedes iniciar sesión.")
-        return redirect("login")
-
-    return render(request, "register.html")
-
+    return render(request, "register.html", {"form": form})
 
 # --------------------------
 #  LOGIN

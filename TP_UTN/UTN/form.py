@@ -1,22 +1,25 @@
 from django import forms
 from .models import (
     Alumno, Carrera, Curso, Materia, MateriaCurso,
-    AlumnoCurso, Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion
+    Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion
 )
 
 
-class AlumnoForm(forms.ModelForm):
-    class Meta:
-        model = Alumno
-        fields = '__all__'
-        widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}),
-            'apellido': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apellido'}),
-            'dni': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'DNI'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Correo electrónico'}),
-            'anio_universitario': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 10}),
-            'carrera': forms.Select(attrs={'class': 'form-select'}),
-        }
+class RegistroForm(forms.Form):
+    nombre = forms.CharField(max_length=50)
+    apellido = forms.CharField(max_length=50)
+    dni = forms.CharField(max_length=20)
+    email = forms.EmailField()
+    password = forms.CharField(widget=forms.PasswordInput())
+    password2 = forms.CharField(widget=forms.PasswordInput(), label="Confirmar contraseña")
+    anio_universitario = forms.IntegerField(min_value=1, max_value=10)
+    carrera = forms.ModelChoiceField(queryset=Carrera.objects.all())
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get("password") != cleaned.get("password2"):
+            raise forms.ValidationError("Las contraseñas no coinciden.")
+        return cleaned
 
 
 class CursoForm(forms.ModelForm):
@@ -55,14 +58,7 @@ class MateriaCursoForm(forms.ModelForm):
         }
 
 
-class AlumnoCursoForm(forms.ModelForm):
-    class Meta:
-        model = AlumnoCurso
-        fields = '__all__'
-        widgets = {
-            'alumno': forms.Select(attrs={'class': 'form-select'}),
-            'curso': forms.Select(attrs={'class': 'form-select'}),
-        }
+
 
 
 class InscripcionForm(forms.ModelForm):

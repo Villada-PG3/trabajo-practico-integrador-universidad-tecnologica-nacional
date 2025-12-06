@@ -2,64 +2,80 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
     <title>Registro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+<body class="bg-white text-black flex justify-center items-center h-screen">
 
-    <div class="bg-white shadow-lg p-8 rounded-2xl w-full max-w-md">
-        <h2 class="text-3xl font-bold text-center text-blue-700 mb-6">
-            Crear Cuenta
+    <div class="bg-gray-100 p-8 rounded-xl shadow-xl w-full max-w-md border border-black">
+
+        <h2 class="text-3xl font-bold text-center text-black mb-6">
+            Crear cuenta de alumno
         </h2>
 
-        <form method="POST">
+        <form method="post">
             {% csrf_token %}
 
-            <label class="block mb-3">
-                <span class="font-semibold">Nombre</span>
-                <input required type="text" name="first_name"
-                       class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-700 focus:outline-none">
-            </label>
+            <!-- Nombre -->
+            <label class="block mb-1 font-semibold">Nombre</label>
+            <input type="text" name="nombre" required
+                   class="w-full mb-4 p-2 rounded bg-white border border-black text-black">
 
-            <label class="block mb-3">
-                <span class="font-semibold">Apellido</span>
-                <input required type="text" name="last_name"
-                       class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-700 focus:outline-none">
-            </label>
+            <!-- Apellido -->
+            <label class="block mb-1 font-semibold">Apellido</label>
+            <input type="text" name="apellido" required
+                   class="w-full mb-4 p-2 rounded bg-white border border-black text-black">
 
-            <label class="block mb-3">
-                <span class="font-semibold">Email</span>
-                <input required type="email" name="email"
-                       class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-700 focus:outline-none">
-            </label>
+            <!-- DNI -->
+            <label class="block mb-1 font-semibold">DNI</label>
+            <input type="text" name="dni" required
+                   class="w-full mb-4 p-2 rounded bg-white border border-black text-black">
 
-            <label class="block mb-4">
-                <span class="font-semibold">Contraseña</span>
-                <input required type="password" name="password"
-                       class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-700 focus:outline-none">
-            </label>
+            <!-- Email -->
+            <label class="block mb-1 font-semibold">Email</label>
+            <input type="email" name="email" required
+                   class="w-full mb-4 p-2 rounded bg-white border border-black text-black">
 
-            {% if messages %}
-                <div class="mb-4">
-                    {% for message in messages %}
-                        <p class="text-red-600 text-sm">{{ message }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
+            <!-- Año Universitario -->
+            <label class="block mb-1 font-semibold">Año universitario</label>
+            <input type="number" name="anio_universitario" min="1" max="10" required
+                   class="w-full mb-4 p-2 rounded bg-white border border-black text-black">
 
-            <button type="submit"
-                class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 rounded-lg transition">
+            <!-- Carrera -->
+            <label class="block mb-1 font-semibold">Carrera</label>
+            <select name="carrera" required
+                    class="w-full mb-4 p-2 rounded bg-white border border-black text-black">
+                {% for c in form.carrera.field.queryset %}
+                    <option value="{{ c.id }}">{{ c.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Password -->
+            <label class="block mb-1 font-semibold">Contraseña</label>
+            <input type="password" name="password" required
+                   class="w-full mb-4 p-2 rounded bg-white border border-black text-black">
+
+            <!-- Confirmación -->
+            <label class="block mb-1 font-semibold">Confirmar contraseña</label>
+            <input type="password" name="password2" required
+                   class="w-full mb-4 p-2 rounded bg-white border border-black text-black">
+
+
+            <button class="w-full bg-black hover:bg-gray-800 text-white py-2 rounded mt-2 text-lg font-semibold">
                 Registrarme
             </button>
+
         </form>
 
-        <p class="text-center mt-5 text-sm text-gray-600">
+        {% if form.errors %}
+            <p class="text-red-600 text-center mt-4">{{ form.errors }}</p>
+        {% endif %}
+
+        <p class="text-center mt-4">
             ¿Ya tenés cuenta?
-            <a href="{% url 'login' %}" class="text-blue-700 font-semibold hover:underline">
-                Iniciar sesión
-            </a>
+            <a href="{% url 'login' %}" class="font-semibold underline">Iniciar sesión</a>
         </p>
+
     </div>
 
 </body>
