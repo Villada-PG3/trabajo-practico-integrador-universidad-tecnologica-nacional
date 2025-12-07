@@ -267,64 +267,69 @@ class CarreraListView(ListView):
         return context
 
 def register_view(request):
+    carreras = Carrera.objects.all()
+
     if request.method == "POST":
-        form = RegistroForm(request.POST)
-        if form.is_valid():
-            nombre = form.cleaned_data["nombre"]
-            apellido = form.cleaned_data["apellido"]
-            dni = form.cleaned_data["dni"]
-            email = form.cleaned_data["email"]
-            password = form.cleaned_data["password"]
-            anio = form.cleaned_data["anio_universitario"]
-            carrera = form.cleaned_data["carrera"]
+        nombre = request.POST.get("nombre")
+        apellido = request.POST.get("apellido")
+        dni = request.POST.get("dni")
+        email = request.POST.get("email")
+        anio = request.POST.get("anio_universitario")
+        carrera_id = request.POST.get("carrera")
+        password = request.POST.get("password")
+        password2 = request.POST.get("password2")
 
-            # -----------------------------
-            # CREAR USUARIO (usa email como username)
-            # -----------------------------
-            user = User.objects.create_user(
-                username=email,   # obligatorio = evita tu error
-                email=email,
-                password=password,
-                first_name=nombre,
-                last_name=apellido
-            )
+        # Validar contraseñas
+        if password != password2:
+            return render(request, "register.html", {
+                "carreras": carreras,
+                "error": "Las contraseñas no coinciden."
+            })
 
-            # -----------------------------
-            # CREAR ALUMNO
-            # -----------------------------
-            Alumno.objects.create(
-                user=user,
-                nombre=nombre,
-                apellido=apellido,
-                dni=dni,
-                email=email,
-                anio_universitario=anio,
-                carrera=carrera
-            )
+        # Crear usuario Django
+        user = User.objects.create_user(
+            username=email,   # obligatorio
+            email=email,
+            password=password
+        )
 
-            # -----------------------------
-            # LOGEAR AUTOMÁTICAMENTE
-            # -----------------------------
-            login(request, user)
-            return redirect("inicio")  # o "/"
-    else:
-        form = RegistroForm()
+        # Guardar alumno
+        Alumno.objects.create(
+            user=user,
+            nombre=nombre,
+            apellido=apellido,
+            dni=dni,
+            email=email,
+            anio_universitario=anio,
+            carrera_id=carrera_id  # 🔥🔥 ESTO ES LO IMPORTANTE
+        )
 
-    return render(request, "register.html", {"form": form})
+        return redirect("login")
+
+    return render(request, "register.html", {"carreras": carreras})
+
 
 # --------------------------
 #  LOGIN
 # --------------------------
 def login_view(request):
     if request.method == "POST":
-        username = request.POST.get("username")
+        email = request.POST.get("email")
         password = request.POST.get("password")
 
-        user = authenticate(request, username=username, password=password)
+        # Buscar usuario por email
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            messages.error(request, "Credenciales incorrectas.")
+            return render(request, "login.html")
+
+        # Autenticar usando username interno
+        user = authenticate(request, username=user.username, password=password)
 
         if user is not None:
             login(request, user)
-            return redirect("home")   # Cambiá "home" por tu página principal
+            return redirect("/")
         else:
             messages.error(request, "Credenciales incorrectas.")
 

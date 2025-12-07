@@ -45,8 +45,8 @@
             <label class="block mb-1 font-semibold">Carrera</label>
             <select name="carrera" required
                     class="w-full mb-4 p-2 rounded bg-white border border-black text-black">
-                {% for c in form.carrera.field.queryset %}
-                    <option value="{{ c.id }}">{{ c.nombre }}</option>
+                {% for c in carreras %}
+                    <option value="{{ c.id_carrera }}">{{ c.nombre }}</option>
                 {% endfor %}
             </select>
 
@@ -61,7 +61,7 @@
                    class="w-full mb-4 p-2 rounded bg-white border border-black text-black">
 
 
-            <button class="w-full bg-black hover:bg-gray-800 text-white py-2 rounded mt-2 text-lg font-semibold">
+            <button href="{% url 'login' %}"class="w-full bg-black hover:bg-gray-800 text-white py-2 rounded mt-2 text-lg font-semibold">
                 Registrarme
             </button>
 
