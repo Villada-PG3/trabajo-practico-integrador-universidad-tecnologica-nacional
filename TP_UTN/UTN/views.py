@@ -405,7 +405,7 @@ def login_profesores(request):
                 return render(request, "profesores/login_profesores.html")
 
             login(request, user)
-            return redirect("panel_profesor")
+            return redirect("dashboard")
 
         else:
             messages.error(request, "Credenciales incorrectas.")
