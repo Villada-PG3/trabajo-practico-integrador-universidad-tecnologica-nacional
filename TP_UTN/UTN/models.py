@@ -14,7 +14,7 @@ class Carrera(models.Model):
     duracion_anios = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):
-        return self.nombre
+        return self.nombre or "Sin nombre"
 
 class Alumno(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='alumno', null=True)
@@ -103,7 +103,7 @@ class MateriaCurso(models.Model):
 
         return dias, h_inicio, h_fin
     def __str__(self):
-        return self.materia.nombre
+        return f"{self.materia.nombre} - {self.curso.nombre}"
 
 class Inscripcion(models.Model):
     ESTADOS_INSCRIPCION = [
@@ -152,7 +152,7 @@ class Inscripcion(models.Model):
 
 class CondicionFinal(models.Model):
     id_condicion_final = models.AutoField(primary_key=True)
-    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='condiciones')
+    # estaba duplicado - lo dejo con un único campo alumno
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='condiciones')
     CONDICIONES_FINAL = [
         ('regular', 'Regular'),
@@ -165,17 +165,24 @@ class CondicionFinal(models.Model):
     profesor = models.ForeignKey('Profesor', on_delete=models.CASCADE, related_name='condiciones')
 
     def __str__(self):
-        return f"{self.alumno} - {self.materia_curso} - {self.condicion}"
+        return f"{self.alumno} - {self.condicion}"
+
 
 #####################################################
 
 class Profesor(models.Model):
     id_profesor = models.AutoField(primary_key=True)
+    # vinculo con user para usar el auth
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profesor', null=True, blank=True)
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     email = models.EmailField()
+
     def __str__(self):
-        return f"{self.nombre} {self.apellido} - {self.email}"
+        display = f"{self.nombre} {self.apellido}"
+        if self.user:
+            display += f" ({self.user.username})"
+        return display
     
 class TipoEvaluacion(models.Model):
     id_tipo_evaluacion = models.AutoField(primary_key=True)
@@ -209,8 +216,11 @@ class ProfesorCurso(models.Model):
     profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE, related_name='cursos')
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='profesores')
 
+    class Meta:
+        unique_together = ('profesor', 'curso')
+
     def __str__(self):
-        return f"hace un html con el estilo del anterior y que sea simple con un titulo que yo voy a ingresar una descripcion que yo tmb voy a ingresar y un boton de insribirse y eso ademas que debajo de la descripcion yo agrego el horario los turnos y los profesself.profesor - {self.curso}"
+        return f"{self.profesor} - {self.curso}"
     
 from django.core.exceptions import ValidationError
 from django.db import models

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mx-auto px-6 mt-10">
+
+    <h2 class="text-3xl font-bold mb-6">Panel del Profesor</h2>
+
+    <div class="bg-gray-100 border border-black p-6 rounded-xl max-w-xl">
+        <p class="text-lg">
+            Bienvenido,
+            <span class="font-semibold">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+        </p>
+
+        <div class="mt-6 space-y-4">
+            <a href="{% url 'mis_clases' %}"
+               class="block bg-black text-white text-center py-2 rounded hover:bg-gray-800 transition">
+                Ver mis clases
+            </a>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

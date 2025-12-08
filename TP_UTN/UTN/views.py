@@ -5,7 +5,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from .models import (
     Alumno, AlumnoMateriaCurso, Carrera, Curso, Materia, MateriaCurso,
-    Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion, CarreraMateria
+    Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion, CarreraMateria,
+    Profesor, ProfesorCurso
 )
 from django.db.models import Q
 from django.contrib.auth import logout
@@ -19,14 +20,12 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from .form import RegistroForm
 
-
 # ============================
 #   LOGOUT LIMPIO
 # ============================
 def logout_view(request):
     logout(request)
     return redirect('/')
-
 
 # ============================
 #   POST LOGIN CHECK
@@ -41,13 +40,11 @@ class PostLoginCheckView(View):
         else:
             return redirect('alumno_create')
 
-
 # ============================
 #   INICIO
 # ============================
 class InicioView(TemplateView):
     template_name = "inicio.html"
-
 
 # ============================
 #   ALUMNO DETAIL
@@ -91,7 +88,6 @@ class AlumnoDetailView(DetailView):
         context["semana"] = semana
         return context
 
-
 # ============================
 #   ALUMNO CREATE
 # ============================
@@ -130,7 +126,6 @@ class AlumnoDeleteView(DeleteView):
     model = Alumno
     template_name = 'alumno/alumno_confirm_delete.html'
     success_url = reverse_lazy('inicio')
-
 
 # ============================
 #   MATERIAS
@@ -342,6 +337,11 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect("login")
+
+
+# ============================
+#  Páginas de Carrera (TemplateViews)
+# ============================
 class Ingenieria_civil(TemplateView):
     template_name = "carreras/Ingenieria_civil.html"
 
@@ -372,3 +372,143 @@ class Ingenieria_quimica(TemplateView):
 
 class Ingenieria_sistemas(TemplateView):
     template_name = "carreras/Ingenieria_sistema.html"
+
+
+# ============================
+#  VISTAS DE PROFESORES
+# ============================
+@method_decorator(login_required, name='dispatch')
+class ProfesorDashboardView(TemplateView):
+    """
+    Dashboard del profesor: muestra los cursos asignados y links para ver alumnos / cargar notas.
+    """
+    template_name = "profesor/dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        profesor = getattr(user, 'profesor', None)
+
+        if profesor:
+            cursos = ProfesorCurso.objects.filter(profesor=profesor).select_related('curso')
+            context['profesor'] = profesor
+            context['cursos_profesor'] = cursos
+        else:
+            context['profesor'] = None
+            context['cursos_profesor'] = []
+
+        # Para asignar nuevas clases (lista de cursos disponibles)
+        context['cursos_disponibles'] = Curso.objects.exclude(id_curso__in=[pc.curso.id_curso for pc in ProfesorCurso.objects.all()])
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class ProfesorAsignarClaseView(View):
+    """
+    POST para que un profesor se asigne a un curso (crear ProfesorCurso).
+    """
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        profesor = getattr(user, 'profesor', None)
+        if not profesor:
+            messages.error(request, "Tu usuario no está vinculado a un perfil de profesor.")
+            return redirect('profesor_dashboard')
+
+        curso_id = request.POST.get('curso_id')
+        if not curso_id:
+            messages.error(request, "Seleccione un curso para asignarse.")
+            return redirect('profesor_dashboard')
+
+        curso = get_object_or_404(Curso, id_curso=curso_id)
+
+        # Evitar duplicados por unique_together
+        obj, created = ProfesorCurso.objects.get_or_create(profesor=profesor, curso=curso)
+        if created:
+            messages.success(request, f"Te asignaste al curso {curso.nombre}.")
+        else:
+            messages.warning(request, "Ya estás asignado/a a ese curso.")
+
+        return redirect('profesor_dashboard')
+
+
+@method_decorator(login_required, name='dispatch')
+class ProfesorCursoEstudiantesView(TemplateView):
+    """
+    Lista de alumnos de un curso en particular (materias ofrecidas) — accesible solo si el profesor está asignado al curso.
+    """
+    template_name = "profesor/curso_estudiantes.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        curso_id = self.kwargs.get('curso_id')
+        curso = get_object_or_404(Curso, id_curso=curso_id)
+        user = self.request.user
+        profesor = getattr(user, 'profesor', None)
+
+        # Verificar que el profesor esté asignado a ese curso
+        if not ProfesorCurso.objects.filter(profesor=profesor, curso=curso).exists():
+            messages.error(self.request, "No estás asignado a ese curso.")
+            return redirect('profesor_dashboard')
+
+        # Obtener todos los MateriaCurso asociados al curso
+        materia_cursos = MateriaCurso.objects.filter(curso=curso).select_related('materia')
+
+        # Para cada MateriaCurso, traer alumnos inscritos (AlumnoMateriaCurso)
+        detalle = []
+        for mc in materia_cursos:
+            alumnos_inscriptos = AlumnoMateriaCurso.objects.filter(materia_curso=mc).select_related('alumno')
+            detalle.append({
+                'materia_curso': mc,
+                'alumnos': alumnos_inscriptos
+            })
+
+        context['curso'] = curso
+        context['detalle'] = detalle
+        return context
+
+
+@login_required
+def ProfesorEditarNotaView(request, curso_id, alumno_materia_id):
+    """
+    POST para que el profesor edite la nota de un AlumnoMateriaCurso.
+    Verifica que el profesor esté asignado al curso correspondiente.
+    """
+    user = request.user
+    profesor = getattr(user, 'profesor', None)
+    if not profesor:
+        messages.error(request, "Tu usuario no está vinculado a un perfil de profesor.")
+        return redirect('profesor_dashboard')
+
+    curso = get_object_or_404(Curso, id_curso=curso_id)
+    # validar asignación
+    if not ProfesorCurso.objects.filter(profesor=profesor, curso=curso).exists():
+        messages.error(request, "No tenés permisos para editar notas de este curso.")
+        return redirect('profesor_dashboard')
+
+    alumno_materia = get_object_or_404(AlumnoMateriaCurso, id_alumno_materia_curso=alumno_materia_id)
+    # validar que la materia_curso pertenezca al curso
+    if alumno_materia.materia_curso.curso.id_curso != curso.id_curso:
+        messages.error(request, "Registro inválido.")
+        return redirect('profesor_curso_estudiantes', curso_id=curso.id_curso)
+
+    if request.method == "POST":
+        # obtener nota desde POST
+        nota = request.POST.get('nota')
+        try:
+            if nota is None or nota == "":
+                alumno_materia.nota = None
+            else:
+                nota_int = int(nota)
+                if nota_int < 0 or nota_int > 10:
+                    raise ValueError("Nota fuera de rango")
+                alumno_materia.nota = nota_int
+
+            alumno_materia.save()
+            messages.success(request, "Nota actualizada correctamente.")
+        except ValueError:
+            messages.error(request, "Ingrese una nota válida entre 0 y 10.")
+
+        return redirect('profesor_curso_estudiantes', curso_id=curso.id_curso)
+
+    # Si GET mostramos un simple form (opcional) — pero normalmente usás POST desde la lista
+    return render(request, 'profesor/editar_nota.html', {'alumno_materia': alumno_materia, 'curso': curso})

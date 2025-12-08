@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mx-auto px-6 mt-10 max-w-lg">
+
+    <h2 class="text-3xl font-bold mb-4">Cargar Nota</h2>
+
+    <div class="bg-gray-100 border border-black p-6 rounded-xl">
+        
+        <p class="mb-4">
+            <span class="font-semibold">Curso:</span> {{ clase.curso.nombre }} <br>
+            <span class="font-semibold">Materia:</span> {{ clase.materia.nombre }}
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button class="w-full bg-black text-white py-2 rounded mt-4 hover:bg-gray-800 transition">
+                Guardar Nota
+            </button>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
