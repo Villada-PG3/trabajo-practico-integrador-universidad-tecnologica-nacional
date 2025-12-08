@@ -491,3 +491,6 @@ def cargar_nota(request, clase_id):
         "materia_curso": materia_curso,
         "alumnos": alumnos
     })
+def logout_profesores(request):
+    logout(request)
+    return redirect("login_profesores")
