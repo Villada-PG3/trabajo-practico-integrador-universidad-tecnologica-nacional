@@ -377,138 +377,117 @@ class Ingenieria_sistemas(TemplateView):
 # ============================
 #  VISTAS DE PROFESORES
 # ============================
-@method_decorator(login_required, name='dispatch')
-class ProfesorDashboardView(TemplateView):
-    """
-    Dashboard del profesor: muestra los cursos asignados y links para ver alumnos / cargar notas.
-    """
-    template_name = "profesor/dashboard.html"
+def get_profesor_or_redirect(request):
+    """ Devuelve profesor o redirige si el usuario NO es profesor. """
+    profesor = getattr(request.user, "profesor", None)
+    if profesor is None:
+        messages.error(request, "Debés iniciar sesión como profesor.")
+        return None# =======================================
+#   LOGIN PROFESORES (exclusivo)
+# =======================================
+def login_profesores(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        profesor = getattr(user, 'profesor', None)
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            messages.error(request, "Credenciales incorrectas.")
+            return render(request, "profesores/login_profesores.html")
 
-        if profesor:
-            cursos = ProfesorCurso.objects.filter(profesor=profesor).select_related('curso')
-            context['profesor'] = profesor
-            context['cursos_profesor'] = cursos
+        user = authenticate(request, username=user.username, password=password)
+
+        if user is not None:
+            # Validar que tenga perfil de profesor
+            if not hasattr(user, "profesor"):
+                messages.error(request, "Este usuario no es profesor.")
+                return render(request, "profesores/login_profesores.html")
+
+            login(request, user)
+            return redirect("panel_profesor")
+
         else:
-            context['profesor'] = None
-            context['cursos_profesor'] = []
+            messages.error(request, "Credenciales incorrectas.")
 
-        # Para asignar nuevas clases (lista de cursos disponibles)
-        context['cursos_disponibles'] = Curso.objects.exclude(id_curso__in=[pc.curso.id_curso for pc in ProfesorCurso.objects.all()])
-        return context
+    return render(request, "profesores/login_profesores.html")
 
 
-@method_decorator(login_required, name='dispatch')
-class ProfesorAsignarClaseView(View):
-    """
-    POST para que un profesor se asigne a un curso (crear ProfesorCurso).
-    """
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        profesor = getattr(user, 'profesor', None)
-        if not profesor:
-            messages.error(request, "Tu usuario no está vinculado a un perfil de profesor.")
-            return redirect('profesor_dashboard')
-
-        curso_id = request.POST.get('curso_id')
-        if not curso_id:
-            messages.error(request, "Seleccione un curso para asignarse.")
-            return redirect('profesor_dashboard')
-
-        curso = get_object_or_404(Curso, id_curso=curso_id)
-
-        # Evitar duplicados por unique_together
-        obj, created = ProfesorCurso.objects.get_or_create(profesor=profesor, curso=curso)
-        if created:
-            messages.success(request, f"Te asignaste al curso {curso.nombre}.")
-        else:
-            messages.warning(request, "Ya estás asignado/a a ese curso.")
-
-        return redirect('profesor_dashboard')
-
-
-@method_decorator(login_required, name='dispatch')
-class ProfesorCursoEstudiantesView(TemplateView):
-    """
-    Lista de alumnos de un curso en particular (materias ofrecidas) — accesible solo si el profesor está asignado al curso.
-    """
-    template_name = "profesor/curso_estudiantes.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        curso_id = self.kwargs.get('curso_id')
-        curso = get_object_or_404(Curso, id_curso=curso_id)
-        user = self.request.user
-        profesor = getattr(user, 'profesor', None)
-
-        # Verificar que el profesor esté asignado a ese curso
-        if not ProfesorCurso.objects.filter(profesor=profesor, curso=curso).exists():
-            messages.error(self.request, "No estás asignado a ese curso.")
-            return redirect('profesor_dashboard')
-
-        # Obtener todos los MateriaCurso asociados al curso
-        materia_cursos = MateriaCurso.objects.filter(curso=curso).select_related('materia')
-
-        # Para cada MateriaCurso, traer alumnos inscritos (AlumnoMateriaCurso)
-        detalle = []
-        for mc in materia_cursos:
-            alumnos_inscriptos = AlumnoMateriaCurso.objects.filter(materia_curso=mc).select_related('alumno')
-            detalle.append({
-                'materia_curso': mc,
-                'alumnos': alumnos_inscriptos
-            })
-
-        context['curso'] = curso
-        context['detalle'] = detalle
-        return context
-
-
+# =======================================
+#   PANEL DEL PROFESOR
+# =======================================
 @login_required
-def ProfesorEditarNotaView(request, curso_id, alumno_materia_id):
-    """
-    POST para que el profesor edite la nota de un AlumnoMateriaCurso.
-    Verifica que el profesor esté asignado al curso correspondiente.
-    """
-    user = request.user
-    profesor = getattr(user, 'profesor', None)
-    if not profesor:
-        messages.error(request, "Tu usuario no está vinculado a un perfil de profesor.")
-        return redirect('profesor_dashboard')
+def panel_profesor(request):
+    profesor = getattr(request.user, "profesor", None)
+    if profesor is None:
+        messages.error(request, "Debés iniciar sesión como profesor.")
+        return redirect("login_profesores")
 
-    curso = get_object_or_404(Curso, id_curso=curso_id)
-    # validar asignación
-    if not ProfesorCurso.objects.filter(profesor=profesor, curso=curso).exists():
-        messages.error(request, "No tenés permisos para editar notas de este curso.")
-        return redirect('profesor_dashboard')
+    cursos_asignados = ProfesorCurso.objects.filter(
+        profesor=profesor
+    ).select_related("curso")
 
-    alumno_materia = get_object_or_404(AlumnoMateriaCurso, id_alumno_materia_curso=alumno_materia_id)
-    # validar que la materia_curso pertenezca al curso
-    if alumno_materia.materia_curso.curso.id_curso != curso.id_curso:
-        messages.error(request, "Registro inválido.")
-        return redirect('profesor_curso_estudiantes', curso_id=curso.id_curso)
+    return render(request, "profesores/dashboard.html", {
+        "profesor": profesor,
+        "cursos_asignados": cursos_asignados
+    })
+
+
+# =======================================
+#   MIS CLASES
+# =======================================
+@login_required
+def mis_clases(request):
+    profesor = getattr(request.user, "profesor", None)
+    if profesor is None:
+        messages.error(request, "Debés iniciar sesión como profesor.")
+        return redirect("login_profesores")
+
+    clases = ProfesorCurso.objects.filter(
+        profesor=profesor
+    ).select_related("curso")
+
+    return render(request, "profesores/mis_clases.html", {
+        "clases": clases
+    })
+
+
+# =======================================
+#   CARGAR NOTA
+# =======================================
+@login_required
+def cargar_nota(request, clase_id):
+    profesor = getattr(request.user, "profesor", None)
+    if profesor is None:
+        messages.error(request, "Debés iniciar sesión como profesor.")
+        return redirect("login_profesores")
+
+    materia_curso = get_object_or_404(MateriaCurso, id_materia_curso=clase_id)
+
+    alumnos = AlumnoMateriaCurso.objects.filter(
+        materia_curso=materia_curso
+    ).select_related("alumno")
 
     if request.method == "POST":
-        # obtener nota desde POST
-        nota = request.POST.get('nota')
-        try:
-            if nota is None or nota == "":
-                alumno_materia.nota = None
-            else:
-                nota_int = int(nota)
-                if nota_int < 0 or nota_int > 10:
-                    raise ValueError("Nota fuera de rango")
-                alumno_materia.nota = nota_int
+        alumno_id = request.POST.get("alumno_id")
+        nota = request.POST.get("nota")
 
-            alumno_materia.save()
-            messages.success(request, "Nota actualizada correctamente.")
-        except ValueError:
-            messages.error(request, "Ingrese una nota válida entre 0 y 10.")
+        alumno_materia = get_object_or_404(
+            AlumnoMateriaCurso,
+            id_alumno_materia_curso=alumno_id
+        )
 
-        return redirect('profesor_curso_estudiantes', curso_id=curso.id_curso)
+        if nota == "":
+            alumno_materia.nota = None
+        else:
+            alumno_materia.nota = int(nota)
 
-    # Si GET mostramos un simple form (opcional) — pero normalmente usás POST desde la lista
-    return render(request, 'profesor/editar_nota.html', {'alumno_materia': alumno_materia, 'curso': curso})
+        alumno_materia.save()
+        messages.success(request, "Nota guardada correctamente.")
+
+        return redirect("cargar_nota", clase_id=clase_id)
+
+    return render(request, "profesores/cargar_nota.html", {
+        "materia_curso": materia_curso,
+        "alumnos": alumnos
+    })

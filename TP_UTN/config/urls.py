@@ -23,10 +23,8 @@ from UTN.views import (
     Ingenieria_quimica, Ingenieria_sistemas,
 
     # PROFESORES - nuevas vistas
-    ProfesorDashboardView,
-    ProfesorAsignarClaseView,
-    ProfesorCursoEstudiantesView,
-    ProfesorEditarNotaView,
+    
+    login_profesores, panel_profesor, mis_clases, cargar_nota,
 )
 
 urlpatterns = [
@@ -65,9 +63,16 @@ urlpatterns = [
     path('carreras/ingenieria_quimica/', Ingenieria_quimica.as_view(), name='Ingenieria_quimica'),
     path('carreras/ingenieria_sistemas/', Ingenieria_sistemas.as_view(), name='ingenieria_sistemas'),
 
+    
+    # ==========================
     # PROFESORES - URLs nuevas
-    path('profesor/dashboard/', ProfesorDashboardView.as_view(), name='profesor_dashboard'),
-    path('profesor/asignar_clase/', ProfesorAsignarClaseView.as_view(), name='profesor_asignar_clase'),
-    path('profesor/curso/<int:curso_id>/estudiantes/', ProfesorCursoEstudiantesView.as_view(), name='profesor_curso_estudiantes'),
-    path('profesor/curso/<int:curso_id>/estudiante/<int:alumno_materia_id>/nota/', ProfesorEditarNotaView, name='profesor_editar_nota'),
+    # ==========================
+    path("profesores/login/", login_profesores, name="login_profesores"),
+
+    path("profesores/panel/", panel_profesor, name="dashboard"),
+
+    path("profesores/mis-clases/", mis_clases, name="mis_clases"),
+
+    path("profesores/cargar-nota/<int:clase_id>/", cargar_nota, name="cargar_nota"),
+
 ]

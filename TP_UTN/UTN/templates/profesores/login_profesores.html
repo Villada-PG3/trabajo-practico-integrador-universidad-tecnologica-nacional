@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Ingreso Profesores{% endblock %}
+
+{% block content %}
+
+<div class="flex justify-center items-center mt-20">
+
+    <div class="bg-white border border-black p-8 rounded-xl shadow max-w-md w-full">
+
+        <h2 class="text-2xl font-semibold mb-6 text-center">Ingreso Profesores</h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Usuario -->
+            <label class="block font-semibold mb-1">Usuario</label>
+            <input type="email" name="email" placeholder="Email" required>
+
+            <!-- Contraseña -->
+            <label class="block font-semibold mb-1">Contraseña</label>
+            <input type="password" name="password" placeholder="Contraseña" required>
+
+            <!-- Botón -->
+            <button type="submit"
+                    class="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition">
+                Iniciar Sesión
+            </button>
+
+            <!-- Errores -->
+            {% if form.errors %}
+            <p class="mt-4 text-red-600 text-center">Usuario o contraseña incorrectos.</p>
+            {% endif %}
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
