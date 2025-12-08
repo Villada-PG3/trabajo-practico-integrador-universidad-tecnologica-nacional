@@ -12,6 +12,7 @@
             background-color: #f3f3f3;
         }
     </style>
+    <link rel="icon" href="https://tse2.mm.bing.net/th/id/OIP.cqBKPdnHYvuLe2CUvTk8EwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" type="image/x-icon">
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -26,7 +27,7 @@
                 <div class="flex items-center gap-4">
                     <span>{{ user.first_name }} {{ user.last_name }}</span>
 
-                    <a href="{% url 'profesores/login/' %}"
+                    <a href="{% url 'logout' %}"
                        class="bg-white text-black px-3 py-1 rounded hover:bg-gray-200 transition">
                         Cerrar sesión
                     </a>

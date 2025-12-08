@@ -74,5 +74,4 @@ urlpatterns = [
     path("profesores/mis-clases/", mis_clases, name="mis_clases"),
 
     path("profesores/cargar-nota/<int:clase_id>/", cargar_nota, name="cargar_nota"),
-
 ]
