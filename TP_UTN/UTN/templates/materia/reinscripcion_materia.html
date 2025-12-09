@@ -78,6 +78,14 @@
                                                 <p class="text-sm text-gray-700"><strong>Turno:</strong> {{ curso_materia.get_turno_cursado_display }}</p>
                                                 <p class="text-sm text-gray-700"><strong>Horario:</strong> {{ curso_materia.horario }}</p>
                                                 <p class="text-sm text-gray-700"><strong>Módulo:</strong> {{ curso_materia.modulo }}</p>
+                                                <p class="text-sm text-gray-700"><strong>Profesor(es):</strong>
+                                                    {% for pmc in curso_materia.profesores.all %}
+                                                        {{ pmc.profesor.nombre }} {{ pmc.profesor.apellido }}
+                                                        {% if not forloop.last %}, {% endif %}
+                                                    {% empty %}
+                                                        <span class="text-red-600">Sin profesor asignado</span>
+                                                    {% endfor %}
+                                                </p>
                                             </div>
 
                                             <form method="post" action="{% url 'materia_reinscribir' alumno.id_alumno materia.sigla %}">

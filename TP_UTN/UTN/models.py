@@ -6,10 +6,6 @@ from django.conf import settings
 import datetime, re
 from django.core.exceptions import ValidationError
 
-# ============================================
-#   MODELOS BASE
-# ============================================
-
 class Carrera(models.Model):
     id_carrera = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100, null=True, blank=True)
@@ -233,6 +229,13 @@ class ProfesorMateriaCurso(models.Model):
     id_profesor_mc = models.AutoField(primary_key=True)
     profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE, related_name='materias_asignadas')
     materia_curso = models.ForeignKey(MateriaCurso, on_delete=models.CASCADE, related_name='profesores_asignados')
+    profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE)
+    materia_curso = models.ForeignKey(
+        MateriaCurso,
+        on_delete=models.CASCADE,
+        related_name="profesores"
+    )
+
 
     class Meta:
         unique_together = ('profesor', 'materia_curso')

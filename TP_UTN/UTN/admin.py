@@ -9,7 +9,15 @@ class AlumnoMateriaCursoAdmin(admin.ModelAdmin):
     list_display = ("alumno", "materia_curso", "nota", "aprobado")
     list_filter = ("materia_curso", "aprobado")
     search_fields = ("alumno__nombre", "materia_curso__materia__nombre")
-    list_editable = ("nota",)  # 🔥 Permite editar notas desde el listado del admin
+    list_editable = ("nota",)
+
+class ProfesorMateriaCursoInline(admin.TabularInline):
+    model = ProfesorMateriaCurso
+    extra = 1
+
+class ProfesorAdmin(admin.ModelAdmin):
+    inlines = [ProfesorMateriaCursoInline]
+
 
 admin.site.register(AlumnoMateriaCurso, AlumnoMateriaCursoAdmin)
 
@@ -23,6 +31,11 @@ admin.site.register(TipoEvaluacion)
 admin.site.register(Carrera)
 admin.site.register(CondicionFinal)
 admin.site.register(Evaluacion)
-admin.site.register(Profesor)
 admin.site.register(ProfesorMateriaCurso)
 
+# ---------------------------------------------------------------------
+# 🔥 AGREGADO: Inline para asignar materias a un profesor
+# ---------------------------------------------------------------------
+
+
+admin.site.register(Profesor, ProfesorAdmin)
