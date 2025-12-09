@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from .models import (
     Alumno, AlumnoMateriaCurso, Carrera, Curso, Materia, MateriaCurso,
     Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion, CarreraMateria,
-    Profesor, ProfesorCurso
+    Profesor, ProfesorMateriaCurso,
 )
 from django.db.models import Q
 from django.contrib.auth import logout
@@ -424,7 +424,8 @@ def get_profesor_or_redirect(request):
     profesor = getattr(request.user, "profesor", None)
     if profesor is None:
         messages.error(request, "Debés iniciar sesión como profesor.")
-        return None# =======================================
+        return None
+# =======================================
 #   LOGIN PROFESORES (exclusivo)
 # =======================================
 def login_profesores(request):
@@ -432,104 +433,142 @@ def login_profesores(request):
         email = request.POST.get("email")
         password = request.POST.get("password")
 
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            messages.error(request, "Credenciales incorrectas.")
-            return render(request, "profesores/login_profesores.html")
-
-        user = authenticate(request, username=user.username, password=password)
+        user = authenticate(request, username=email, password=password)
 
         if user is not None:
-            # Validar que tenga perfil de profesor
-            if not hasattr(user, "profesor"):
-                messages.error(request, "Este usuario no es profesor.")
-                return render(request, "profesores/login_profesores.html")
-
-            login(request, user)
-            return redirect("dashboard")
-
+            if hasattr(user, "profesor"):
+                login(request, user)
+                return redirect("dashboard")
+            else:
+                messages.error(request, "Este usuario no está registrado como profesor.")
         else:
             messages.error(request, "Credenciales incorrectas.")
 
     return render(request, "profesores/login_profesores.html")
 
 
-# =======================================
-#   PANEL DEL PROFESOR
-# =======================================
-@login_required
-def panel_profesor(request):
-    profesor = getattr(request.user, "profesor", None)
-    if profesor is None:
-        messages.error(request, "Debés iniciar sesión como profesor.")
-        return redirect("login_profesores")
 
-    cursos_asignados = ProfesorCurso.objects.filter(
-        profesor=profesor
-    ).select_related("curso")
+# ===========================================
+#   LOGOUT PROFESORES
+# ===========================================
+
+def logout_profesores(request):
+    logout(request)
+    return redirect("login_profesores")
+
+
+
+# ===========================================
+#   DASHBOARD PROFESORES
+# ===========================================
+
+@login_required
+def dashboard(request):
+    profesor = request.user.profesor
+
+    asignaciones = ProfesorMateriaCurso.objects.filter(profesor=profesor)
 
     return render(request, "profesores/dashboard.html", {
         "profesor": profesor,
-        "cursos_asignados": cursos_asignados
+        "asignaciones": asignaciones
     })
 
 
-# =======================================
-#   MIS CLASES
-# =======================================
+
+# ===========================================
+#   LISTAR MATERIAS DISPONIBLES
+# ===========================================
+
+@login_required
+def materias_disponibles(request):
+    profesor = request.user.profesor
+
+    materias = MateriaCurso.objects.exclude(
+        profesores_asignados__profesor=profesor
+    )
+
+    return render(request, "profesores/materias_disponibles.html", {
+        "materias": materias
+    })
+
+
+
+
+
+# ===========================================
+#   ASIGNAR MATERIA A PROFESOR
+# ===========================================
+
+@login_required
+def asignar_materia_profesor(request, id_materia_curso):
+    profesor = request.user.profesor
+    materia_curso = get_object_or_404(MateriaCurso, pk=id_materia_curso)
+
+    asignacion, creada = ProfesorMateriaCurso.objects.get_or_create(
+        profesor=profesor,
+        materia_curso=materia_curso
+    )
+
+    if creada:
+        messages.success(request, f"Te asignaste a {materia_curso.materia.nombre}.")
+    else:
+        messages.warning(request, "Ya estabas asignado a esta materia.")
+
+    return redirect("materias_disponibles")
+
+
+
+# ===========================================
+#   DESASIGNAR MATERIA
+# ===========================================
+
+@login_required
+def desasignar_materia(request, materia_id):
+    profesor = request.user.profesor
+
+    asignacion = get_object_or_404(
+        ProfesorMateriaCurso,
+        profesor=profesor,
+        materia_curso_id=materia_id
+    )
+
+    asignacion.delete()
+
+    messages.success(request, "La materia fue desasignada correctamente.")
+    return redirect("mis_clases")
+
+
+
+# ===========================================
+#   MIS CLASES – LISTA DE CLASES ASIGNADAS
+# ===========================================
+
 @login_required
 def mis_clases(request):
-    profesor = getattr(request.user, "profesor", None)
-    if profesor is None:
-        messages.error(request, "Debés iniciar sesión como profesor.")
-        return redirect("login_profesores")
-
-    clases = ProfesorCurso.objects.filter(
-        profesor=profesor
-    ).select_related("curso")
+    profesor = request.user.profesor
+    asignaciones = ProfesorMateriaCurso.objects.filter(profesor=profesor)
 
     return render(request, "profesores/mis_clases.html", {
-        "clases": clases
+        "asignaciones": asignaciones
     })
 
 
-# =======================================
-#   CARGAR NOTA
-# =======================================
+
+# ===========================================
+#   CARGAR NOTAS (sólo armado del endpoint)
+# ===========================================
+
 @login_required
 def cargar_nota(request, clase_id):
-    profesor = getattr(request.user, "profesor", None)
-    if profesor is None:
-        messages.error(request, "Debés iniciar sesión como profesor.")
-        return redirect("login_profesores")
+    profesor = request.user.profesor
 
-    materia_curso = get_object_or_404(MateriaCurso, id_materia_curso=clase_id)
+    asignacion = get_object_or_404(
+        ProfesorMateriaCurso,
+        profesor=profesor,
+        materia_curso_id=clase_id
+    )
 
-    alumnos = AlumnoMateriaCurso.objects.filter(
-        materia_curso=materia_curso
-    ).select_related("alumno")
-
-    if request.method == "POST":
-        alumno_id = request.POST.get("alumno_id")
-        nota = request.POST.get("nota")
-
-        alumno_materia = get_object_or_404(
-            AlumnoMateriaCurso,
-            id_alumno_materia_curso=alumno_id
-        )
-
-        if nota == "":
-            alumno_materia.nota = None
-        else:
-            alumno_materia.nota = int(nota)
-
-        alumno_materia.save()
-        messages.success(request, "Nota guardada correctamente.")
-
-        return redirect("cargar_nota", clase_id=clase_id)
-
+    # Después te armamos el formulario si querés
     return render(request, "profesores/cargar_nota.html", {
-        "materia_curso": materia_curso,
-        "alumnos": alumnos
+        "asignacion": asignacion
     })

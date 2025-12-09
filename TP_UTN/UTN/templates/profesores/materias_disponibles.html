@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Materias Disponibles{% endblock %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto mt-10">
+
+    <h1 class="text-3xl font-semibold mb-6 text-center">Materias disponibles para asignarte</h1>
+
+    {% if materias %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {% for mc in materias %}
+            <div>
+                <p>{{ mc.materia.nombre }} - {{ mc.curso.nombre }}</p>
+
+                <a href="{% url 'asignar_materia_profesor' mc.id_materia_curso %}">
+                    Asignarme
+                </a>
+            </div>
+        {% endfor %}
+
+                </div>
+
+            {% else %}
+                <p class="text-center text-gray-700 mt-10">
+                    No hay materias disponibles para asignarte en este momento.
+                </p>
+            {% endif %}
+
+        </div>
+
+{% endblock %}

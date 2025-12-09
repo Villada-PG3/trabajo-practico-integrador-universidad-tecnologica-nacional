@@ -19,22 +19,14 @@
         </div>
     </div>
     <h2 class="text-xl font-bold mt-10">Asignarme una Clase</h2>
+    <div>
+        <a href="{% url 'materias_disponibles' %}" 
+            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Ver materias disponibles
+        </a>
+    </div>>
 
-    <form method="post" action="{% url 'asignar_clase' %}">
-        {% csrf_token %}
-
-        <select name="curso_id" class="border p-2 rounded w-full my-4">
-            {% for curso in cursos_disponibles %}
-                <option value="{{ curso.id_curso }}">{{ curso.nombre }}</option>
-            {% endfor %}
-        </select>
-
-        <button type="submit"
-            class="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition">
-            Asignarme esta clase
-        </button>
-    </form>
-
+    
 </div>
 
 {% endblock %}
