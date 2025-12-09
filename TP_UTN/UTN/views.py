@@ -142,6 +142,7 @@ class MateriaListView(ListView):
         if query:
             queryset = queryset.filter(Q(nombre__icontains=query))
         return queryset
+    
 
 
 class MateriaReinscripcionView(TemplateView):
@@ -177,6 +178,47 @@ class MateriaReinscripcionView(TemplateView):
         context['inscripciones_por_materia'] = {
             ins.materia_curso.materia.sigla: ins for ins in insc_activas
         }
+
+        # ============================================
+        # CORRELATIVAS + CHEQUEO DE APROBACIÓN
+        # ============================================
+        materias_info = []
+
+        for materia in materias:
+            estado = "ok"      # habilitada por defecto
+            mensaje = ""
+            correlativa = materia.get_correlativa()  # método que creaste «Fisica 2 → Fisica 1»
+
+            # 1) No permitir reinscribirse si ya aprobó la materia
+            aprobada = AlumnoMateriaCurso.objects.filter(
+                alumno=alumno,
+                materia_curso__materia=materia,
+                nota__gte=4
+            ).exists()
+
+            if aprobada:
+                estado = "aprobada"
+                mensaje = "Ya aprobaste esta materia."
+            
+            # 2) Si tiene correlativa, verificar si está aprobada
+            if correlativa and not aprobada:
+                correlativa_aprobada = AlumnoMateriaCurso.objects.filter(
+                    alumno=alumno,
+                    materia_curso__materia__nombre__iexact=correlativa.nombre,
+                    nota__gte=6
+                ).exists()
+
+                if not correlativa_aprobada:
+                    estado = "correlativa"
+                    mensaje = f"No podés cursar {materia.nombre} sin aprobar {correlativa.nombre}."
+
+            materias_info.append({
+                "materia": materia,
+                "estado": estado,
+                "mensaje": mensaje,
+            })
+
+        context["materias_info"] = materias_info
 
         return context
 

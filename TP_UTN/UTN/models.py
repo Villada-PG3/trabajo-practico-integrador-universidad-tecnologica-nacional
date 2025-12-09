@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import date
 from django.conf import settings
-import datetime
+import datetime, re
 from django.core.exceptions import ValidationError
 
 # Create your models here.
@@ -32,6 +32,13 @@ class Alumno(models.Model):
 
     def get_absolute_url(self):
         return reverse('alumno_detail', kwargs={'pk': self.pk})
+    
+    def tiene_aprobada(self, materia):
+        return AlumnoMateria.objects.filter(
+            alumno=self,
+            materia=materia,
+            aprobado=True
+        ).exists()
 
 class Curso(models.Model):
     id_curso = models.AutoField(primary_key=True)
@@ -55,6 +62,56 @@ class Materia(models.Model):
 
     def get_absolute_url(self):
         return reverse('materia_detail', kwargs={'pk': self.pk})
+    
+    def parse_nombre(self):
+        """
+        Separa el nombre en: base (texto) y número.
+        Ejemplo:
+            "Física 2" -> ("Física", 2)
+            "Programación Web 1" -> ("Programación Web", 1)
+        """
+        match = re.match(r"^(.*?)[ ]?(\d+)$", self.nombre.strip())
+        if match:
+            base = match.group(1).strip()
+            numero = int(match.group(2))
+            return base, numero
+        return self.nombre, None
+
+
+    def get_correlativa(self):
+        """
+        Devuelve la materia correlativa anterior automáticamente.
+
+        Ejemplos:
+            "Física 2"  -> devuelve Materia "Física 1"
+            "Inglés 3"  -> devuelve Materia "Inglés 2"
+            "Química 1" -> devuelve None (no tiene anterior)
+        """
+        base, numero = self.parse_nombre()
+
+        if not numero or numero == 1:
+            return None  # No tiene correlativa
+
+        nombre_correlativa = f"{base} {numero - 1}"
+
+        return Materia.objects.filter(nombre__iexact=nombre_correlativa).first()
+    
+class AlumnoMateria(models.Model):
+    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='materias_estado')
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE, related_name='estado_alumnos')
+    nota_final = models.PositiveSmallIntegerField(null=True, blank=True)
+    aprobado = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('alumno', 'materia')
+
+    def save(self, *args, **kwargs):
+        if self.nota_final is not None:
+            self.aprobado = self.nota_final >= 4
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+            return f"{self.alumno} - {self.materia} - {'Aprobado' if self.aprobado else 'No aprobado'}"
     
 class CarreraMateria(models.Model):
     carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE)
@@ -278,3 +335,5 @@ class AlumnoMateriaCurso(models.Model):
 
     def __str__(self):
         return f"{self.alumno} en {self.materia_curso}"
+    
+
