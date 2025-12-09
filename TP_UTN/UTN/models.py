@@ -5,6 +5,7 @@ from datetime import date
 from django.conf import settings
 import datetime, re
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 
 class Carrera(models.Model):
     id_carrera = models.AutoField(primary_key=True)
@@ -27,7 +28,7 @@ class Alumno(models.Model):
 
     def __str__(self):
         carrera_nombre = self.carrera.nombre if self.carrera else "Sin carrera"
-        return f"{self.id_alumno}, {self.apellido}, {self.nombre} ({carrera_nombre})"
+        return f"{self.anio_universitario}, {self.apellido}, {self.nombre} ({carrera_nombre})"
 
     def get_absolute_url(self):
         return reverse('alumno_detail', kwargs={'pk': self.pk})
@@ -56,9 +57,26 @@ class Materia(models.Model):
     nombre = models.CharField(max_length=100, default="")
     sigla = models.CharField(max_length=10, primary_key=True)
     ciclo_lectivo = models.PositiveIntegerField()
+    correlativas_requeridas = models.ManyToManyField('self', blank=True, symmetrical=False, related_name='materias_que_la_requieren', verbose_name='Materias Correlativas Requeridas')
+
+    def get_carreras_admin(self):
+        """
+        Genera una cadena de texto HTML para mostrar en el Admin con las carreras y sus IDs.
+        """
+        # Usamos self.carreramateria_set para acceder a las relaciones.
+        carreras = self.carreramateria_set.select_related('carrera').all()
+        
+        info_carreras = []
+        for cm in carreras:
+            info_carreras.append(f"{cm.carrera.nombre} (ID: **{cm.carrera.id_carrera}**)")
+            
+        return mark_safe("<br>".join(info_carreras))
+
+    get_carreras_admin.short_description = 'Carreras Asociadas'
+    # Esto le dice a Django que el contenido es HTML, permitiendo el <br> y ** 
 
     def __str__(self):
-        return f"{self.nombre} ({self.sigla})"
+        return f"{self.nombre} (anio: {self.ciclo_lectivo})"
 
     def get_absolute_url(self):
         return reverse('materia_detail', kwargs={'pk': self.pk})
@@ -76,25 +94,6 @@ class Materia(models.Model):
             numero = int(match.group(2))
             return base, numero
         return self.nombre, None
-
-
-    def get_correlativa(self):
-        """
-        Devuelve la materia correlativa anterior automáticamente.
-
-        Ejemplos:
-            "Física 2"  -> devuelve Materia "Física 1"
-            "Inglés 3"  -> devuelve Materia "Inglés 2"
-            "Química 1" -> devuelve None (no tiene anterior)
-        """
-        base, numero = self.parse_nombre()
-
-        if not numero or numero == 1:
-            return None  # No tiene correlativa
-
-        nombre_correlativa = f"{base} {numero - 1}"
-
-        return Materia.objects.filter(nombre__iexact=nombre_correlativa).first()
     
 class AlumnoMateria(models.Model):
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='materias_estado')
@@ -105,9 +104,40 @@ class AlumnoMateria(models.Model):
     class Meta:
         unique_together = ('alumno', 'materia')
 
+    def clean(self):
+        """
+        Valida que el ciclo lectivo de la materia no sea superior 
+        al año universitario actual del alumno para registrar la aprobación.
+        """
+        # Solo aplicamos la validación si se está intentando registrar una nota de aprobación
+        # o si se está marcando como aprobado directamente.
+        
+        # Comprobar si la materia requiere aprobación
+        aprobacion_intento = (self.nota_final is not None and self.nota_final >= 4) or self.aprobado
+        
+        if aprobacion_intento:
+            # 1. Obtener el año universitario del alumno
+            anio_alumno = self.alumno.anio_universitario
+            
+            # 2. Obtener el ciclo lectivo de la materia
+            ciclo_materia = self.materia.ciclo_lectivo
+            
+            # 3. Realizar la validación
+            if ciclo_materia > anio_alumno:
+                raise ValidationError({
+                    'materia': f"No se puede registrar la aprobación de la materia '{self.materia.nombre}' (Ciclo {ciclo_materia}) porque el alumno está actualmente en el año universitario {anio_alumno}."
+                })
+        
+        # Llama a clean() de la clase base, aunque en este caso no hace mucho por defecto.
+        super().clean() 
+
     def save(self, *args, **kwargs):
+        # Llama a clean() antes de guardar para ejecutar la validación
+        self.clean()
+        
         if self.nota_final is not None:
             self.aprobado = self.nota_final >= 4
+        
         super().save(*args, **kwargs)
 
     def __str__(self):
