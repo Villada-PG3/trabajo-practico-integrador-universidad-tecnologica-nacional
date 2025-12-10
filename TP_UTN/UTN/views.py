@@ -356,29 +356,39 @@ def login_view(request):
 
         # Buscar usuario por email
         try:
-            user = User.objects.get(email=email)
+            user_obj = User.objects.get(email=email)
         except User.DoesNotExist:
-            messages.error(request, "Credenciales incorrectas.")
+            messages.error(request, "Email o contraseña incorrectos.")
             return render(request, "login.html")
 
-        # Autenticar usando username interno
-        user = authenticate(request, username=user.username, password=password)
+        # Autenticación usando username interno
+        user = authenticate(request, username=user_obj.username, password=password)
 
         if user is not None:
             login(request, user)
-            return redirect("/")
+
+            # ================================
+            # REDIRECCIÓN SEGÚN ROL
+            # ================================
+
+            # Si es alumno → ir a alumno_detail
+            if hasattr(user, "alumno"):
+                return redirect("alumno_detail", pk=user.alumno.id)
+
+            # Si es profesor → ir a dashboard de profesor
+            if hasattr(user, "profesor"):
+                return redirect("dashboard", pk=user.profesor.id_profesor)
+
+            # Si no tiene rol asociado
+            messages.error(request, "Tu cuenta no tiene un rol asignado.")
+            return redirect("login")
+
         else:
-            messages.error(request, "Credenciales incorrectas.")
+            messages.error(request, "Email o contraseña incorrectos.")
 
     return render(request, "login.html")
 
 
-# --------------------------
-#  LOGOUT
-# --------------------------
-def logout_view(request):
-    logout(request)
-    return redirect("login")
 
 
 # ============================
@@ -463,9 +473,8 @@ def logout_profesores(request):
 # ===========================================
 
 @login_required
-def dashboard(request):
-    profesor = request.user.profesor
-
+def dashboard(request, pk):
+    profesor = Profesor.objects.get(user=request.user)
     asignaciones = ProfesorMateriaCurso.objects.filter(profesor=profesor)
 
     return render(request, "profesores/dashboard.html", {

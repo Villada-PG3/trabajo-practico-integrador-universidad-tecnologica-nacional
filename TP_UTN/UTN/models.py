@@ -6,6 +6,7 @@ from django.conf import settings
 import datetime, re
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
+from django.contrib.auth.models import User
 
 class Carrera(models.Model):
     id_carrera = models.AutoField(primary_key=True)

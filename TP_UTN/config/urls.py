@@ -3,7 +3,7 @@ from django.urls import path
 
 from UTN.views import (
     # Login/registro
-    login_view, register_view, logout_view,
+    login_view, register_view,
 
     # Vistas principales
     InicioView, PostLoginCheckView,
@@ -31,7 +31,6 @@ urlpatterns = [
     # Login / Registro
     path("login/", login_view, name="login"),
     path("register/", register_view, name="register"),
-    path("logout/", logout_view, name="logout"),
 
     # Admin Django
     path('admin/', admin.site.urls),
@@ -67,8 +66,7 @@ urlpatterns = [
     # ==========================
     # PROFESORES - URLs nuevas
     # ==========================
-    path("profesores/login/", login_profesores, name="login_profesores"),
-    path("profesores/panel/", dashboard, name="dashboard"),
+    path("profesores/panel/<int:pk>/", dashboard, name="dashboard"),
     path("profesores/mis-clases/", mis_clases, name="mis_clases"),
     path("profesores/cargar-nota/<int:clase_id>/", cargar_nota, name="cargar_nota"),
     path("profesores/logout/", logout_profesores, name="logout_profesores"),
