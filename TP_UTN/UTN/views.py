@@ -483,9 +483,8 @@ def dashboard(request):
 def materias_disponibles(request):
     profesor = request.user.profesor
 
-    materias = MateriaCurso.objects.exclude(
-        profesores_asignados__profesor=profesor
-    )
+    materias = MateriaCurso.objects.filter(profesores__isnull=True)
+
 
     return render(request, "profesores/materias_disponibles.html", {
         "materias": materias

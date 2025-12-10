@@ -94,6 +94,11 @@ class Materia(models.Model):
             numero = int(match.group(2))
             return base, numero
         return self.nombre, None
+    def get_correlativa(self):
+        correlativas = self.correlativas_requeridas.all()
+        return correlativas.first() if correlativas.exists() else None
+
+    
     
 class AlumnoMateria(models.Model):
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='materias_estado')
