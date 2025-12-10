@@ -373,7 +373,7 @@ def login_view(request):
 
             # Si es alumno → ir a alumno_detail
             if hasattr(user, "alumno"):
-                return redirect("alumno_detail", pk=user.alumno.id)
+                return redirect("/", pk=user.alumno.id_alumno)
 
             # Si es profesor → ir a dashboard de profesor
             if hasattr(user, "profesor"):
