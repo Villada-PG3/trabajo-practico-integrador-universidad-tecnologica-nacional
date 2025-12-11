@@ -59,34 +59,45 @@
 <body class="min-h-screen bg-background text-foreground font-sans">
       
     <!-- Updated header to match UTN style with logo and navigation -->
-    <header class="bg-white border-b border-gray-100 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-3">
-                        <img src="https://tse2.mm.bing.net/th/id/OIP.cqBKPdnHYvuLe2CUvTk8EwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="UTN Logo" class="h-12 mr-4">
-                        <div>
-                            <h1 class="text-xl font-bold text-gray-900">Universidad Tecnológica Nacional</h1>
-                            <p class="text-sm text-gray-600">Excelencia en educación tecnológica</p>
-                        </div>
-                    </div>
+    <!-- NAV -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="https://tse2.mm.bing.net/th/id/OIP.cqBKPdnHYvuLe2CUvTk8EwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="UTN Logo" class="h-12 mr-4">
+                <div>
+                    <h1 class="text-xl font-bold">Universidad Tecnológica Nacional</h1>
+                    <p class="text-sm text-gray-600">Excelencia en educación tecnológica</p>
                 </div>
-                <nav class="hidden md:block">
-                    <div class="flex items-center space-x-8">
-                        <a href="/" class="text-gray-700 hover:text-gray-900 font-medium transition-colors">
-                            Inicio
-                        </a>
-                        <a href="/materias/" class="text-gray-700 hover:text-gray-900 font-medium transition-colors">
-                            Materias
-                        </a>
-                        <a href="/carreras/" class="text-gray-900 font-medium border-b-2 border-gray-900 pb-1">
-                            Carreras
-                        </a>
-                    </div>
-                </nav>
             </div>
+
+            <div class="hidden md:flex space-x-8">
+                <a href="/" class="nav-link font-medium">Inicio</a>
+
+                {% if user.is_authenticated %}
+                    {% if user.alumno %}
+                        <a href="{% url 'alumno_detail' user.alumno.pk %}" class="nav-link font-medium">
+                            {{ user.get_full_name|default:user.username }}
+                        </a>
+                    {% endif %}
+
+                    <a href="{% url 'logout' %}" class="nav-link font-medium text-red-600 hover:text-red-700">
+                        Cerrar Sesión
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-link font-medium">Iniciar Sesión</a>
+                    <a href="{% url 'register' %}" class="nav-link font-medium">Registrarse</a>
+                {% endif %}
+
+                <a href="/carreras/" class="nav-link font-medium">Carreras</a>
+            </div>
+
+            <button class="md:hidden focus:outline-none">
+                <i data-feather="menu"></i>
+            </button>
         </div>
-    </header>
+    </div>
+</nav>
 
     <!-- Added hero section similar to UTN style -->
     <section class="bg-gray-50 py-16">
