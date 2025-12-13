@@ -157,20 +157,40 @@
             
             <!-- Sample course cards with modern design -->
             {% for carrera in carreras %}
-            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ carrera.nombre }}</h2>
-                <p class="text-gray-600 mb-4">identificacion: {{ carrera.id_carrera }}</p>
-                <p class="text-gray-600 mb-4">Duración: {{ carrera.duracion_anios }} años</p>
-                <a href="{% url carrera.url_name %}" 
-                    class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors inline-block mt-2">
-                    Ver carrera
-                </a>
-                <span class="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
-                </span>
-            </div>
-            {% empty %}
-                <p class="text-gray-500 text-center col-span-full">No hay carreras disponibles.</p>
-            {% endfor %}
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+
+                    {% if carrera.imagen_url_c %}
+                        <img
+                            src="{{ carrera.imagen_url_c }}"
+                            alt="Imagen de {{ carrera.nombre }}"
+                            class="w-full h-48 object-cover"
+                        >
+                    {% else %}
+                        <div class="w-full h-48 bg-gray-100 flex items-center justify-center text-gray-400">
+                            Sin imagen
+                        </div>
+                    {% endif %}
+
+                    <div class="p-6">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-2">
+                            {{ carrera.nombre }}
+                        </h2>
+
+                        <p class="text-gray-600 mb-2">
+                            Identificación: {{ carrera.id_carrera }}
+                        </p>
+
+                        <p class="text-gray-600 mb-4">
+                            Duración: {{ carrera.duracion_anios }} años
+                        </p>
+
+                        <a href="{% url carrera.url_name %}"
+                        class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors inline-block mt-2">
+                            Ver carrera
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
         </div>
 
                             </svg>

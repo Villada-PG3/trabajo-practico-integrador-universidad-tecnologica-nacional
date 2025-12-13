@@ -20,7 +20,7 @@ from UTN.views import (
     CarreraListView,
     Ingenieria_civil, Ingenieria_electronica, Ingenieria_energia,
     Ingenieria_industrial, Ingenieria_mecanica, Ingenieria_metalurgica,
-    Ingenieria_quimica, Ingenieria_sistemas,
+    Ingenieria_quimica, Ingenieria_sistema,
 
     # PROFESORES - nuevas vistas
     
@@ -61,7 +61,7 @@ urlpatterns = [
     path('carreras/ingenieria_mecanica/', Ingenieria_mecanica.as_view(), name='Ingenieria_mecanica'),
     path('carreras/ingenieria_metalurgica/', Ingenieria_metalurgica.as_view(), name='Ingenieria_metalurgica'),
     path('carreras/ingenieria_quimica/', Ingenieria_quimica.as_view(), name='Ingenieria_quimica'),
-    path('carreras/ingenieria_sistemas/', Ingenieria_sistemas.as_view(), name='ingenieria_sistemas'),
+    path('carreras/ingenieria_sistema/', Ingenieria_sistema.as_view(), name='Ingenieria_sistema'),
 
     
     # ==========================
