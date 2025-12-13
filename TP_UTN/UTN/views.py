@@ -302,7 +302,7 @@ CARRERA_URL_MAP = {
     "Ingeniería Mecánica": "Ingenieria_mecanica",
     "Ingeniería Metalúrgica": "Ingenieria_metalurgica",
     "Ingeniería Química": "Ingenieria_quimica",
-    "Ingeniería en Sistemas de Información": "Ingenieria_sistema",
+    "Ingeniería en Sistemas de Información": "ingenieria_sistemas",
 }
 
 
@@ -324,23 +324,6 @@ class CarreraListView(ListView):
 
         for carrera in context['carreras']:
             carrera.url_name = CARRERA_URL_MAP.get(carrera.nombre, 'carrera_list')
-
-        return context
-    
-class CarreraTemplateView(TemplateView):
-    """
-    Vista base para páginas de carreras individuales.
-    Inyecta la carrera correspondiente en el contexto.
-    """
-    carrera_nombre = None
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context["carrera"] = get_object_or_404(
-            Carrera,
-            nombre=self.carrera_nombre
-        )
 
         return context
 
@@ -435,44 +418,36 @@ def login_view(request):
 # ============================
 #  Páginas de Carrera (TemplateViews)
 # ============================
-class Ingenieria_civil(CarreraTemplateView):
+class Ingenieria_civil(TemplateView):
     template_name = "carreras/Ingenieria_civil.html"
-    carrera_nombre = "Ingeniería Civil"
 
 
-class Ingenieria_electronica(CarreraTemplateView):
+class Ingenieria_electronica(TemplateView):
     template_name = "carreras/Ingenieria_electronica.html"
-    carrera_nombre = "Ingeniería Electrónica"
 
 
-class Ingenieria_energia(CarreraTemplateView):
+class Ingenieria_energia(TemplateView):
     template_name = "carreras/Ingenieria_energia.html"
-    carrera_nombre = "Ingeniería en Energía Eléctrica"
 
 
-class Ingenieria_industrial(CarreraTemplateView):
+class Ingenieria_industrial(TemplateView):
     template_name = "carreras/Ingenieria_industrial.html"
-    carrera_nombre = "Ingeniería Industrial"
 
 
-class Ingenieria_mecanica(CarreraTemplateView):
+class Ingenieria_mecanica(TemplateView):
     template_name = "carreras/Ingenieria_mecanica.html"
-    carrera_nombre = "Ingeniería Mecánica"
 
 
-class Ingenieria_metalurgica(CarreraTemplateView):
+class Ingenieria_metalurgica(TemplateView):
     template_name = "carreras/Ingenieria_metalurgica.html"
-    carrera_nombre = "Ingeniería Metalúrgica"
 
 
-class Ingenieria_quimica(CarreraTemplateView):
+class Ingenieria_quimica(TemplateView):
     template_name = "carreras/Ingenieria_quimica.html"
-    carrera_nombre = "Ingeniería Química"
 
 
-class Ingenieria_sistema(CarreraTemplateView):
+class Ingenieria_sistemas(TemplateView):
     template_name = "carreras/Ingenieria_sistema.html"
-    carrera_nombre = "Ingeniería en Sistemas de Información"
 
 
 # ============================
