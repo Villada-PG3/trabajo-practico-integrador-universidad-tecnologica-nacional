@@ -1,35 +1,193 @@
-{% extends 'base.html' %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis clases</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<div class="container mx-auto px-6 mt-10">
+    <style>
+        :root {
+            --negro: #111;
+            --gris-oscuro: #2f2f2f;
+            --gris: #6b6b6b;
+            --gris-claro: #e5e5e5;
+            --blanco: #ffffff;
+        }
 
-    <h2 class="text-3xl font-bold mb-6">Mis Clases</h2>
+        * {
+            box-sizing: border-box;
+            font-family: "Segoe UI", system-ui, sans-serif;
+        }
 
-    {% if clases %}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        body {
+            margin: 0;
+            background-color: var(--gris-claro);
+            color: var(--negro);
+        }
 
-            {% for clase in clases %}
-            <div class="bg-gray-100 border border-black rounded-xl p-6 shadow-sm">
-                <h3 class="text-xl font-bold mb-2">
-                    {{ clase.curso.nombre }}
-                </h3>
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
 
-                <p class="text-gray-700">
-                    Materia: <strong>{{ clase.materia.nombre }}</strong>
-                </p>
+        h1 {
+            margin-bottom: 25px;
+            font-size: 28px;
+            font-weight: 600;
+        }
 
-                <a href="{% url 'cargar_nota' asignacion.materia_curso.id_materia_curso %}">
-                    Cargar notas
-                </a>
-            </div>
+        /* =====================
+           GRID DE CLASES
+        ====================== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* =====================
+           TARJETA
+        ====================== */
+        .card {
+            background-color: var(--blanco);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin: 0 0 8px;
+        }
+
+        .card p {
+            margin: 4px 0;
+            color: var(--gris);
+            font-size: 14px;
+        }
+
+        /* =====================
+           BOTONES
+        ====================== */
+        .acciones {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-notas {
+            background-color: var(--negro);
+            color: var(--blanco);
+        }
+
+        .btn-notas:hover {
+            background-color: #000;
+        }
+
+        .btn-salir {
+            background-color: transparent;
+            color: var(--gris);
+            border: 1px solid var(--gris);
+        }
+
+        .btn-salir:hover {
+            background-color: var(--gris-claro);
+            color: var(--negro);
+        }
+
+        /* =====================
+           EMPTY STATE
+        ====================== */
+        .empty {
+            background-color: var(--blanco);
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            color: var(--gris);
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+<div class="container">
+    <a
+    href="{% url 'dashboard' request.user.profesor.pk %}"
+    class="btn btn-salir"
+    style="margin-bottom:20px; display:inline-block;"
+    >
+        ⬅ Volver al Panel
+    </a>
+
+
+    <h1>Mis clases</h1>
+
+    {% if asignaciones %}
+        <div class="grid">
+            {% for asignacion in asignaciones %}
+                <div class="card">
+
+                    <div>
+                        <h2>{{ asignacion.materia_curso.materia.nombre }}</h2>
+                        <p><strong>Curso:</strong> {{ asignacion.materia_curso.curso.nombre }}</p>
+                        <p><strong>Turno:</strong> {{ asignacion.materia_curso.get_turno_cursado_display }}</p>
+                        <p><strong>Horario:</strong> {{ asignacion.materia_curso.horario }}</p>
+                    </div>
+
+                    <div class="acciones">
+                        <!-- CARGAR NOTAS -->
+                        <a
+                            href="{% url 'cargar_nota' asignacion.materia_curso.id_materia_curso %}"
+                            class="btn btn-notas"
+                        >
+                            Cargar notas
+                        </a>
+
+                        <!-- DESASIGNAR -->
+                        <a
+                            href="{% url 'desasignar_materia' asignacion.materia_curso.id_materia_curso %}"
+                            class="btn btn-salir"
+                            onclick="return confirm('¿Seguro que querés dejar de dar esta materia?');"
+                        >
+                            Dejar materia
+                        </a>
+                    </div>
+
+                </div>
             {% endfor %}
-
         </div>
-
     {% else %}
-        <p class="text-gray-700">No tenés clases asignadas.</p>
+        <div class="empty">
+            <h2>No tenés materias asignadas</h2>
+            <p>Asignate una materia para comenzar.</p>
+        </div>
     {% endif %}
 
 </div>
 
-{% endblock %}
+</body>
+</html>

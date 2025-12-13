@@ -492,12 +492,14 @@ def dashboard(request, pk):
 def materias_disponibles(request):
     profesor = request.user.profesor
 
-    materias = MateriaCurso.objects.filter(profesores__isnull=True)
-
+    materias = MateriaCurso.objects.exclude(
+        profesores__profesor=profesor
+    )
 
     return render(request, "profesores/materias_disponibles.html", {
         "materias": materias
     })
+
 
 
 
@@ -554,11 +556,15 @@ def desasignar_materia(request, materia_id):
 @login_required
 def mis_clases(request):
     profesor = request.user.profesor
-    asignaciones = ProfesorMateriaCurso.objects.filter(profesor=profesor)
+
+    asignaciones = ProfesorMateriaCurso.objects.filter(
+        profesor=profesor
+    ).select_related("materia_curso", "materia_curso__materia", "materia_curso__curso")
 
     return render(request, "profesores/mis_clases.html", {
         "asignaciones": asignaciones
     })
+
 
 
 
@@ -599,3 +605,17 @@ def cargar_nota(request, clase_id):
         "materia_curso": materia_curso,
         "alumnos": alumnos_cursando
     })
+@login_required
+def desasignar_materia(request, id_materia_curso):
+    profesor = request.user.profesor
+
+    asignacion = get_object_or_404(
+        ProfesorMateriaCurso,
+        profesor=profesor,
+        materia_curso_id=id_materia_curso
+    )
+
+    asignacion.delete()
+    messages.success(request, "Dejaste de dar la materia correctamente.")
+
+    return redirect("mis_clases")

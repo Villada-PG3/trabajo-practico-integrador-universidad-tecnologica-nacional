@@ -24,7 +24,7 @@ from UTN.views import (
 
     # PROFESORES - nuevas vistas
     
-    login_profesores, dashboard, mis_clases, cargar_nota, logout_profesores, materias_disponibles, asignar_materia_profesor,  
+    login_profesores, desasignar_materia, dashboard, mis_clases, cargar_nota, logout_profesores, materias_disponibles, asignar_materia_profesor,  
 )
 
 urlpatterns = [
@@ -73,5 +73,6 @@ urlpatterns = [
     path("profesores/logout/", logout_profesores, name="logout_profesores"),
     path("profesores/materias-disponibles/", materias_disponibles, name="materias_disponibles"),
     path("profesores/asignar/<int:id_materia_curso>/", asignar_materia_profesor, name="asignar_materia_profesor"),
+    path("desasignar/<int:id_materia_curso>/", desasignar_materia, name="desasignar_materia")
 
 ]
