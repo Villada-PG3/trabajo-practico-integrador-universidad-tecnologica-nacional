@@ -595,40 +595,63 @@ def mis_clases(request):
 # ===========================================
 #   CARGAR NOTAS (sólo armado del endpoint)
 # ===========================================
-
 @login_required
 def cargar_nota(request, clase_id):
-    profesor = request.user.profesor
-
-    # 🔒 Seguridad: el profesor DEBE estar asignado
-    asignacion = get_object_or_404(
-        ProfesorMateriaCurso,
-        profesor=profesor,
-        materia_curso_id=clase_id
+    curso = get_object_or_404(
+        MateriaCurso,
+        id_materia_curso=clase_id
     )
 
-    materia_curso = asignacion.materia_curso
-
-    alumnos_cursando = AlumnoMateriaCurso.objects.filter(
-        materia_curso=materia_curso
+    inscripciones = AlumnoMateriaCurso.objects.filter(
+        materia_curso=curso,
+        finalizado=False
     ).select_related('alumno')
 
     if request.method == "POST":
-        for inscripcion in alumnos_cursando:
-            campo = f"nota_{inscripcion.id_alumno_materia_curso}"
-            valor = request.POST.get(campo)
+        for ins in inscripciones:
+            # Tomamos las notas del POST
+            n1 = request.POST.get(f"nota_1_{ins.pk}")
+            n2 = request.POST.get(f"nota_2_{ins.pk}")
+            n3 = request.POST.get(f"nota_3_{ins.pk}")
 
-            if valor != "" and valor is not None:
-                inscripcion.nota = int(valor)
-                inscripcion.save()
+            # Convertimos a int o None
+            ins.nota_1 = int(n1) if n1 else None
+            ins.nota_2 = int(n2) if n2 else None
+            ins.nota_3 = int(n3) if n3 else None
 
-        messages.success(request, "Notas guardadas correctamente.")
-        return redirect("mis_clases")
+            # Calcula promedio y estado
+            ins.calcular_promedio()
 
-    return render(request, "profesores/cargar_nota.html", {
-        "materia_curso": materia_curso,
-        "alumnos": alumnos_cursando
-    })
+            # Si ya tiene las 3 notas → se finaliza la cursada
+            if ins.promedio is not None:
+                ins.finalizado = True
+
+                if ins.aprobado:
+                    messages.success(
+                        request,
+                        f"{ins.alumno} APROBÓ {curso.materia} (Promedio: {ins.promedio})"
+                    )
+                else:
+                    messages.warning(
+                        request,
+                        f"{ins.alumno} DESAPROBÓ {curso.materia} "
+                        f"(Promedio: {ins.promedio}) - Debe reinscribirse"
+                    )
+
+            ins.save()
+
+        return redirect('mis_clases')
+
+    return render(
+        request,
+        "profesores/cargar_nota.html",
+        {
+            "curso": curso,
+            "inscripciones": inscripciones
+        }
+    )
+
+
 @login_required
 def desasignar_materia(request, id_materia_curso):
     profesor = request.user.profesor

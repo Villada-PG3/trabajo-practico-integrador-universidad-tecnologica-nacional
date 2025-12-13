@@ -6,9 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-        /* =========================
-           PALETA: NEGRO / BLANCO / GRIS
-        ========================== */
         :root {
             --negro: #111111;
             --gris-oscuro: #2e2e2e;
@@ -28,11 +25,8 @@
             color: var(--negro);
         }
 
-        /* =========================
-           CONTENEDOR PRINCIPAL
-        ========================== */
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 40px auto;
             background-color: var(--blanco);
             padding: 30px;
@@ -40,9 +34,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
 
-        /* =========================
-           HEADER
-        ========================== */
         .header {
             border-bottom: 1px solid var(--gris-claro);
             margin-bottom: 25px;
@@ -61,9 +52,6 @@
             font-size: 14px;
         }
 
-        /* =========================
-           TABLA
-        ========================== */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -77,7 +65,7 @@
 
         th, td {
             padding: 12px 10px;
-            text-align: left;
+            text-align: center;
         }
 
         th {
@@ -93,11 +81,8 @@
             background-color: #f7f7f7;
         }
 
-        /* =========================
-           INPUT NOTA
-        ========================== */
         input[type="number"] {
-            width: 70px;
+            width: 60px;
             padding: 6px;
             font-size: 14px;
             border-radius: 6px;
@@ -110,9 +95,20 @@
             border-color: var(--negro);
         }
 
-        /* =========================
-           BOTONES
-        ========================== */
+        .estado-aprobado {
+            color: green;
+            font-weight: 600;
+        }
+
+        .estado-desaprobado {
+            color: red;
+            font-weight: 600;
+        }
+
+        .estado-curso {
+            color: var(--gris);
+        }
+
         .acciones {
             display: flex;
             justify-content: flex-end;
@@ -148,20 +144,6 @@
             background-color: var(--gris-claro);
             color: var(--negro);
         }
-
-        /* =========================
-           RESPONSIVE
-        ========================== */
-        @media (max-width: 600px) {
-            th:nth-child(2),
-            td:nth-child(2) {
-                display: none;
-            }
-
-            .header h1 {
-                font-size: 22px;
-            }
-        }
     </style>
 </head>
 
@@ -173,9 +155,9 @@
     <div class="header">
         <h1>Carga de notas</h1>
         <p>
-            {{ materia_curso.materia.nombre }} —
-            {{ materia_curso.curso.nombre }} |
-            Turno: {{ materia_curso.get_turno_cursado_display }}
+            {{ curso.materia.nombre }} —
+            {{ curso.curso.nombre }} |
+            Turno: {{ curso.get_turno_cursado_display }}
         </p>
     </div>
 
@@ -187,28 +169,57 @@
             <thead>
                 <tr>
                     <th>Alumno</th>
-                    <th>Legajo</th>
-                    <th>Nota</th>
+                    <th>Nota 1</th>
+                    <th>Nota 2</th>
+                    <th>Nota 3</th>
+                    <th>Promedio</th>
+                    <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
-                {% for ins in alumnos %}
+                {% for ins in inscripciones %}
                 <tr>
-                    <td>{{ ins.alumno.apellido }}, {{ ins.alumno.nombre }}</td>
-                    <td>{{ ins.alumno.dni }}</td>
                     <td>
-                        <input
-                            type="number"
-                            name="nota_{{ ins.id_alumno_materia_curso }}"
-                            value="{{ ins.nota }}"
-                            min="0"
-                            max="10"
-                        >
+                        {{ ins.alumno.apellido }}, {{ ins.alumno.nombre }}
+                    </td>
+
+                    <td>
+                        <input type="number" min="1" max="10"
+                               name="nota_1_{{ ins.id }}"
+                               value="{{ ins.nota_1|default_if_none:'' }}">
+                    </td>
+
+                    <td>
+                        <input type="number" min="1" max="10"
+                               name="nota_2_{{ ins.id }}"
+                               value="{{ ins.nota_2|default_if_none:'' }}">
+                    </td>
+
+                    <td>
+                        <input type="number" min="1" max="10"
+                               name="nota_3_{{ ins.id }}"
+                               value="{{ ins.nota_3|default_if_none:'' }}">
+                    </td>
+
+                    <td>
+                        {{ ins.promedio|default:"—" }}
+                    </td>
+
+                    <td>
+                        {% if ins.finalizado %}
+                            {% if ins.aprobado %}
+                                <span class="estado-aprobado">Aprobado</span>
+                            {% else %}
+                                <span class="estado-desaprobado">Desaprobado</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="estado-curso">En curso</span>
+                        {% endif %}
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="3" style="text-align:center; color: var(--gris);">
+                    <td colspan="6" style="text-align:center; color: var(--gris);">
                         No hay alumnos inscriptos en esta materia.
                     </td>
                 </tr>
@@ -216,7 +227,6 @@
             </tbody>
         </table>
 
-        <!-- ACCIONES -->
         <div class="acciones">
             <a href="{% url 'mis_clases' %}" class="btn btn-volver">
                 Volver
