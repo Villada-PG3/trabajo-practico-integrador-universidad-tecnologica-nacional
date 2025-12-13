@@ -353,17 +353,16 @@ def login_view(request):
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
-
         # Buscar usuario por email
         try:
             user_obj = User.objects.get(email=email)
+            
         except User.DoesNotExist:
             messages.error(request, "Email o contraseña incorrectos.")
             return render(request, "login.html")
 
         # Autenticación usando username interno
         user = authenticate(request, username=user_obj.username, password=password)
-
         if user is not None:
             login(request, user)
 
