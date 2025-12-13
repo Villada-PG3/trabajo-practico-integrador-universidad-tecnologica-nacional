@@ -570,13 +570,32 @@ def mis_clases(request):
 def cargar_nota(request, clase_id):
     profesor = request.user.profesor
 
+    # 🔒 Seguridad: el profesor DEBE estar asignado
     asignacion = get_object_or_404(
         ProfesorMateriaCurso,
         profesor=profesor,
         materia_curso_id=clase_id
     )
 
-    # Después te armamos el formulario si querés
+    materia_curso = asignacion.materia_curso
+
+    alumnos_cursando = AlumnoMateriaCurso.objects.filter(
+        materia_curso=materia_curso
+    ).select_related('alumno')
+
+    if request.method == "POST":
+        for inscripcion in alumnos_cursando:
+            campo = f"nota_{inscripcion.id_alumno_materia_curso}"
+            valor = request.POST.get(campo)
+
+            if valor != "" and valor is not None:
+                inscripcion.nota = int(valor)
+                inscripcion.save()
+
+        messages.success(request, "Notas guardadas correctamente.")
+        return redirect("mis_clases")
+
     return render(request, "profesores/cargar_nota.html", {
-        "asignacion": asignacion
+        "materia_curso": materia_curso,
+        "alumnos": alumnos_cursando
     })
