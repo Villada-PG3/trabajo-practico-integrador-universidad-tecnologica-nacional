@@ -153,7 +153,11 @@ class MateriaReinscripcionView(TemplateView):
         alumno_id = self.kwargs.get('alumno_id')
 
         alumno = Alumno.objects.get(id_alumno=alumno_id)
+        context['alumno'] = alumno
 
+        # =========================
+        # MATERIAS SEGÚN CARRERA
+        # =========================
         materias_relacionadas = CarreraMateria.objects.filter(
             carrera=alumno.carrera,
             materia__ciclo_lectivo__lte=alumno.anio_universitario
@@ -161,35 +165,52 @@ class MateriaReinscripcionView(TemplateView):
 
         materias = [cm.materia for cm in materias_relacionadas]
 
-        context['alumno'] = alumno
-        context['materias'] = materias
+        # =========================
+        # CURSOS CON PROFESOR
+        # =========================
+        cursos_validos = MateriaCurso.objects.filter(
+            materia__in=materias,
+            profesores__isnull=False
+        ).distinct().select_related('materia')
 
-        cursos = MateriaCurso.objects.filter(materia__in=materias)
-        context['cursos_disponibles'] = cursos
+        # Agrupar cursos por materia
+        cursos_por_materia = {}
+        for curso in cursos_validos:
+            cursos_por_materia.setdefault(curso.materia.sigla, []).append(curso)
 
-        materias_reins = AlumnoMateriaCurso.objects.filter(alumno=alumno) \
-            .values_list('materia_curso__materia__sigla', flat=True)
+
+        # Filtrar materias SIN cursos válidos
+        materias = [m for m in materias if m.sigla in cursos_por_materia]
+
+
+        # =========================
+        # REINSCRIPCIONES
+        # =========================
+        materias_reins = AlumnoMateriaCurso.objects.filter(
+            alumno=alumno
+        ).values_list('materia_curso__materia__sigla', flat=True)
 
         context['materias_reinscriptas'] = list(materias_reins)
 
-        insc_activas = AlumnoMateriaCurso.objects.filter(alumno=alumno) \
-            .select_related('materia_curso')
+        insc_activas = AlumnoMateriaCurso.objects.filter(
+            alumno=alumno
+        ).select_related('materia_curso')
 
         context['inscripciones_por_materia'] = {
             ins.materia_curso.materia.sigla: ins for ins in insc_activas
         }
 
-        # ============================================
-        # CORRELATIVAS + CHEQUEO DE APROBACIÓN
-        # ============================================
+        # =========================
+        # INFO POR MATERIA
+        # =========================
         materias_info = []
 
         for materia in materias:
-            estado = "ok"      # habilitada por defecto
+            estado = "ok"
             mensaje = ""
-            correlativa = materia.get_correlativa()  # método que creaste «Fisica 2 → Fisica 1»
 
-            # 1) No permitir reinscribirse si ya aprobó la materia
+            correlativa = materia.get_correlativa()
+
             aprobada = AlumnoMateriaCurso.objects.filter(
                 alumno=alumno,
                 materia_curso__materia=materia,
@@ -199,9 +220,8 @@ class MateriaReinscripcionView(TemplateView):
             if aprobada:
                 estado = "aprobada"
                 mensaje = "Ya aprobaste esta materia."
-            
-            # 2) Si tiene correlativa, verificar si está aprobada
-            if correlativa and not aprobada:
+
+            elif correlativa:
                 correlativa_aprobada = AlumnoMateriaCurso.objects.filter(
                     alumno=alumno,
                     materia_curso__materia__nombre__iexact=correlativa.nombre,
@@ -216,10 +236,10 @@ class MateriaReinscripcionView(TemplateView):
                 "materia": materia,
                 "estado": estado,
                 "mensaje": mensaje,
+                "cursos": cursos_por_materia.get(materia.sigla, [])
             })
 
         context["materias_info"] = materias_info
-
         return context
 
 
@@ -235,7 +255,11 @@ def reinscribir_materia(request, alumno_id, materia_id):
         return redirect('materia_reinscripcion', alumno_id=alumno.id_alumno)
 
     curso_id = request.POST.get('curso_id')
-    materia_curso = get_object_or_404(MateriaCurso, id_materia_curso=curso_id)
+    materia_curso = get_object_or_404(
+        MateriaCurso,
+        id_materia_curso=curso_id,
+        profesores__isnull=False
+    )
 
     inscripcion = AlumnoMateriaCurso(alumno=alumno, materia_curso=materia_curso)
 
@@ -491,12 +515,14 @@ def dashboard(request, pk):
 def materias_disponibles(request):
     profesor = request.user.profesor
 
-    materias = MateriaCurso.objects.filter(profesores__isnull=True)
-
+    materias = MateriaCurso.objects.exclude(
+        profesores__profesor=profesor
+    )
 
     return render(request, "profesores/materias_disponibles.html", {
         "materias": materias
     })
+
 
 
 
@@ -553,11 +579,15 @@ def desasignar_materia(request, materia_id):
 @login_required
 def mis_clases(request):
     profesor = request.user.profesor
-    asignaciones = ProfesorMateriaCurso.objects.filter(profesor=profesor)
+
+    asignaciones = ProfesorMateriaCurso.objects.filter(
+        profesor=profesor
+    ).select_related("materia_curso", "materia_curso__materia", "materia_curso__curso")
 
     return render(request, "profesores/mis_clases.html", {
         "asignaciones": asignaciones
     })
+
 
 
 
@@ -569,13 +599,46 @@ def mis_clases(request):
 def cargar_nota(request, clase_id):
     profesor = request.user.profesor
 
+    # 🔒 Seguridad: el profesor DEBE estar asignado
     asignacion = get_object_or_404(
         ProfesorMateriaCurso,
         profesor=profesor,
         materia_curso_id=clase_id
     )
 
-    # Después te armamos el formulario si querés
+    materia_curso = asignacion.materia_curso
+
+    alumnos_cursando = AlumnoMateriaCurso.objects.filter(
+        materia_curso=materia_curso
+    ).select_related('alumno')
+
+    if request.method == "POST":
+        for inscripcion in alumnos_cursando:
+            campo = f"nota_{inscripcion.id_alumno_materia_curso}"
+            valor = request.POST.get(campo)
+
+            if valor != "" and valor is not None:
+                inscripcion.nota = int(valor)
+                inscripcion.save()
+
+        messages.success(request, "Notas guardadas correctamente.")
+        return redirect("mis_clases")
+
     return render(request, "profesores/cargar_nota.html", {
-        "asignacion": asignacion
+        "materia_curso": materia_curso,
+        "alumnos": alumnos_cursando
     })
+@login_required
+def desasignar_materia(request, id_materia_curso):
+    profesor = request.user.profesor
+
+    asignacion = get_object_or_404(
+        ProfesorMateriaCurso,
+        profesor=profesor,
+        materia_curso_id=id_materia_curso
+    )
+
+    asignacion.delete()
+    messages.success(request, "Dejaste de dar la materia correctamente.")
+
+    return redirect("mis_clases")

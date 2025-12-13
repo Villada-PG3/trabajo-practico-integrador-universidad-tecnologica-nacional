@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
+{% load custom_filters %}
 {% block content %}
 
-{% load custom_filters %}
-
-{# Opcional: Mostrar los mensajes de Django (éxito/error/warning) #}
 {% if messages %}
     <ul class="messages max-w-5xl mx-auto mt-4">
         {% for message in messages %}
@@ -15,96 +13,94 @@
 {% endif %}
 
 <div class="max-w-5xl mx-auto mt-10">
+
     <h1 class="text-3xl font-bold text-center mb-6">
         Reinscripción de {{ alumno.nombre }} {{ alumno.apellido }}
     </h1>
 
-    {% if materias %}
+    {% if materias_info %}
         <div class="space-y-6">
+
             {% for item in materias_info %}
-                {% with materia=item.materia estado=item.estado mensaje=item.mensaje %}
+                {% with materia=item.materia estado=item.estado mensaje=item.mensaje cursos=item.cursos %}
 
                 <div class="bg-white border border-gray-200 rounded-2xl shadow-lg p-6">
+
                     <h2 class="text-2xl font-bold text-gray-900 mb-3">
                         Materia: {{ materia.nombre }}
                     </h2>
 
-                    {# 1) MATERIA APROBADA #}
+                    {# ================= APROBADA ================= #}
                     {% if estado == "aprobada" %}
                         <p class="text-green-700 font-bold bg-green-50 border border-green-300 p-3 rounded-lg">
                             ✔ {{ mensaje }}
                         </p>
-                    
-                    {# 2) CORRELATIVA NO APROBADA #}
+
+                    {# ================= CORRELATIVA ================= #}
                     {% elif estado == "correlativa" %}
                         <p class="text-red-600 font-bold bg-red-50 border border-red-300 p-3 rounded-lg">
                             ⛔ {{ mensaje }}
                         </p>
 
-                    {# 3) YA REINSCRIPTO #}
+                    {# ================= YA REINSCRIPTO ================= #}
                     {% elif materia.sigla in materias_reinscriptas %}
-                        {% with inscripcion_actual=inscripciones_por_materia|get_item:materia.sigla %}
+                        {% with inscripcion=inscripciones_por_materia|get_item:materia.sigla %}
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center p-4 bg-green-50 border border-green-300 rounded-lg">
                                 <div>
                                     <p class="text-green-700 font-bold text-lg mb-1">
                                         Reinscripto ✅
                                     </p>
                                     <p class="text-green-700 text-sm">
-                                        Comisión actual: {{ inscripcion_actual.materia_curso.curso.nombre }}
-                                        ({{ inscripcion_actual.materia_curso.get_turno_cursado_display }} - {{ inscripcion_actual.materia_curso.horario }})
+                                        Comisión actual:
+                                        {{ inscripcion.materia_curso.curso.nombre }}
+                                        ({{ inscripcion.materia_curso.get_turno_cursado_display }}
+                                        - {{ inscripcion.materia_curso.horario }})
                                     </p>
                                 </div>
 
-                                <a href="{% url 'cancelar_reinscripcion' alumno_id=alumno.id_alumno materia_id=materia.sigla %}"
-                                class="mt-3 md:mt-0 bg-red-600 text-white px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors">
-                                    Cancelar Reinscripción
+                                <a href="{% url 'cancelar_reinscripcion' alumno.id_alumno materia.sigla %}"
+                                   class="mt-3 md:mt-0 bg-red-600 text-white px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition">
+                                    Cancelar reinscripción
                                 </a>
                             </div>
                         {% endwith %}
 
-                    {# 4) CURSOS DISPONIBLES (SOLO SI TODO LO ANTERIOR FALLÓ) #}
+                    {# ================= CURSOS DISPONIBLES ================= #}
                     {% else %}
                         <h3 class="text-xl font-semibold mt-4 mb-2 text-indigo-700">
-                            Cursos disponibles (Selecciona solo uno):
+                            Cursos disponibles (seleccioná uno):
                         </h3>
 
-                        {% with cursos_materia=materia.cursos_ofrecidos.all %}
-                            {% if cursos_materia %}
-                                <div class="space-y-3 pl-4 border-l-4 border-indigo-200">
-                                    {% for curso_materia in cursos_materia %}
-                                        <div class="p-3 bg-indigo-50 rounded-lg border border-indigo-100 flex justify-between items-center">
+                        <div class="space-y-3 pl-4 border-l-4 border-indigo-200">
+                            {% for curso in cursos %}
+                                <div class="p-3 bg-indigo-50 rounded-lg border border-indigo-100 flex justify-between items-center">
 
-                                            <div class="flex flex-col">
-                                                <p class="text-sm text-gray-700"><strong>Turno:</strong> {{ curso_materia.get_turno_cursado_display }}</p>
-                                                <p class="text-sm text-gray-700"><strong>Horario:</strong> {{ curso_materia.horario }}</p>
-                                                <p class="text-sm text-gray-700"><strong>Módulo:</strong> {{ curso_materia.modulo }}</p>
-                                                <p class="text-sm text-gray-700"><strong>Profesor(es):</strong>
-                                                    {% for pmc in curso_materia.profesores.all %}
-                                                        {{ pmc.profesor.nombre }} {{ pmc.profesor.apellido }}
-                                                        {% if not forloop.last %}, {% endif %}
-                                                    {% empty %}
-                                                        <span class="text-red-600">Sin profesor asignado</span>
-                                                    {% endfor %}
-                                                </p>
-                                            </div>
+                                    <div class="flex flex-col text-sm text-gray-700">
+                                        <p><strong>Curso:</strong> {{ curso.curso.nombre }}</p>
+                                        <p><strong>Turno:</strong> {{ curso.get_turno_cursado_display }}</p>
+                                        <p><strong>Horario:</strong> {{ curso.horario }}</p>
+                                        <p><strong>Módulo:</strong> {{ curso.modulo }}</p>
+                                        <p>
+                                            <strong>Profesor(es):</strong>
+                                            {% for pmc in curso.profesores.all %}
+                                                {{ pmc.profesor.nombre }} {{ pmc.profesor.apellido }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </p>
+                                    </div>
 
-                                            <form method="post" action="{% url 'materia_reinscribir' alumno.id_alumno materia.sigla %}">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="curso_id" value="{{ curso_materia.id_materia_curso }}">
-                                                <button type="submit"
-                                                        class="bg-blue-600 text-white px-4 py-2 text-sm rounded-lg hover:bg-blue-700 transition-colors">
-                                                    Reinscribirse
-                                                </button>
-                                            </form>
+                                    <form method="post"
+                                          action="{% url 'materia_reinscribir' alumno.id_alumno materia.sigla %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="curso_id" value="{{ curso.id_materia_curso }}">
+                                        <button type="submit"
+                                                class="bg-blue-600 text-white px-4 py-2 text-sm rounded-lg hover:bg-blue-700 transition">
+                                            Reinscribirse
+                                        </button>
+                                    </form>
 
-                                        </div>
-                                    {% endfor %}
                                 </div>
-                            {% else %}
-                                <p class="text-red-500">No hay cursos asignados para esta materia.</p>
-                            {% endif %}
-                        {% endwith %}
-
+                            {% endfor %}
+                        </div>
                     {% endif %}
 
                 </div>
@@ -112,7 +108,10 @@
             {% endfor %}
         </div>
     {% else %}
-        <p>No hay materias disponibles para reinscribirse.</p>
+        <p class="text-center text-gray-600">
+            No hay materias disponibles para reinscribirse.
+        </p>
     {% endif %}
 </div>
+
 {% endblock %}

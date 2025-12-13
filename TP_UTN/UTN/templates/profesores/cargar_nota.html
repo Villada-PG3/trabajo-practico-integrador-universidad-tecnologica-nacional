@@ -1,27 +1,233 @@
-{% extends 'base.html' %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cargar notas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<div class="container mx-auto px-6 mt-10 max-w-lg">
+    <style>
+        /* =========================
+           PALETA: NEGRO / BLANCO / GRIS
+        ========================== */
+        :root {
+            --negro: #111111;
+            --gris-oscuro: #2e2e2e;
+            --gris: #6b6b6b;
+            --gris-claro: #e5e5e5;
+            --blanco: #ffffff;
+        }
 
-    <h2 class="text-3xl font-bold mb-4">Cargar Nota</h2>
+        * {
+            box-sizing: border-box;
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        }
 
-    <div class="bg-gray-100 border border-black p-6 rounded-xl">
-        
-        <p class="mb-4">
-            <span class="font-semibold">Curso:</span> {{ clase.curso.nombre }} <br>
-            <span class="font-semibold">Materia:</span> {{ clase.materia.nombre }}
+        body {
+            margin: 0;
+            background-color: var(--gris-claro);
+            color: var(--negro);
+        }
+
+        /* =========================
+           CONTENEDOR PRINCIPAL
+        ========================== */
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: var(--blanco);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        /* =========================
+           HEADER
+        ========================== */
+        .header {
+            border-bottom: 1px solid var(--gris-claro);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 600;
+        }
+
+        .header p {
+            margin-top: 6px;
+            color: var(--gris);
+            font-size: 14px;
+        }
+
+        /* =========================
+           TABLA
+        ========================== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        thead {
+            background-color: var(--gris-oscuro);
+            color: var(--blanco);
+        }
+
+        th, td {
+            padding: 12px 10px;
+            text-align: left;
+        }
+
+        th {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--gris-claro);
+        }
+
+        tbody tr:hover {
+            background-color: #f7f7f7;
+        }
+
+        /* =========================
+           INPUT NOTA
+        ========================== */
+        input[type="number"] {
+            width: 70px;
+            padding: 6px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid var(--gris);
+            text-align: center;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--negro);
+        }
+
+        /* =========================
+           BOTONES
+        ========================== */
+        .acciones {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-guardar {
+            background-color: var(--negro);
+            color: var(--blanco);
+        }
+
+        .btn-guardar:hover {
+            background-color: #000000;
+        }
+
+        .btn-volver {
+            background-color: transparent;
+            color: var(--gris);
+            border: 1px solid var(--gris);
+        }
+
+        .btn-volver:hover {
+            background-color: var(--gris-claro);
+            color: var(--negro);
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+        @media (max-width: 600px) {
+            th:nth-child(2),
+            td:nth-child(2) {
+                display: none;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>Carga de notas</h1>
+        <p>
+            {{ materia_curso.materia.nombre }} —
+            {{ materia_curso.curso.nombre }} |
+            Turno: {{ materia_curso.get_turno_cursado_display }}
         </p>
-
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-
-            <button class="w-full bg-black text-white py-2 rounded mt-4 hover:bg-gray-800 transition">
-                Guardar Nota
-            </button>
-        </form>
-
     </div>
+
+    <!-- FORM -->
+    <form method="post">
+        {% csrf_token %}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Legajo</th>
+                    <th>Nota</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ins in alumnos %}
+                <tr>
+                    <td>{{ ins.alumno.apellido }}, {{ ins.alumno.nombre }}</td>
+                    <td>{{ ins.alumno.dni }}</td>
+                    <td>
+                        <input
+                            type="number"
+                            name="nota_{{ ins.id_alumno_materia_curso }}"
+                            value="{{ ins.nota }}"
+                            min="0"
+                            max="10"
+                        >
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align:center; color: var(--gris);">
+                        No hay alumnos inscriptos en esta materia.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- ACCIONES -->
+        <div class="acciones">
+            <a href="{% url 'mis_clases' %}" class="btn btn-volver">
+                Volver
+            </a>
+            <button type="submit" class="btn btn-guardar">
+                Guardar notas
+            </button>
+        </div>
+    </form>
+
 </div>
 
-{% endblock %}
+</body>
+</html>

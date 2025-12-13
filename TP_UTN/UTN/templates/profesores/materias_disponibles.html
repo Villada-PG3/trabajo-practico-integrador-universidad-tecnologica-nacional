@@ -1,33 +1,169 @@
-{% extends 'base.html' %}
-{% block title %}Materias Disponibles{% endblock %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Materias disponibles</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block content %}
+    <style>
+        :root {
+            --negro: #111;
+            --gris-oscuro: #2f2f2f;
+            --gris: #6b6b6b;
+            --gris-claro: #e5e5e5;
+            --blanco: #ffffff;
+        }
 
-<div class="max-w-4xl mx-auto mt-10">
+        * {
+            box-sizing: border-box;
+            font-family: "Segoe UI", system-ui, sans-serif;
+        }
 
-    <h1 class="text-3xl font-semibold mb-6 text-center">Materias disponibles para asignarte</h1>
+        body {
+            margin: 0;
+            background-color: var(--gris-claro);
+            color: var(--negro);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            font-size: 28px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* TARJETA */
+        .card {
+            background-color: var(--blanco);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin: 0 0 8px;
+        }
+
+        .card p {
+            margin: 4px 0;
+            color: var(--gris);
+            font-size: 14px;
+        }
+
+        /* BOTONES */
+        .btn {
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            transition: all 0.2s ease;
+            display: block;
+        }
+
+        .btn-asignar {
+            background-color: var(--negro);
+            color: var(--blanco);
+            margin-top: 20px;
+        }
+
+        .btn-asignar:hover {
+            background-color: #000;
+        }
+
+        .btn-volver {
+            background-color: transparent;
+            color: var(--gris);
+            border: 1px solid var(--gris);
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .btn-volver:hover {
+            background-color: var(--gris-claro);
+            color: var(--negro);
+        }
+
+        /* EMPTY */
+        .empty {
+            background-color: var(--blanco);
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            color: var(--gris);
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- VOLVER AL PANEL -->
+    <a
+        href="{% url 'dashboard' request.user.profesor.pk %}"
+        class="btn btn-volver"
+    >
+        ⬅ Volver al Panel
+    </a>
+
+    <h1>Materias disponibles para asignarte</h1>
 
     {% if materias %}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid">
+            {% for mc in materias %}
+                <div class="card">
 
-        {% for mc in materias %}
-            <div>
-                <p>{{ mc.materia.nombre }} - {{ mc.curso.nombre }}</p>
+                    <div>
+                        <h2>{{ mc.materia.nombre }}</h2>
+                        <p><strong>Curso:</strong> {{ mc.curso.nombre }}</p>
+                        <p><strong>Turno:</strong> {{ mc.get_turno_cursado_display }}</p>
+                        <p><strong>Horario:</strong> {{ mc.horario }}</p>
+                    </div>
 
-                <a href="{% url 'asignar_materia_profesor' mc.id_materia_curso %}">
-                    Asignarme
-                </a>
-            </div>
-        {% endfor %}
+                    <a
+                        href="{% url 'asignar_materia_profesor' mc.id_materia_curso %}"
+                        class="btn btn-asignar"
+                    >
+                        Asignarme
+                    </a>
 
                 </div>
-
-            {% else %}
-                <p class="text-center text-gray-700 mt-10">
-                    No hay materias disponibles para asignarte en este momento.
-                </p>
-            {% endif %}
-
+            {% endfor %}
         </div>
+    {% else %}
+        <div class="empty">
+            <h2>No hay materias disponibles</h2>
+            <p>En este momento no hay materias para asignarte.</p>
+        </div>
+    {% endif %}
 
-{% endblock %}
+</div>
+
+</body>
+</html>

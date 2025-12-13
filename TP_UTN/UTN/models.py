@@ -263,15 +263,18 @@ class Profesor(models.Model):
 
 class ProfesorMateriaCurso(models.Model):
     id_profesor_mc = models.AutoField(primary_key=True)
-    profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE, related_name='materias_asignadas')
-    materia_curso = models.ForeignKey(MateriaCurso, on_delete=models.CASCADE, related_name='profesores_asignados')
-    profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE)
+
+    profesor = models.ForeignKey(
+        Profesor,
+        on_delete=models.CASCADE,
+        related_name='materias_asignadas'
+    )
+
     materia_curso = models.ForeignKey(
         MateriaCurso,
         on_delete=models.CASCADE,
-        related_name="profesores"
+        related_name='profesores'
     )
-
 
     class Meta:
         unique_together = ('profesor', 'materia_curso')
