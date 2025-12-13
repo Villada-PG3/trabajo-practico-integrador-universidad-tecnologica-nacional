@@ -12,6 +12,7 @@ class Carrera(models.Model):
     id_carrera = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100, null=True, blank=True)
     duracion_anios = models.PositiveIntegerField(null=True, blank=True)
+    imagen_url_c = models.URLField(max_length=1000, null=True, blank=True)
 
     def __str__(self):
         return self.nombre or "Sin nombre"
