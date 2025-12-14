@@ -61,8 +61,7 @@
     </style>
 </head>
 <body class="min-h-screen bg-background text-foreground">
-    <!-- Added complete header navigation matching the reference design -->
-        <nav class="bg-white shadow-md sticky top-0 z-50">
+    <nav class="bg-white shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
@@ -73,12 +72,12 @@
                     </div>
                 </div>
                 <div class="hidden md:flex space-x-8">
-                    <a href=" /" class="nav-link font-medium">Inicio</a>
-                            {% if user.alumno %}
-                                <a href="{% url 'alumno_detail' user.alumno.pk %}" class="nav-link font-medium">
-                                    {{ user.get_full_name|default:user.username }}
-                                </a>
-                            {% endif %}
+                    <a href="/" class="nav-link font-medium">Inicio</a>
+                    {% if user.alumno %}
+                        <a href="{% url 'alumno_detail' user.alumno.pk %}" class="nav-link font-medium">
+                            {{ user.get_full_name|default:user.username }}
+                        </a>
+                    {% endif %}
                     <a href="{% url 'logout' %}" class="nav-link font-medium text-red-600 hover:text-red-700">
                         Cerrar Sesión
                     </a>
@@ -92,7 +91,6 @@
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Added breadcrumb navigation -->
         <nav class="flex mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-3">
                 <li class="inline-flex items-center">
@@ -113,7 +111,6 @@
             </ol>
         </nav>
 
-        <!-- Redesigned student profile header with avatar and consistent styling -->
         <div class="bg-card rounded-lg border border-border shadow-sm p-6 mb-6">
             <div class="flex items-center space-x-6">
                 <div class="flex-shrink-0">
@@ -143,7 +140,6 @@
             </div>
         </div>
 
-        <!-- Redesigned information cards with consistent styling -->
         <div class="grid md:grid-cols-2 gap-6 mb-6">
             <div class="bg-card rounded-lg border border-border shadow-sm p-6">
                 <div class="flex items-center space-x-3 mb-4">
@@ -180,102 +176,120 @@
             </div>
         </div>
 
-        <!-- Redesigned action buttons section with consistent styling -->
-        <div class="bg-card rounded-lg border border-border shadow-sm p-6">
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h2 class="text-lg font-semibold text-foreground">Acciones Disponibles</h2>
-                    <p class="text-sm text-muted-foreground mt-1">Gestionar información del estudiante</p>
-                </div>
-            </div>
-            
-            <div class="flex flex-col sm:flex-row gap-4">
-            
-
-
-                <a href="{% url 'alumno_delete' object.pk %}" 
-                   class="inline-flex items-center px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors font-medium shadow-sm">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                    </svg>
-                    Eliminar Alumno
-                </a>
-            </div>
-        </div>
         <div class="bg-card rounded-lg border border-border shadow-sm p-6 mt-10">
-    <h2 class="text-2xl font-bold mb-6 text-foreground">Horario Semanal</h2>
+            <h2 class="text-2xl font-bold mb-6 text-foreground">Horario Semanal</h2>
 
-    <div class="overflow-x-auto">
-        <table class="min-w-full border border-border text-sm">
-            <thead class="bg-primary/10">
-                <tr>
-                    <th class="border border-border px-4 py-2">Día</th>
-                    <th class="border border-border px-4 py-2">Materias</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for dia, materias in semana.items %}
-                    <tr class="hover:bg-muted/50 transition">
-                        <td class="border border-border px-4 py-2 font-semibold w-32">
-                            {{ dia }}
-                        </td>
-
-                        <td class="border border-border px-4 py-2">
-                            {% if materias %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full border border-border text-sm">
+                    <thead class="bg-primary/10">
+                        <tr>
+                            <th class="border border-border px-4 py-2">Día</th>
+                            <th class="border border-border px-4 py-2">Materias</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dia, materias in semana.items %}
+                        <tr class="hover:bg-muted/50 transition">
+                            <td class="border border-border px-4 py-2 font-semibold w-32">{{ dia }}</td>
+                            <td class="border border-border px-4 py-2">
+                                {% if materias %}
                                 <ul class="space-y-2">
                                     {% for m in materias %}
-                                        <li class="bg-secondary/10 p-3 rounded-lg shadow-sm">
-                                            
-                                            <p class="font-bold text-secondary">
-                                                {{ m.materia }}
-                                            </p>
+                                    <li class="bg-secondary/10 p-3 rounded-lg shadow-sm">
+                                        <p class="font-bold text-secondary">{{ m.materia }}</p>
+                                        <p class="text-sm text-muted-foreground">
+                                            {{ m.horario }} — Turno {{ m.turno|title }}
+                                        </p>
+                                        
+                                        <p class="mt-1 text-sm">
+                                            <strong>Profesor:</strong> {{ m.profesor }}
+                                        </p>
 
-                                            <!-- 👨‍🏫 PROFESOR -->
-                                            <p class="text-sm text-muted-foreground">
-                                                 Profesor: {{ m.profesor }}
-                                            </p>
-
-                                            <p class="text-sm text-muted-foreground">
-                                                 {{ m.horario }} — Turno {{ m.turno|title }}
-                                            </p>
-
-                                            {% if m.nota %}
-                                                <p class="mt-1 text-sm">
-                                                    Promedio:
-                                                    <span class="font-bold">{{ m.nota }}</span> —
-                                                    {% if m.aprobado %}
-                                                        <span class="text-green-600 font-semibold">
-                                                            Aprobado
-                                                        </span>
-                                                    {% else %}
-                                                        <span class="text-red-600 font-semibold">
-                                                            No aprobado
-                                                        </span>
-                                                    {% endif %}
-                                                </p>
-                                            {% else %}
-                                                <p class="mt-1 text-sm text-muted-foreground">
-                                                    Sin nota
-                                                </p>
-                                            {% endif %}
-                                        </li>
+                                        
+                                    </li>
                                     {% endfor %}
                                 </ul>
-                            {% else %}
+                                {% else %}
                                 <span class="text-muted-foreground">—</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-              
-            </tbody>
-        </table>
-    </div>
-</div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="bg-card rounded-lg border border-border shadow-sm p-6 mb-10">
+            <h2 class="text-2xl font-bold mb-6 text-foreground">
+                Materias cursadas y notas
+            </h2>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full border border-border text-sm">
+                    <thead class="bg-primary/10">
+                        <tr>
+                            <th class="border px-4 py-2 text-left">Materia</th>
+                            <th class="border px-4 py-2">Nota 1</th>
+                            <th class="border px-4 py-2">Nota 2</th>
+                            <th class="border px-4 py-2">Nota 3</th>
+                            <th class="border px-4 py-2">Promedio</th>
+                            <th class="border px-4 py-2">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ins in materias_cursadas %}
+                        <tr class="hover:bg-muted/50 transition">
+                            <td class="border px-4 py-2 font-medium">
+                                {{ ins.materia_curso.materia.nombre }}
+                            </td>
+
+                            <td class="border px-4 py-2 text-center">
+                                {{ ins.nota_1|default:"—" }}
+                            </td>
+                            <td class="border px-4 py-2 text-center">
+                                {{ ins.nota_2|default:"—" }}
+                            </td>
+                            <td class="border px-4 py-2 text-center">
+                                {{ ins.nota_3|default:"—" }}
+                            </td>
+
+                            <td class="border px-4 py-2 text-center font-semibold">
+                                {{ ins.promedio|default:"—" }}
+                            </td>
+
+                            <td class="border px-4 py-2 text-center">
+                                {% if ins.finalizado %}
+                                    {% if ins.aprobado %}
+                                        <span class="text-green-600 font-semibold">
+                                            Aprobado
+                                        </span>
+                                    {% else %}
+                                        <span class="text-red-600 font-semibold">
+                                            No aprobado
+                                        </span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted-foreground">
+                                        En curso
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted-foreground py-4">
+                                No hay materias cursadas.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
 
     </main>
 
-    <!-- Added footer matching the reference design -->
     <footer class="bg-muted border-t border-border mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="text-center">

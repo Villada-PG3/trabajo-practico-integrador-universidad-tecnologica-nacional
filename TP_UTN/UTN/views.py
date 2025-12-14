@@ -102,7 +102,7 @@ class AlumnoDetailView(DetailView):
                 dia = dia.strip()
                 if dia in semana:
                     semana[dia].append(entrada)
-
+        context["materias_cursadas"] = inscripciones
         context["semana"] = semana
         return context
 
@@ -636,42 +636,38 @@ def cargar_nota(request, clase_id):
     )
 
     inscripciones = AlumnoMateriaCurso.objects.filter(
-        materia_curso=curso,
-        finalizado=False
+        materia_curso=curso
     ).select_related('alumno')
 
     if request.method == "POST":
         for ins in inscripciones:
-            # Tomamos las notas del POST
             n1 = request.POST.get(f"nota_1_{ins.pk}")
             n2 = request.POST.get(f"nota_2_{ins.pk}")
             n3 = request.POST.get(f"nota_3_{ins.pk}")
 
-            # Convertimos a int o None
             ins.nota_1 = int(n1) if n1 else None
             ins.nota_2 = int(n2) if n2 else None
             ins.nota_3 = int(n3) if n3 else None
 
-            # Calcula promedio y estado
-            ins.calcular_promedio()
+            # ⛔ NO calcular promedio acá
+            # ⛔ NO tocar finalizado acá
 
-            # Si ya tiene las 3 notas → se finaliza la cursada
-            if ins.promedio is not None:
-                ins.finalizado = True
+            ins.save()  # ← ACÁ se ejecuta toda la lógica real
 
+            # Mensajes solo si ya está finalizada
+            if ins.finalizado:
                 if ins.aprobado:
                     messages.success(
                         request,
-                        f"{ins.alumno} APROBÓ {curso.materia} (Promedio: {ins.promedio})"
+                        f"{ins.alumno} APROBÓ {curso.materia} "
+                        f"(Promedio: {ins.promedio})"
                     )
                 else:
                     messages.warning(
                         request,
                         f"{ins.alumno} DESAPROBÓ {curso.materia} "
-                        f"(Promedio: {ins.promedio}) - Debe reinscribirse"
+                        f"(Promedio: {ins.promedio})"
                     )
-
-            ins.save()
 
         return redirect('mis_clases')
 

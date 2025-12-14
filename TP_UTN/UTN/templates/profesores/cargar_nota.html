@@ -185,19 +185,21 @@
 
                     <td>
                         <input type="number" min="1" max="10"
-                               name="nota_1_{{ ins.id }}"
-                               value="{{ ins.nota_1|default_if_none:'' }}">
+                            name="nota_1_{{ ins.pk }}"
+                            value="{{ ins.nota_1|default_if_none:'' }}">
+
                     </td>
 
                     <td>
                         <input type="number" min="1" max="10"
-                               name="nota_2_{{ ins.id }}"
-                               value="{{ ins.nota_2|default_if_none:'' }}">
+                            name="nota_2_{{ ins.pk }}"
+                            value="{{ ins.nota_2|default_if_none:'' }}">
+
                     </td>
 
                     <td>
                         <input type="number" min="1" max="10"
-                               name="nota_3_{{ ins.id }}"
+                               name="nota_3_{{ ins.pk }}"
                                value="{{ ins.nota_3|default_if_none:'' }}">
                     </td>
 
