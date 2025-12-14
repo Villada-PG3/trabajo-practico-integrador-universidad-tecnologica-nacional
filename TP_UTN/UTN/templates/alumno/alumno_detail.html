@@ -200,32 +200,12 @@
                                         <p class="text-sm text-muted-foreground">
                                             {{ m.horario }} — Turno {{ m.turno|title }}
                                         </p>
-                                        <p class="mt-1 text-sm">
-                                            {% if m.nota_1 is not None or m.nota_2 is not None or m.nota_3 is not None %}
-                                                <strong>Notas:</strong>
-                                                {{ m.nota_1|default:"—" }} /
-                                                {{ m.nota_2|default:"—" }} /
-                                                {{ m.nota_3|default:"—" }}
-                                            {% else %}
-                                                <span class="text-muted-foreground">Sin nota</span>
-                                            {% endif %}
-                                        </p>
-
+                                        
                                         <p class="mt-1 text-sm">
                                             <strong>Profesor:</strong> {{ m.profesor }}
                                         </p>
 
-                                        {% if m.promedio is not None %}
-                                        <p class="mt-1 text-sm">
-                                            <strong>Promedio:</strong>
-                                            <span class="font-bold">{{ m.promedio }}</span> —
-                                            {% if m.aprobado %}
-                                                <span class="text-green-600 font-semibold">Aprobado</span>
-                                            {% else %}
-                                                <span class="text-red-600 font-semibold">No aprobado</span>
-                                            {% endif %}
-                                        </p>
-                                        {% endif %}
+                                        
                                     </li>
                                     {% endfor %}
                                 </ul>
@@ -239,6 +219,74 @@
                 </table>
             </div>
         </div>
+        <div class="bg-card rounded-lg border border-border shadow-sm p-6 mb-10">
+            <h2 class="text-2xl font-bold mb-6 text-foreground">
+                Materias cursadas y notas
+            </h2>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full border border-border text-sm">
+                    <thead class="bg-primary/10">
+                        <tr>
+                            <th class="border px-4 py-2 text-left">Materia</th>
+                            <th class="border px-4 py-2">Nota 1</th>
+                            <th class="border px-4 py-2">Nota 2</th>
+                            <th class="border px-4 py-2">Nota 3</th>
+                            <th class="border px-4 py-2">Promedio</th>
+                            <th class="border px-4 py-2">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ins in materias_cursadas %}
+                        <tr class="hover:bg-muted/50 transition">
+                            <td class="border px-4 py-2 font-medium">
+                                {{ ins.materia_curso.materia.nombre }}
+                            </td>
+
+                            <td class="border px-4 py-2 text-center">
+                                {{ ins.nota_1|default:"—" }}
+                            </td>
+                            <td class="border px-4 py-2 text-center">
+                                {{ ins.nota_2|default:"—" }}
+                            </td>
+                            <td class="border px-4 py-2 text-center">
+                                {{ ins.nota_3|default:"—" }}
+                            </td>
+
+                            <td class="border px-4 py-2 text-center font-semibold">
+                                {{ ins.promedio|default:"—" }}
+                            </td>
+
+                            <td class="border px-4 py-2 text-center">
+                                {% if ins.finalizado %}
+                                    {% if ins.aprobado %}
+                                        <span class="text-green-600 font-semibold">
+                                            Aprobado
+                                        </span>
+                                    {% else %}
+                                        <span class="text-red-600 font-semibold">
+                                            No aprobado
+                                        </span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted-foreground">
+                                        En curso
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted-foreground py-4">
+                                No hay materias cursadas.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
 
     </main>
 

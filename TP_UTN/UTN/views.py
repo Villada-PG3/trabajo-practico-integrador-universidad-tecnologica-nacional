@@ -102,7 +102,7 @@ class AlumnoDetailView(DetailView):
                 dia = dia.strip()
                 if dia in semana:
                     semana[dia].append(entrada)
-
+        context["materias_cursadas"] = inscripciones
         context["semana"] = semana
         return context
 
