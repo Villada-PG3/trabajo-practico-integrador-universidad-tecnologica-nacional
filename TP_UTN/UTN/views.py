@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from .models import (
     Alumno, AlumnoMateriaCurso, Carrera, Curso, Materia, MateriaCurso,
     Inscripcion, TipoEvaluacion, CondicionFinal, Evaluacion, CarreraMateria,
-    Profesor, ProfesorMateriaCurso,
+    Profesor, ProfesorMateriaCurso, alumno_cumple_correlativas
 )
 from django.db.models import Q
 from django.contrib.auth import logout
@@ -197,10 +197,8 @@ class MateriaReinscripcionView(TemplateView):
         for curso in cursos_validos:
             cursos_por_materia.setdefault(curso.materia.sigla, []).append(curso)
 
-
         # Filtrar materias SIN cursos válidos
         materias = [m for m in materias if m.sigla in cursos_por_materia]
-
 
         # =========================
         # REINSCRIPCIONES
@@ -213,7 +211,7 @@ class MateriaReinscripcionView(TemplateView):
 
         insc_activas = AlumnoMateriaCurso.objects.filter(
             alumno=alumno
-        ).select_related('materia_curso')
+        ).select_related('materia_curso', 'materia_curso__materia')
 
         context['inscripciones_por_materia'] = {
             ins.materia_curso.materia.sigla: ins for ins in insc_activas
@@ -228,28 +226,34 @@ class MateriaReinscripcionView(TemplateView):
             estado = "ok"
             mensaje = ""
 
-            correlativa = materia.get_correlativa()
-
+            # -------------------------
+            # ¿YA APROBÓ LA MATERIA?
+            # -------------------------
             aprobada = AlumnoMateriaCurso.objects.filter(
                 alumno=alumno,
                 materia_curso__materia=materia,
-                nota__gte=4
+                aprobado=True
             ).exists()
 
             if aprobada:
                 estado = "aprobada"
                 mensaje = "Ya aprobaste esta materia."
 
-            elif correlativa:
-                correlativa_aprobada = AlumnoMateriaCurso.objects.filter(
-                    alumno=alumno,
-                    materia_curso__materia__nombre__iexact=correlativa.nombre,
-                    nota__gte=6
-                ).exists()
+            else:
+                # -------------------------
+                # VALIDACIÓN CORRELATIVIDADES
+                # -------------------------
+                cumple, correlativa_faltante = alumno_cumple_correlativas(
+                    alumno,
+                    materia
+                )
 
-                if not correlativa_aprobada:
+                if not cumple:
                     estado = "correlativa"
-                    mensaje = f"No podés cursar {materia.nombre} sin aprobar {correlativa.nombre}."
+                    mensaje = (
+                        f"No podés cursar {materia.nombre} "
+                        f"sin aprobar {correlativa_faltante.nombre}."
+                    )
 
             materias_info.append({
                 "materia": materia,
@@ -260,6 +264,7 @@ class MateriaReinscripcionView(TemplateView):
 
         context["materias_info"] = materias_info
         return context
+
 
 
 def reinscribir_materia(request, alumno_id, materia_id):

@@ -41,6 +41,8 @@ class Alumno(models.Model):
             aprobado=True
         ).exists()
 
+
+
 class Curso(models.Model):
     id_curso = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
@@ -356,21 +358,42 @@ class AlumnoMateriaCurso(models.Model):
     # =====================
     # VALIDACIÓN HORARIOS (TUYA, INTACTA)
     # =====================
-    def clean(self):
-        nuevo_horario = self.materia_curso.horario
-        nuevo_turno = self.materia_curso.turno_cursado
+def clean(self):
+    # =====================
+    # VALIDACIÓN HORARIOS (TUYA)
+    # =====================
+    nuevo_horario = self.materia_curso.horario
+    nuevo_turno = self.materia_curso.turno_cursado
 
-        materias_existentes = AlumnoMateriaCurso.objects.filter(
-            alumno=self.alumno,
-            materia_curso__horario=nuevo_horario,
-            materia_curso__turno_cursado=nuevo_turno,
-            finalizado=False
-        ).exclude(pk=self.pk)
+    materias_existentes = AlumnoMateriaCurso.objects.filter(
+        alumno=self.alumno,
+        materia_curso__horario=nuevo_horario,
+        materia_curso__turno_cursado=nuevo_turno,
+        finalizado=False
+    ).exclude(pk=self.pk)
 
-        if materias_existentes.exists():
-            raise ValidationError(
-                "Ya estás inscripto en una materia en el mismo día y horario."
-            )
+    if materias_existentes.exists():
+        raise ValidationError(
+            "Ya estás inscripto en una materia en el mismo día y horario."
+        )
+
+    # =====================
+    # VALIDACIÓN CORRELATIVIDADES
+    # =====================
+    from .models import alumno_cumple_correlativas
+
+    materia = self.materia_curso.materia
+    cumple, correlativa_faltante = alumno_cumple_correlativas(
+        self.alumno,
+        materia
+    )
+
+    if not cumple:
+        raise ValidationError(
+            f"No podés inscribirte a {materia.nombre} "
+            f"sin aprobar {correlativa_faltante.nombre}."
+        )
+
 
     # =====================
     # LÓGICA DE PROMEDIO
@@ -397,6 +420,25 @@ class AlumnoMateriaCurso(models.Model):
     def __str__(self):
         return f"{self.alumno} en {self.materia_curso}"
 
+# ======================================================
+#   VALIDACIÓN DE CORRELATIVIDADES (GLOBAL)
+# ======================================================
 
-    
+def alumno_aprobo_materia(alumno, materia):
+    return AlumnoMateriaCurso.objects.filter(
+        alumno=alumno,
+        materia_curso__materia=materia,
+        aprobado=True
+    ).exists()
+
+
+def alumno_cumple_correlativas(alumno, materia):
+    correlativas = materia.correlativas_requeridas.all()
+
+    for correlativa in correlativas:
+        if not alumno_aprobo_materia(alumno, correlativa):
+            return False, correlativa
+
+    return True, None
+
 
