@@ -358,42 +358,42 @@ class AlumnoMateriaCurso(models.Model):
 
     # =====================
     # VALIDACIÓN HORARIOS (TUYA, INTACTA)
-    # =====================
-def clean(self):
-    # =====================
-    # VALIDACIÓN HORARIOS (TUYA)
-    # =====================
-    nuevo_horario = self.materia_curso.horario
-    nuevo_turno = self.materia_curso.turno_cursado
+        # =====================
+    def clean(self):
+        # =====================
+        # VALIDACIÓN HORARIOS (TUYA)
+        # =====================
+        nuevo_horario = self.materia_curso.horario
+        nuevo_turno = self.materia_curso.turno_cursado
 
-    materias_existentes = AlumnoMateriaCurso.objects.filter(
-        alumno=self.alumno,
-        materia_curso__horario=nuevo_horario,
-        materia_curso__turno_cursado=nuevo_turno,
-        finalizado=False
-    ).exclude(pk=self.pk)
+        materias_existentes = AlumnoMateriaCurso.objects.filter(
+            alumno=self.alumno,
+            materia_curso__horario=nuevo_horario,
+            materia_curso__turno_cursado=nuevo_turno,
+            finalizado=False
+        ).exclude(pk=self.pk)
 
-    if materias_existentes.exists():
-        raise ValidationError(
-            "Ya estás inscripto en una materia en el mismo día y horario."
+        if materias_existentes.exists():
+            raise ValidationError(
+                "Ya estás inscripto en una materia en el mismo día y horario."
+            )
+
+        # =====================
+        # VALIDACIÓN CORRELATIVIDADES
+        # =====================
+        from .models import alumno_cumple_correlativas
+
+        materia = self.materia_curso.materia
+        cumple, correlativa_faltante = alumno_cumple_correlativas(
+            self.alumno,
+            materia
         )
 
-    # =====================
-    # VALIDACIÓN CORRELATIVIDADES
-    # =====================
-    from .models import alumno_cumple_correlativas
-
-    materia = self.materia_curso.materia
-    cumple, correlativa_faltante = alumno_cumple_correlativas(
-        self.alumno,
-        materia
-    )
-
-    if not cumple:
-        raise ValidationError(
-            f"No podés inscribirte a {materia.nombre} "
-            f"sin aprobar {correlativa_faltante.nombre}."
-        )
+        if not cumple:
+            raise ValidationError(
+                f"No podés inscribirte a {materia.nombre} "
+                f"sin aprobar {correlativa_faltante.nombre}."
+            )
 
 
     # =====================
