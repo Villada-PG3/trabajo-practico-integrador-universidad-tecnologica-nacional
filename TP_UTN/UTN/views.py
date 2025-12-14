@@ -174,36 +174,36 @@ class MateriaReinscripcionView(TemplateView):
         alumno = Alumno.objects.get(id_alumno=alumno_id)
         context['alumno'] = alumno
 
-        # =========================
-        # MATERIAS SEGÚN CARRERA
-        # =========================
-        materias_relacionadas = CarreraMateria.objects.filter(
+        # ==================================================
+        # MATERIAS DE LA CARRERA + AÑO DEL ALUMNO
+        # ==================================================
+        materias_carrera = CarreraMateria.objects.filter(
             carrera=alumno.carrera,
             anio__lte=alumno.anio_universitario
         ).select_related('materia')
 
-        materias = [cm.materia for cm in materias_relacionadas]
-
-
-        # =========================
+        # ==================================================
         # CURSOS CON PROFESOR
-        # =========================
+        # ==================================================
         cursos_validos = MateriaCurso.objects.filter(
-            materia__in=materias,
             profesores__isnull=False
-        ).distinct().select_related('materia')
+        ).select_related('materia')
 
         # Agrupar cursos por materia
         cursos_por_materia = {}
         for curso in cursos_validos:
             cursos_por_materia.setdefault(curso.materia.sigla, []).append(curso)
 
-        # Filtrar materias SIN cursos válidos
-        materias = [m for m in materias if m.sigla in cursos_por_materia]
+        # ==================================================
+        # FILTRAR SOLO MATERIAS QUE TENGAN CURSOS
+        # ==================================================
+        materias_validas = materias_carrera.filter(
+            materia__in=cursos_validos.values('materia')
+        ).order_by('anio', 'materia__nombre')
 
-        # =========================
-        # REINSCRIPCIONES
-        # =========================
+        # ==================================================
+        # REINSCRIPCIONES ACTIVAS
+        # ==================================================
         materias_reins = AlumnoMateriaCurso.objects.filter(
             alumno=alumno
         ).values_list('materia_curso__materia__sigla', flat=True)
@@ -218,18 +218,19 @@ class MateriaReinscripcionView(TemplateView):
             ins.materia_curso.materia.sigla: ins for ins in insc_activas
         }
 
-        # =========================
-        # INFO POR MATERIA
-        # =========================
+        # ==================================================
+        # INFO POR MATERIA (SOLO LAS VALIDAS)
+        # ==================================================
         materias_info = []
 
-        for materia in materias:
+        for cm in materias_validas:
+            materia = cm.materia
+            anio_materia = cm.anio
+
             estado = "ok"
             mensaje = ""
 
-            # -------------------------
-            # ¿YA APROBÓ LA MATERIA?
-            # -------------------------
+            # ¿YA APROBÓ?
             aprobada = AlumnoMateriaCurso.objects.filter(
                 alumno=alumno,
                 materia_curso__materia=materia,
@@ -239,11 +240,7 @@ class MateriaReinscripcionView(TemplateView):
             if aprobada:
                 estado = "aprobada"
                 mensaje = "Ya aprobaste esta materia."
-
             else:
-                # -------------------------
-                # VALIDACIÓN CORRELATIVIDADES
-                # -------------------------
                 cumple, correlativa_faltante = alumno_cumple_correlativas(
                     alumno,
                     materia
@@ -258,6 +255,7 @@ class MateriaReinscripcionView(TemplateView):
 
             materias_info.append({
                 "materia": materia,
+                "anio": anio_materia,
                 "estado": estado,
                 "mensaje": mensaje,
                 "cursos": cursos_por_materia.get(materia.sigla, [])
@@ -265,6 +263,8 @@ class MateriaReinscripcionView(TemplateView):
 
         context["materias_info"] = materias_info
         return context
+
+        
 
 
 
