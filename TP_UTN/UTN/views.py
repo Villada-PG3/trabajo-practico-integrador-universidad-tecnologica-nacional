@@ -58,7 +58,13 @@ class AlumnoDetailView(DetailView):
 
         alumno = self.object
 
-        inscripciones = alumno.materias_curso.select_related("materia_curso")
+    
+        inscripciones = alumno.materias_curso.select_related(
+            "materia_curso",
+            "materia_curso__materia"
+        ).prefetch_related(
+            "materia_curso__profesores__profesor"
+        )
 
         semana = {
             "Lunes": [], "Martes": [], "Miércoles": [],
@@ -67,13 +73,22 @@ class AlumnoDetailView(DetailView):
 
         for ins in inscripciones:
             mc = ins.materia_curso
+
             try:
                 dias, hora_inicio, hora_fin = mc.parse_horario()
             except:
                 continue
 
+          
+            profesores = mc.profesores.all()
+            nombres_profesores = ", ".join(
+                f"{p.profesor.nombre} {p.profesor.apellido}"
+                for p in profesores
+            )
+
             entrada = {
                 "materia": mc.materia.nombre,
+                "profesor": nombres_profesores or "Sin asignar",
                 "horario": f"{hora_inicio.strftime('%H:%M')}–{hora_fin.strftime('%H:%M')}",
                 "turno": mc.turno_cursado.capitalize(),
                 "nota": ins.nota,
@@ -87,6 +102,7 @@ class AlumnoDetailView(DetailView):
 
         context["semana"] = semana
         return context
+
 
 # ============================
 #   ALUMNO CREATE
