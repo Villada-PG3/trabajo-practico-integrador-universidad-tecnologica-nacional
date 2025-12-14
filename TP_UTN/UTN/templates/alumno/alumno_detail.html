@@ -190,7 +190,9 @@
             </div>
             
             <div class="flex flex-col sm:flex-row gap-4">
-                
+            
+
+
                 <a href="{% url 'alumno_delete' object.pk %}" 
                    class="inline-flex items-center px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors font-medium shadow-sm">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,6 +215,7 @@
             </thead>
             <tbody>
                 {% for dia, materias in semana.items %}
+<<<<<<< HEAD
                 <tr class="hover:bg-muted/50 transition">
                     <td class="border border-border px-4 py-2 font-semibold w-32">{{ dia }}</td>
                     <td class="border border-border px-4 py-2">
@@ -260,6 +263,61 @@
                     </td>
                 </tr>
                 {% endfor %}
+=======
+                    <tr class="hover:bg-muted/50 transition">
+                        <td class="border border-border px-4 py-2 font-semibold w-32">
+                            {{ dia }}
+                        </td>
+
+                        <td class="border border-border px-4 py-2">
+                            {% if materias %}
+                                <ul class="space-y-2">
+                                    {% for m in materias %}
+                                        <li class="bg-secondary/10 p-3 rounded-lg shadow-sm">
+                                            
+                                            <p class="font-bold text-secondary">
+                                                {{ m.materia }}
+                                            </p>
+
+                                            <!-- 👨‍🏫 PROFESOR -->
+                                            <p class="text-sm text-muted-foreground">
+                                                 Profesor: {{ m.profesor }}
+                                            </p>
+
+                                            <p class="text-sm text-muted-foreground">
+                                                 {{ m.horario }} — Turno {{ m.turno|title }}
+                                            </p>
+
+                                            {% if m.nota %}
+                                                <p class="mt-1 text-sm">
+                                                    Promedio:
+                                                    <span class="font-bold">{{ m.nota }}</span> —
+                                                    {% if m.aprobado %}
+                                                        <span class="text-green-600 font-semibold">
+                                                            Aprobado
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="text-red-600 font-semibold">
+                                                            No aprobado
+                                                        </span>
+                                                    {% endif %}
+                                                </p>
+                                            {% else %}
+                                                <p class="mt-1 text-sm text-muted-foreground">
+                                                    Sin nota
+                                                </p>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <span class="text-muted-foreground">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+              
+>>>>>>> b4baa476e2324d7ebac58abce653f2e5048f5f31
             </tbody>
         </table>
     </div>

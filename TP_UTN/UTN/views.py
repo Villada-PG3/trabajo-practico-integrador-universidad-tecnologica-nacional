@@ -76,8 +76,16 @@ class AlumnoDetailView(DetailView):
             except:
                 continue
 
+          
+            profesores = mc.profesores.all()
+            nombres_profesores = ", ".join(
+                f"{p.profesor.nombre} {p.profesor.apellido}"
+                for p in profesores
+            )
+
             entrada = {
                 "materia": mc.materia.nombre,
+                "profesor": nombres_profesores or "Sin asignar",
                 "horario": f"{hora_inicio.strftime('%H:%M')}–{hora_fin.strftime('%H:%M')}",
                 "turno": mc.turno_cursado.capitalize(),
 
