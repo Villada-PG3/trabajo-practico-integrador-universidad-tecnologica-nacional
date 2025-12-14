@@ -179,10 +179,11 @@ class MateriaReinscripcionView(TemplateView):
         # =========================
         materias_relacionadas = CarreraMateria.objects.filter(
             carrera=alumno.carrera,
-            materia__ciclo_lectivo__lte=alumno.anio_universitario
+            anio__lte=alumno.anio_universitario
         ).select_related('materia')
 
         materias = [cm.materia for cm in materias_relacionadas]
+
 
         # =========================
         # CURSOS CON PROFESOR
@@ -271,6 +272,23 @@ def reinscribir_materia(request, alumno_id, materia_id):
     alumno = get_object_or_404(Alumno, id_alumno=alumno_id)
     materia = get_object_or_404(Materia, sigla=materia_id)
 
+    # =========================
+    # VALIDAR AÑO Y CARRERA
+    # =========================
+    if not CarreraMateria.objects.filter(
+        carrera=alumno.carrera,
+        materia=materia,
+        anio__lte=alumno.anio_universitario
+    ).exists():
+        messages.error(
+            request,
+            "No podés inscribirte a una materia que no corresponde a tu año."
+        )
+        return redirect('materia_reinscripcion', alumno_id=alumno.id_alumno)
+
+    # =========================
+    # YA INSCRIPTO
+    # =========================
     if AlumnoMateriaCurso.objects.filter(
         alumno=alumno,
         materia_curso__materia=materia
@@ -279,22 +297,31 @@ def reinscribir_materia(request, alumno_id, materia_id):
         return redirect('materia_reinscripcion', alumno_id=alumno.id_alumno)
 
     curso_id = request.POST.get('curso_id')
+
     materia_curso = get_object_or_404(
         MateriaCurso,
         id_materia_curso=curso_id,
+        materia=materia,
         profesores__isnull=False
     )
 
-    inscripcion = AlumnoMateriaCurso(alumno=alumno, materia_curso=materia_curso)
+    inscripcion = AlumnoMateriaCurso(
+        alumno=alumno,
+        materia_curso=materia_curso
+    )
 
     try:
         inscripcion.full_clean()
         inscripcion.save()
-        messages.success(request, f"Te reinscribiste a {materia.nombre} correctamente.")
+        messages.success(
+            request,
+            f"Te reinscribiste a {materia.nombre} correctamente."
+        )
     except ValidationError as e:
         messages.error(request, e.messages[0])
 
     return redirect('materia_reinscripcion', alumno_id=alumno.id_alumno)
+
 
 
 def cancelar_reinscripcion(request, alumno_id, materia_id):

@@ -154,12 +154,13 @@ class AlumnoMateria(models.Model):
 class CarreraMateria(models.Model):
     carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE)
     materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
+    anio = models.PositiveIntegerField()
 
     class Meta:
         unique_together = ('carrera', 'materia')
 
     def __str__(self):
-        return f"{self.materia} - {self.carrera}"
+        return f"{self.materia} - {self.carrera} ({self.anio}° año)"
 
 
 class MateriaCurso(models.Model):
