@@ -340,15 +340,12 @@ class AlumnoMateriaCurso(models.Model):
         related_name='alumnos'
     )
 
-    # =====================
-    # NOTAS
-    # =====================
     nota_1 = models.PositiveSmallIntegerField(null=True, blank=True)
     nota_2 = models.PositiveSmallIntegerField(null=True, blank=True)
     nota_3 = models.PositiveSmallIntegerField(null=True, blank=True)
 
     promedio = models.FloatField(null=True, blank=True)
-    nota = models.PositiveSmallIntegerField(null=True, blank=True)  # nota final
+    nota = models.PositiveSmallIntegerField(null=True, blank=True)
 
     aprobado = models.BooleanField(default=False)
     finalizado = models.BooleanField(default=False)
@@ -356,32 +353,9 @@ class AlumnoMateriaCurso(models.Model):
     class Meta:
         unique_together = ('alumno', 'materia_curso')
 
-    # =====================
-    # VALIDACIÓN HORARIOS (TUYA, INTACTA)
-    # =====================
-    def clean(self):
-        nuevo_horario = self.materia_curso.horario
-        nuevo_turno = self.materia_curso.turno_cursado
-
-        materias_existentes = AlumnoMateriaCurso.objects.filter(
-            alumno=self.alumno,
-            materia_curso__horario=nuevo_horario,
-            materia_curso__turno_cursado=nuevo_turno,
-            finalizado=False
-        ).exclude(pk=self.pk)
-
-        if materias_existentes.exists():
-            raise ValidationError(
-                "Ya estás inscripto en una materia en el mismo día y horario."
-            )
-
-    # =====================
-    # LÓGICA DE PROMEDIO
-    # =====================
     def calcular_promedio(self):
         notas = [self.nota_1, self.nota_2, self.nota_3]
 
-        # Si todavía no están las 3 notas → NO finaliza
         if not all(n is not None for n in notas):
             self.promedio = None
             self.nota = None
@@ -389,19 +363,18 @@ class AlumnoMateriaCurso(models.Model):
             self.finalizado = False
             return
 
-        # Si están las 3 notas
         self.promedio = sum(notas) / 3
         self.nota = round(self.promedio)
         self.aprobado = self.promedio >= 6
         self.finalizado = True
 
-
-def save(self, *args, **kwargs):
-    self.calcular_promedio()
-    super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.calcular_promedio()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.alumno} en {self.materia_curso}"
+
 
     
 
