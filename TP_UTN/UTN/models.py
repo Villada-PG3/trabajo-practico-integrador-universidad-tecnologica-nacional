@@ -352,35 +352,11 @@ class AlumnoMateriaCurso(models.Model):
 
     class Meta:
         unique_together = ('alumno', 'materia_curso')
-    
+
     # =====================
     # VALIDACIÓN HORARIOS (TUYA, INTACTA)
     # =====================
     def clean(self):
-        # =============================
-        # VALIDACIÓN CORRELATIVAS OBLIGATORIAS
-        # =============================
-        materia = self.materia_curso.materia
-        alumno = self.alumno
-
-        correlativas = materia.correlativas_requeridas.all()
-
-        for correlativa in correlativas:
-            aprobada = AlumnoMateriaCurso.objects.filter(
-                alumno=alumno,
-                materia_curso__materia=correlativa,
-                aprobado=True
-            ).exists()
-
-            if not aprobada:
-                raise ValidationError(
-                    f"No podés reinscribirte en {materia.nombre} "
-                    f"sin aprobar previamente {correlativa.nombre}."
-                )
-
-        # =============================
-        # VALIDACIÓN HORARIOS (TUYA)
-        # =============================
         nuevo_horario = self.materia_curso.horario
         nuevo_turno = self.materia_curso.turno_cursado
 
