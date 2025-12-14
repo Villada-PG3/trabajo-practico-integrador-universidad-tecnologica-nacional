@@ -228,28 +228,42 @@ class MateriaReinscripcionView(TemplateView):
             estado = "ok"
             mensaje = ""
 
-            correlativa = materia.get_correlativa()
-
+            # =========================
+            # MATERIA YA APROBADA
+            # =========================
             aprobada = AlumnoMateriaCurso.objects.filter(
                 alumno=alumno,
                 materia_curso__materia=materia,
-                nota__gte=4
+                aprobado=True
             ).exists()
 
             if aprobada:
                 estado = "aprobada"
                 mensaje = "Ya aprobaste esta materia."
 
-            elif correlativa:
-                correlativa_aprobada = AlumnoMateriaCurso.objects.filter(
-                    alumno=alumno,
-                    materia_curso__materia__nombre__iexact=correlativa.nombre,
-                    nota__gte=6
-                ).exists()
+            else:
+                # =========================
+                # CORRELATIVAS OBLIGATORIAS
+                # =========================
+                correlativas = materia.correlativas_requeridas.all()
+                faltantes = []
 
-                if not correlativa_aprobada:
+                for corr in correlativas:
+                    aprobada_corr = AlumnoMateriaCurso.objects.filter(
+                        alumno=alumno,
+                        materia_curso__materia=corr,
+                        aprobado=True
+                    ).exists()
+
+                    if not aprobada_corr:
+                        faltantes.append(corr.nombre)
+
+                if faltantes:
                     estado = "correlativa"
-                    mensaje = f"No podés cursar {materia.nombre} sin aprobar {correlativa.nombre}."
+                    mensaje = (
+                        f"No podés reinscribirte a {materia.nombre}. "
+                        f"Te falta aprobar: {', '.join(faltantes)}."
+                    )
 
             materias_info.append({
                 "materia": materia,

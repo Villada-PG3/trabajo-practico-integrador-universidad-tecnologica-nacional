@@ -215,55 +215,6 @@
             </thead>
             <tbody>
                 {% for dia, materias in semana.items %}
-<<<<<<< HEAD
-                <tr class="hover:bg-muted/50 transition">
-                    <td class="border border-border px-4 py-2 font-semibold w-32">{{ dia }}</td>
-                    <td class="border border-border px-4 py-2">
-                        {% if materias %}
-                            <ul class="space-y-2">
-                                {% for m in materias %}
-                                    <li class="bg-secondary/10 p-3 rounded-lg shadow-sm">
-                                        <p class="font-bold text-secondary">{{ m.materia }}</p>
-
-                                        <p class="text-sm text-muted-foreground">
-                                            {{ m.horario }} — Turno {{ m.turno|title }}
-                                        </p>
-
-                                        <p class="mt-1 text-sm">
-                                            {% if m.nota_1 is not None or m.nota_2 is not None or m.nota_3 is not None %}
-                                                <strong>Notas:</strong>
-                                                {{ m.nota_1|default:"—" }} /
-                                                {{ m.nota_2|default:"—" }} /
-                                                {{ m.nota_3|default:"—" }}
-                                            {% else %}
-                                                <span class="text-muted-foreground">Sin nota</span>
-                                            {% endif %}
-                                        </p>
-
-                                        {% if m.promedio is not None %}
-                                            <p class="mt-1 text-sm">
-                                                <strong>Promedio:</strong>
-                                                <span class="font-bold">{{ m.promedio }}</span> —
-                                                {% if m.aprobado %}
-                                                    <span class="text-green-600 font-semibold">Aprobado</span>
-                                                {% else %}
-                                                    <span class="text-red-600 font-semibold">No aprobado</span>
-                                                {% endif %}
-                                            </p>
-                                        {% endif %}
-                                    </li>
-                                {% empty %}
-                                    <span class="text-muted-foreground">—</span>
-                                {% endfor %}
-                            </ul>
-
-                        {% else %}
-                            <span class="text-muted-foreground">—</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-=======
                     <tr class="hover:bg-muted/50 transition">
                         <td class="border border-border px-4 py-2 font-semibold w-32">
                             {{ dia }}
@@ -317,7 +268,6 @@
                     </tr>
                     {% endfor %}
               
->>>>>>> b4baa476e2324d7ebac58abce653f2e5048f5f31
             </tbody>
         </table>
     </div>
