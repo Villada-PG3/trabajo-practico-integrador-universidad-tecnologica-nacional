@@ -178,17 +178,24 @@ class MateriaReinscripcionView(TemplateView):
         # MATERIAS DE LA CARRERA + AÑO DEL ALUMNO
         # ==================================================
         materias_carrera = CarreraMateria.objects.filter(
-            carrera=alumno.carrera,
-            anio__lte=alumno.anio_universitario
-        ).select_related('materia')
+                carrera=alumno.carrera,
+                anio__lte=alumno.anio_universitario
+            ).select_related('materia')
+
+        materias = [cm.materia for cm in materias_carrera]
+
 
         # ==================================================
         # CURSOS CON PROFESOR
         # ==================================================
-        cursos_validos = MateriaCurso.objects.filter(materia__in=materia, profesores__isnull=False).distinct().order_by(
+        cursos_validos = MateriaCurso.objects.filter(
+            materia__in=materias,
+            profesores__isnull=False
+        ).distinct().order_by(
             'turno_cursado',
             'horario'
         )
+
 
 
         # Agrupar cursos por materia
