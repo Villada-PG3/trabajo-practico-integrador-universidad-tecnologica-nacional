@@ -185,9 +185,11 @@ class MateriaReinscripcionView(TemplateView):
         # ==================================================
         # CURSOS CON PROFESOR
         # ==================================================
-        cursos_validos = MateriaCurso.objects.filter(
-            profesores__isnull=False
-        ).select_related('materia')
+        cursos_validos = MateriaCurso.objects.filter(materia__in=materia, profesores__isnull=False).distinct().order_by(
+            'turno_cursado',
+            'horario'
+        )
+
 
         # Agrupar cursos por materia
         cursos_por_materia = {}
